@@ -2,6 +2,7 @@
 *.pyc
 *.egg-info
 *.swp
+.idea/*
 tags
 hr_time/docs/current
 node_modules/
