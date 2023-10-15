@@ -1,0 +1,327 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:employee_grade",
+ "creation": "2023-10-15 15:51:10.123654",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee_grade",
+  "section_break_g6wvs",
+  "monday_working_hours",
+  "column_break_zyg0t",
+  "monday_core_time_start",
+  "column_break_xdtf6",
+  "monday_core_time_end",
+  "definition_tuesday_section",
+  "tuesday_working_hours",
+  "column_break_supyr",
+  "tuesday_core_time_start",
+  "column_break_psonb",
+  "tuesday_core_time_end",
+  "definition_wednesday_section",
+  "wednesday_working_hours",
+  "column_break_dv2bw",
+  "wednesday_core_time_start",
+  "column_break_jog3e",
+  "wednesday_core_time_end",
+  "definition_thursday_section",
+  "thursday_working_hours",
+  "column_break_qnyzu",
+  "thursday_core_time_start",
+  "column_break_crqeh",
+  "thursday_core_time_end",
+  "definition_friday_section",
+  "friday_working_hours",
+  "column_break_b7blr",
+  "friday_core_time_start",
+  "column_break_mjp2d",
+  "friday_core_time_end",
+  "definition_saturday_section",
+  "saturday_working_hours",
+  "column_break_jcdvu",
+  "saturday_core_time_start",
+  "column_break_iqfcc",
+  "saturday_core_time_end",
+  "definition_sunday_section",
+  "sunday_working_hours",
+  "column_break_rl5qu",
+  "sunday_core_time_start",
+  "column_break_tnbsw",
+  "sunday_core_time_end"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee_grade",
+   "fieldtype": "Link",
+   "label": "Employee grade",
+   "options": "Employee Grade",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "monday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "default": "10:00:00",
+   "fieldname": "monday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "15:00:00",
+   "fieldname": "monday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "fieldname": "section_break_g6wvs",
+   "fieldtype": "Section Break",
+   "label": "Definition Monday"
+  },
+  {
+   "fieldname": "tuesday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "fieldname": "wednesday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "fieldname": "thursday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "fieldname": "friday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "fieldname": "sunday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "default": "10:00:00",
+   "fieldname": "tuesday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "10:00:00",
+   "fieldname": "wednesday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "10:00:00",
+   "fieldname": "thursday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "10:00:00",
+   "fieldname": "friday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "00:00:00",
+   "fieldname": "sunday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "15:00:00",
+   "fieldname": "tuesday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "default": "15:00:00",
+   "fieldname": "wednesday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "default": "15:00:00",
+   "fieldname": "thursday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "default": "15:00:00",
+   "fieldname": "friday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "default": "00:00:00",
+   "fieldname": "sunday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  },
+  {
+   "fieldname": "column_break_zyg0t",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "definition_tuesday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Tuesday"
+  },
+  {
+   "fieldname": "column_break_xdtf6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "definition_wednesday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Wednesday"
+  },
+  {
+   "fieldname": "definition_thursday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Thursday"
+  },
+  {
+   "fieldname": "definition_friday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Friday"
+  },
+  {
+   "fieldname": "definition_sunday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Sunday"
+  },
+  {
+   "fieldname": "column_break_supyr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_psonb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_dv2bw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jog3e",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_qnyzu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_crqeh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_b7blr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mjp2d",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_jcdvu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_iqfcc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_rl5qu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tnbsw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "definition_saturday_section",
+   "fieldtype": "Section Break",
+   "label": "Definition Saturday"
+  },
+  {
+   "fieldname": "saturday_working_hours",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "label": "Working hours"
+  },
+  {
+   "default": "00:00:00",
+   "fieldname": "saturday_core_time_start",
+   "fieldtype": "Time",
+   "label": "Core time start"
+  },
+  {
+   "default": "00:00:00",
+   "fieldname": "saturday_core_time_end",
+   "fieldtype": "Time",
+   "label": "Core time end"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-10-15 17:57:12.625202",
+ "modified_by": "Administrator",
+ "module": "HR time management",
+ "name": "Flextime definition",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

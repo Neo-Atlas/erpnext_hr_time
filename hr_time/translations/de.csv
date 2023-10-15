@@ -1,0 +1,17 @@
+Employee time model,Arbeitszeitmodell Zuweisung
+Time model,Arbeitszeitmodell
+Flextime account,Gleitzeitkonto
+Flextime definition,Definition Gleitzeit
+Definition Monday,Definition Montag
+Definition Tuesday,Definition Dienstag
+Definition Wednesday,Definition Mittwoch
+Definition Thursday,Definition Donnerstag
+Definition Friday,Definition Freitag
+Definition Saturday,Definition Samstag
+Definition Sunday,Definition Sonntag,
+Working hours,Arbeitsstunden
+Core time start,Beginn Kernzeit
+Core time end,Ende Kernzeit
+{0}: The end of core working time cannot be empty if a start is set.,"{0}: Das Ende der Kernarbeitszeit kann nicht leer sein, wenn ein Beginn gesetzt ist."
+{0}: The start of core working time cannot be empty if a end is set.,"{0}: Der Beginn der Kernarbeitszeit kann nicht leer sein\, wenn ein Ende gesetzt ist."
+{0}: The end of the core working time must be after the start.,{0}: Das Ende der Kernarbeitszeit muss vor dem Beginn liegen.
