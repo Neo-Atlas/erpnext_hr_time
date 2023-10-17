@@ -1,0 +1,164 @@
+{
+ "actions": [],
+ "autoname": "format:{employee}-{date}",
+ "creation": "2023-10-16 22:29:01.696725",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "column_break_vevwk",
+  "date",
+  "section_break_wkna4",
+  "total_working_hours",
+  "column_break_4owxv",
+  "time_balance",
+  "section_break_y3rom",
+  "target_working_time",
+  "column_break_ihdvp",
+  "flextime_delta",
+  "section_break_s9nzl",
+  "checkin_list",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_vevwk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_wkna4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_working_hours",
+   "fieldtype": "Duration",
+   "in_list_view": 1,
+   "label": "Total working time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4owxv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_balance",
+   "fieldtype": "Float",
+   "label": "Current flextime account balance [hours]",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee name",
+   "read_only": 1
+  },
+  {
+   "columns": 8,
+   "fieldname": "checkin_list",
+   "fieldtype": "Table",
+   "label": "Checkin/Checkout list",
+   "options": "Checkin duration"
+  },
+  {
+   "fieldname": "section_break_s9nzl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_y3rom",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "target_working_time",
+   "fieldtype": "Duration",
+   "label": "Target working time"
+  },
+  {
+   "fieldname": "column_break_ihdvp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "flextime_delta",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Flextime delta"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Flextime daily status",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2023-10-17 13:32:52.741094",
+ "modified_by": "Administrator",
+ "module": "HR time management",
+ "name": "Flextime daily status",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

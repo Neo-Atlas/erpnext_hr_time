@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-10-16 22:34:29.613861",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "time_checkin",
+  "time_checkout",
+  "total_time",
+  "checkin",
+  "checkout"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "checkin",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Checkin event",
+   "options": "Employee Checkin",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "checkout",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Checkout event",
+   "options": "Employee Checkin",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "time_checkin",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Time start",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "time_checkout",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Time end",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "total_time",
+   "fieldtype": "Duration",
+   "hide_days": 1,
+   "in_list_view": 1,
+   "label": "Total time",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-10-16 23:11:31.114402",
+ "modified_by": "Administrator",
+ "module": "HR time management",
+ "name": "Checkin duration",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

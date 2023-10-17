@@ -1,3 +1,5 @@
+HR time management,Personalwesen Zeitverwaltung
+Flextime,Gleitzeit
 Employee time model,Arbeitszeitmodell Zuweisung
 Time model,Arbeitszeitmodell
 Flextime account,Gleitzeitkonto
@@ -15,3 +17,18 @@ Core time end,Ende Kernzeit
 {0}: The end of core working time cannot be empty if a start is set.,"{0}: Das Ende der Kernarbeitszeit kann nicht leer sein, wenn ein Beginn gesetzt ist."
 {0}: The start of core working time cannot be empty if a end is set.,"{0}: Der Beginn der Kernarbeitszeit kann nicht leer sein\, wenn ein Ende gesetzt ist."
 {0}: The end of the core working time must be after the start.,{0}: Das Ende der Kernarbeitszeit muss vor dem Beginn liegen.
+Flextime daily status,Gleitzeit Tagesstatus
+Employee name,Mitarbeitername
+Total working time,Gesamtarbeitszeit
+Flextime delta,Kontodifferenz
+Current flextime account balance [hours],Aktueller Gleitzeitkontostand [Stunden]
+Checkin/Checkout list,Stempelzeiten
+Time start,Arbeitsbeginn
+Time end,Arbeitsende
+Total time,Gesamtzeit
+No workday,Kein Arbeitstag
+Checkin event,Protokoll Einstempeln
+Checkout event,Protokoll Ausstempeln
+Target working time,Sollarbeitszeit
+Time gain,Stundenaufbau
+Time loss,Stundenabbau
