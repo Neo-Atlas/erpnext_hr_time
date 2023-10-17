@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"h4VBpdPqR9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Quick Access</b></span>\",\"col\":12}},{\"id\":\"BDbBPXrKI0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Flextime daily status\",\"col\":3}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
+ "content": "[{\"id\":\"h4VBpdPqR9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Quick Access</b></span>\",\"col\":12}},{\"id\":\"BDbBPXrKI0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Flextime daily status\",\"col\":3}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}}]",
  "creation": "2023-10-16 22:03:41.419125",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,23 +15,33 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Settings",
-   "link_count": 1,
+   "label": "Einstellungen",
+   "link_count": 2,
    "onboard": 0,
    "type": "Card Break"
   },
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Flextime definition",
+   "label": "Definition Gleitzeit",
    "link_count": 0,
    "link_to": "Flextime definition",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Brake time definition",
+   "link_count": 0,
+   "link_to": "Brake time definition",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-17 00:15:00.761188",
+ "modified": "2023-10-17 17:14:24.032907",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",

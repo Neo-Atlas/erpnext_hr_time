@@ -32,3 +32,8 @@ Checkout event,Protokoll Ausstempeln
 Target working time,Sollarbeitszeit
 Time gain,Stundenaufbau
 Time loss,Stundenabbau
+Brake time definition,Definition Pausenzeit
+Minimal working time,Gilt ab einer Mindestarbeitszeit von
+Forced brake time,Gesetzliche Pausenzeit
+Applies to minors only,Gilt nur für Minderjährige
+Is brake,Ist Pause
