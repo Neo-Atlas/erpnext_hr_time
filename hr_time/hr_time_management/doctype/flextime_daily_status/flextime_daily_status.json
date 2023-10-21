@@ -13,6 +13,7 @@
   "date",
   "section_break_wkna4",
   "total_working_hours",
+  "brake_time_deducted",
   "column_break_4owxv",
   "time_balance",
   "section_break_y3rom",
@@ -112,12 +113,17 @@
    "options": "Flextime daily status",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "brake_time_deducted",
+   "fieldtype": "Duration",
+   "label": "Deducted brake time"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-17 13:32:52.741094",
+ "modified": "2023-10-18 23:18:41.326518",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime daily status",

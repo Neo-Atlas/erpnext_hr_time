@@ -8,6 +8,7 @@
  "field_order": [
   "time_checkin",
   "time_checkout",
+  "type",
   "total_time",
   "checkin",
   "checkout"
@@ -55,12 +56,21 @@
    "in_list_view": 1,
    "label": "Total time",
    "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Work time\nBreak time",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-16 23:11:31.114402",
+ "modified": "2023-10-18 14:52:12.965890",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Checkin duration",

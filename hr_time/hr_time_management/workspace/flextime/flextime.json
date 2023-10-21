@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"h4VBpdPqR9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Quick Access</b></span>\",\"col\":12}},{\"id\":\"BDbBPXrKI0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Flextime daily status\",\"col\":3}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}}]",
+ "content": "[{\"id\":\"h4VBpdPqR9\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Quick Access</b></span>\",\"col\":12}},{\"id\":\"BDbBPXrKI0\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Flextime daily status\",\"col\":3}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
  "creation": "2023-10-16 22:03:41.419125",
  "custom_blocks": [],
  "docstatus": 0,
@@ -39,9 +39,27 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tools",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trigger batch jobs",
+   "link_count": 0,
+   "link_to": "Trigger HR time management batch jobs",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2023-10-17 17:14:24.032907",
+ "modified": "2023-10-17 18:19:38.516057",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",

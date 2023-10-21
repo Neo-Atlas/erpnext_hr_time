@@ -1,15 +1,13 @@
 frappe.listview_settings['Flextime daily status'] = {
 
+    add_fields: ["target_working_time"],
+
     options: {
         columns: ["flextime_delta"]
     },
 
     // set this to true to apply indicator function on draft documents too
     has_indicator_for_draft: false,
-
-    onload(listview) {
-        console.log(listview);
-    },
 
     get_indicator(doc) {
         if ((doc.target_working_time === 0 || doc.target_working_time === undefined) && doc.total_working_hours === 0) {

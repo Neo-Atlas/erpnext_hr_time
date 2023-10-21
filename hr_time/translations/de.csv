@@ -14,6 +14,7 @@ Definition Sunday,Definition Sonntag,
 Working hours,Arbeitsstunden
 Core time start,Beginn Kernzeit
 Core time end,Ende Kernzeit
+Break time handling,Verarbeitung Pausenzeit
 {0}: The end of core working time cannot be empty if a start is set.,"{0}: Das Ende der Kernarbeitszeit kann nicht leer sein, wenn ein Beginn gesetzt ist."
 {0}: The start of core working time cannot be empty if a end is set.,"{0}: Der Beginn der Kernarbeitszeit kann nicht leer sein\, wenn ein Ende gesetzt ist."
 {0}: The end of the core working time must be after the start.,{0}: Das Ende der Kernarbeitszeit muss vor dem Beginn liegen.
@@ -23,8 +24,11 @@ Total working time,Gesamtarbeitszeit
 Flextime delta,Kontodifferenz
 Current flextime account balance [hours],Aktueller Gleitzeitkontostand [Stunden]
 Checkin/Checkout list,Stempelzeiten
-Time start,Arbeitsbeginn
-Time end,Arbeitsende
+Time start,Begin
+Time end,Ende
+Type,Typ
+Work time,Arbeit
+Break time,Pause
 Total time,Gesamtzeit
 No workday,Kein Arbeitstag
 Checkin event,Protokoll Einstempeln
@@ -37,3 +41,8 @@ Minimal working time,Gilt ab einer Mindestarbeitszeit von
 Forced brake time,Gesetzliche Pausenzeit
 Applies to minors only,Gilt nur für Minderjährige
 Is brake,Ist Pause
+Trigger HR time management batch jobs,HR Zeitverwaltung Hintergrundaufgaben starten
+Process daily flextime status,Starte die Verarbeitung der Gleitzeitkonten
+Trigger batch jobs,Hintergrundaufgaben starten
+"This break time is deducted if the employee should have taken a break (based on legal requirements) but none was clocked in.","Diese Pausenzeit wird abgezogen, falls der Mitarbeiter eine Pause (aufgrund der gesetzlichen Bestimmungen) hätte nehmen müssen, jedoch keine gestempelt wurde."
+Deducted work time (if no brake time),Abgezogene Arbeitszeit (bei nicht gestempelter Pausenzeit)
