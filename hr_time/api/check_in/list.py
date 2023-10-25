@@ -1,3 +1,5 @@
+from typing import Optional
+
 from hr_time.api import logger
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.flextime.repository import CheckinDuration
@@ -50,3 +52,9 @@ class CheckinList:
                     current = event
 
         return durations
+
+    def get_latest(self) -> Optional[CheckinEvent]:
+        if not self.events:
+            return None
+
+        return self.events[-1]

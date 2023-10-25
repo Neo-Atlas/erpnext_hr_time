@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"-pZs9Pq_5z\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Status</b></span>\",\"col\":12}},{\"id\":\"4-ByA7Y9WZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":4}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
+ "content": "[{\"id\":\"-pZs9Pq_5z\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Status</b></span>\",\"col\":12}},{\"id\":\"-utdX4KjtV\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Checkin status\",\"col\":4}},{\"id\":\"4-ByA7Y9WZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":4}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
  "creation": "2023-10-16 22:03:41.419125",
  "custom_blocks": [],
  "docstatus": 0,
@@ -59,11 +59,15 @@
    "type": "Link"
   }
  ],
- "modified": "2023-10-24 00:33:44.524739",
+ "modified": "2023-10-25 23:25:06.439305",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",
  "number_cards": [
+  {
+   "label": "Checkin status",
+   "number_card_name": "Checkin status"
+  },
   {
    "label": "Current flextime account balance",
    "number_card_name": "Current flextime account balance"
