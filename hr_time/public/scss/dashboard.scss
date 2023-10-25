@@ -58,15 +58,18 @@
 }
 
 #hr_time_number_card_checkin_status .checkin_status.work {
-  background-color: var(--dark-green-600);
+  background-color: var(--bg-green);
+  color: var(--text-on-green)
 }
 
 #hr_time_number_card_checkin_status .checkin_status.break {
-  background-color: var(--blue-600);
+  background-color: var(--bg-blue);
+  color: var(--text-on-blue)
 }
 
 #hr_time_number_card_checkin_status .checkin_status.out {
   background-color: var(--bg-grey);
+  color: var(--text-on-grey)
 }
 
 #hr_time_number_card_checkin_status .checkin_status .fa {
