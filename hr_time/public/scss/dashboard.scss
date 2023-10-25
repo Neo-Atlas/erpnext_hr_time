@@ -51,18 +51,18 @@
 }
 
 #hr_time_number_card_checkin_status .checkin_status {
-    line-height: 38px;
+  line-height: 48px;
   padding-left: 9px;
   padding-right: 11px;
   border-radius: 8px;
 }
 
 #hr_time_number_card_checkin_status .checkin_status.work {
-  background-color: var(--dark-green-700);
+  background-color: var(--dark-green-600);
 }
 
 #hr_time_number_card_checkin_status .checkin_status.break {
-  background-color: var(--blue-700);
+  background-color: var(--blue-600);
 }
 
 #hr_time_number_card_checkin_status .checkin_status.out {

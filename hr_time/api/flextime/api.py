@@ -42,7 +42,7 @@ def render_number_card_checkin_status():
             icon = "coffee"
         case _:
             label = "Unknown"
-            status = "out",
+            status = "out"
             icon = "question"
 
     return frappe.render_template("templates/number_card/checkin_status.html", {
