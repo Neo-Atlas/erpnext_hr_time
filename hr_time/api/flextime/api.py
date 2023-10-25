@@ -11,10 +11,10 @@ def generate_daily_flextime_status():
 
 
 @frappe.whitelist()
-def get_flextime_time_balance():
+def render_number_card_flextime_time_balance():
     balance = FlextimeStatisticsService.prod().get_balance()
 
-    return frappe.render_template("templates/flextime_account_balance.html", {
+    return frappe.render_template("templates/number_card/flextime_account_balance.html", {
         "time_balance_hours": frappe._('{0} hour(s)').format(balance.balance_hours),
         "time_balance_minutes": frappe._('{0} minute(s)').format(balance.balance_minutes),
         "trend_value": "{}H, {}m ({} %)".format(abs(balance.trend_hours), abs(balance.trend_minutes),
