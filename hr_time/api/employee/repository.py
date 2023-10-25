@@ -48,13 +48,28 @@ class Employee:
 
 
 class EmployeeRepository:
+    doc_fields = ["name", "custom_time_model", "grade", "date_of_birth", "date_of_joining"]
+
     def get_all(self) -> list[Employee]:
-        docs_employees = frappe.get_all("Employee", fields=["name", "custom_time_model", "grade", "date_of_birth",
-                                                            "date_of_joining"])
+        docs_employees = frappe.get_all("Employee", fields=self.doc_fields)
         employees = []
 
         for doc in docs_employees:
-            time_model = TimeModel.Flextime if doc.custom_time_model == "Flextime account" else TimeModel.Undefined
-            employees.append(Employee(doc.name, time_model, doc.grade, doc.date_of_birth, doc.date_of_joining))
+            employees.append(self._build_from_doc(doc))
 
         return employees
+
+    # Returns the Employee object of the current user
+    def get_current(self) -> Optional[Employee]:
+        user_id = frappe.get_user().doc.email
+        docs = frappe.get_all("Employee", fields=self.doc_fields, filters={"user_id": user_id})
+
+        if not docs:
+            return None
+
+        return self._build_from_doc(docs[0])
+
+    @staticmethod
+    def _build_from_doc(doc) -> Employee:
+        time_model = TimeModel.Flextime if doc.custom_time_model == "Flextime account" else TimeModel.Undefined
+        return Employee(doc.name, time_model, doc.grade, doc.date_of_birth, doc.date_of_joining)

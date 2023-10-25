@@ -3,6 +3,7 @@
 *.egg-info
 *.swp
 .idea/*
+hr_time/public/dist
 tags
 hr_time/docs/current
 node_modules/

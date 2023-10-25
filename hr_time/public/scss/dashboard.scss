@@ -1,0 +1,51 @@
+#hr_time_dashboard_flextime_balance .balance {
+  float: left;
+}
+
+#hr_time_dashboard_flextime_balance .trend,
+#hr_time_dashboard_flextime_balance .balance {
+  font-weight: normal
+}
+
+#hr_time_dashboard_flextime_balance .trend {
+  line-height: 25px;
+}
+
+#hr_time_dashboard_flextime_balance .balance {
+  line-height: 27px;
+}
+
+#hr_time_dashboard_flextime_balance .balance .hours {
+  font-size: 21px;
+}
+
+#hr_time_dashboard_flextime_balance .trend .absolute,
+#hr_time_dashboard_flextime_balance .trend .meta {
+  font-size: 13px;
+}
+
+#hr_time_dashboard_flextime_balance .balance .minutes {
+  font-size: 16px;
+}
+
+#hr_time_dashboard_flextime_balance .balance .minutes,
+#hr_time_dashboard_flextime_balance .trend .meta {
+  color: var(--text-muted) !important;
+}
+
+#hr_time_dashboard_flextime_balance .trend {
+  float: right;
+  text-align: right;
+}
+
+#hr_time_dashboard_flextime_balance .trend .icon {
+  font-size: 16px;
+}
+
+#hr_time_dashboard_flextime_balance .positive {
+  color: var(--dark-green-500);
+}
+
+#hr_time_dashboard_flextime_balance .negative {
+  color: var(--red);
+}

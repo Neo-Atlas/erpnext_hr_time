@@ -141,6 +141,17 @@ class FlextimeStatusRepository:
 
         return docs[0].time_balance
 
+    # Returns the flextime balance by the given date
+    def get_balance_by_date(self, employee_id: str, date: datetime.date) -> Optional[float]:
+        docs = frappe.get_all("Flextime daily status", fields=["time_balance"], filters={"employee": employee_id, "date": date.isoformat()},
+                              order_by="date desc", limit=1)
+
+        if not docs:
+            return None
+
+        return docs[0].time_balance
+
+
     # Saves a new daily status
     def add(self, status: FlextimeDailyStatus):
         parent = frappe.new_doc("Flextime daily status")

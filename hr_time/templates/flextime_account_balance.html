@@ -1,0 +1,21 @@
+<div id="hr_time_dashboard_flextime_balance">
+    <script>
+        document.getElementById("hr_time_dashboard_flextime_balance")
+            .parentElement
+            .parentElement
+            .setAttribute("style", "display: block;")
+    </script>
+    <div class="balance">
+        <span class="{{ color }} hours">{{ time_balance_hours }}</span><br>
+        <span class="minutes">{{ time_balance_minutes }}</span>
+    </div>
+    <div class="trend">
+        {% if is_trend_positive %}
+        <div class="icon">↖</div>
+        {% else %}
+        <div class="icon">↙</div>
+        {% endif %}
+        <span class="absolute">{{ trend_value }}</span><br>
+        <span class="meta">{{ trend_meta }}</span>
+    </div>
+</div>

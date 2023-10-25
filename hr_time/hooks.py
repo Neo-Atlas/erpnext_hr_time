@@ -8,3 +8,4 @@ app_email = "info@atlasaero.eu"
 app_license = "MIT"
 
 fixtures = ["Custom Field"]
+app_include_css = ['hr_time.bundle.css']

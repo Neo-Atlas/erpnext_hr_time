@@ -23,6 +23,7 @@ Employee name,Mitarbeitername
 Total working time,Gesamtarbeitszeit
 Flextime delta,Kontodifferenz
 Current flextime account balance [hours],Aktueller Gleitzeitkontostand [Stunden]
+Current flextime account balance,Aktueller Gleitzeitkontostand
 Checkin/Checkout list,Stempelzeiten
 Time start,Begin
 Time end,Ende
@@ -46,3 +47,7 @@ Process daily flextime status,Starte die Verarbeitung der Gleitzeitkonten
 Trigger batch jobs,Hintergrundaufgaben starten
 "This break time is deducted if the employee should have taken a break (based on legal requirements) but none was clocked in.","Diese Pausenzeit wird abgezogen, falls der Mitarbeiter eine Pause (aufgrund der gesetzlichen Bestimmungen) hätte nehmen müssen, jedoch keine gestempelt wurde."
 Deducted work time (if no brake time),Abgezogene Arbeitszeit (bei nicht gestempelter Pausenzeit)
+Latest daily status,Letzter Tagesstatus
+{0} hour(s),{0} Stunde(n)
+{0} minute(s),{0} Minute(n)
+Within last month,Im letzten Monat
