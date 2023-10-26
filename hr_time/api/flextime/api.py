@@ -1,6 +1,7 @@
 import frappe
 
 from hr_time.api.check_in.service import CheckinService, State, Action
+from hr_time.api.employee.repository import EmployeeRepository, TimeModel
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 
@@ -27,6 +28,23 @@ def render_number_card_flextime_time_balance():
 
 @frappe.whitelist()
 def render_number_card_checkin_status():
+    return frappe.render_template("templates/number_card/checkin_status.html", _get_checkin_status_parameters())
+
+
+@frappe.whitelist()
+def render_navbar_checkin_status():
+    employee = EmployeeRepository().get_current()
+
+    if employee is None:
+        return ""
+
+    if employee.time_model is not TimeModel.Flextime:
+        return ""
+
+    return frappe.render_template("templates/navbar/checkin_status.html", _get_checkin_status_parameters())
+
+
+def _get_checkin_status_parameters():
     match CheckinService.prod().get_current_status().state:
         case State.In:
             label = "Checked in"
@@ -45,11 +63,11 @@ def render_number_card_checkin_status():
             status = "out"
             icon = "question"
 
-    return frappe.render_template("templates/number_card/checkin_status.html", {
+    return {
         "label": frappe._(label),
         "status": status,
         "icon": icon
-    })
+    }
 
 
 @frappe.whitelist()
@@ -84,4 +102,3 @@ def submit_easy_checkin(action: str):
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
             raise ValueError("Unknown action given")
-

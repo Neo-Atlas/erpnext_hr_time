@@ -25,17 +25,17 @@ class CheckinList:
                 continue
 
             # Cannot start with a non-brake OUT event
-            if (not current.is_in) and (not current.is_brake):
+            if (not current.is_in) and (not current.is_break):
                 logger.info("Unable to match checkin event " + current.id)
                 current = event
                 continue
 
             # Matching OUT event to current IN event
-            if current.is_in and (not current.is_brake):
+            if current.is_in and (not current.is_break):
                 if not event.is_in:
                     durations.append(CheckinDuration.build_from_events(current, event))
 
-                    if event.is_brake:
+                    if event.is_break:
                         current = event
                     else:
                         current = None
@@ -46,7 +46,7 @@ class CheckinList:
                     continue
 
             # Currently in brake, searching for IN event
-            if (not current.is_in) and current.is_brake:
+            if (not current.is_in) and current.is_break:
                 if event.is_in:
                     durations.append(CheckinDuration.build_from_events(current, event))
                     current = event
@@ -62,7 +62,7 @@ class CheckinList:
     # Returns true if at leas one break event exists
     def has_break(self) -> bool:
         for event in self.events:
-            if event.is_brake:
+            if event.is_break:
                 return True
 
         return False

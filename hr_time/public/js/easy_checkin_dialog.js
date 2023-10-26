@@ -1,9 +1,14 @@
+import {EasyCheckinStatus} from "./easy_checkin_status";
+
 export class EasyCheckinDialog {
     options = [];
     default = "";
 
     dashboard_number_card_refresh_button;
 
+    /**
+     * Preloads the current checkin status
+     */
     preload() {
         frappe.call({
             method: "hr_time.api.flextime.api.get_easy_checkin_options",
@@ -14,6 +19,9 @@ export class EasyCheckinDialog {
         });
     }
 
+    /**
+     * Shows the checkin dialog
+     */
     show() {
         let checkin_dialog = this;
 
@@ -37,7 +45,11 @@ export class EasyCheckinDialog {
                         action: values.action
                     },
                     callback: (response) => {
-                        checkin_dialog.dashboard_number_card_refresh_button.click()
+                        if (checkin_dialog.dashboard_number_card_refresh_button !== undefined) {
+                            checkin_dialog.dashboard_number_card_refresh_button.click()
+                        }
+                        EasyCheckinStatus.render();
+                        checkin_dialog.preload();
 
                         let message = "Successfully checked in";
 
@@ -64,9 +76,11 @@ export class EasyCheckinDialog {
         dialog.show()
     }
 
-    static prepare() {
-        let dialog = new EasyCheckinDialog();
-        dialog.preload();
+    /**
+     * Binds events for numer card of dashboard
+     */
+    static prepare_dashboard() {
+        let dialog = EasyCheckinDialog.singleton()
 
         document
             .getElementById("hr_time_number_card_checkin_status")
@@ -78,6 +92,17 @@ export class EasyCheckinDialog {
         dialog.dashboard_number_card_refresh_button = document
             .querySelector('[number_card_name="Checkin status"]')
             .querySelector('[data-action="action-refresh"]')
+    }
+
+    /**
+     * Returns/Creates the singleton instance
+     */
+    static singleton() {
+        if (window.easy_checkin_dialog === undefined) {
+            window.easy_checkin_dialog = new EasyCheckinDialog();
+        }
+
+        return window.easy_checkin_dialog;
     }
 }
 

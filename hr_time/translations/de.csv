@@ -41,7 +41,7 @@ Brake time definition,Definition Pausenzeit
 Minimal working time,Gilt ab einer Mindestarbeitszeit von
 Forced brake time,Gesetzliche Pausenzeit
 Applies to minors only,Gilt nur für Minderjährige
-Is brake,Ist Pause
+Is break,Ist Pause
 Trigger HR time management batch jobs,HR Zeitverwaltung Hintergrundaufgaben starten
 Process daily flextime status,Starte die Verarbeitung der Gleitzeitkonten
 Trigger batch jobs,Hintergrundaufgaben starten

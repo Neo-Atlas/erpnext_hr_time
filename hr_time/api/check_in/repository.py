@@ -12,14 +12,14 @@ class CheckinRepository:
         time_min = date.isoformat() + " 00:00:00"
         time_max = date.isoformat() + " 23:59:59"
 
-        docs = frappe.get_all("Employee Checkin", fields=["name", "employee", "log_type", "time", "custom_is_brake"],
+        docs = frappe.get_all("Employee Checkin", fields=["name", "employee", "log_type", "time", "custom_is_break"],
                               filters=[["employee", "=", employee_id], ["time", ">=", time_min],
                                        ["time", "<=", time_max]], order_by="time asc")
 
         events = []
 
         for doc in docs:
-            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == "IN", doc.custom_is_brake))
+            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == "IN", doc.custom_is_break))
 
         return CheckinList(events)
 

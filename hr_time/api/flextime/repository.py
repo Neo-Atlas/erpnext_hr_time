@@ -48,7 +48,7 @@ class CheckinDuration:
         return CheckinDuration(
             datetime.timedelta(hours=first.timestamp.time().hour, minutes=first.timestamp.time().minute),
             datetime.timedelta(hours=second.timestamp.time().hour, minutes=second.timestamp.time().minute),
-            DurationType.BREAK if first.is_brake else DurationType.WORK,
+            DurationType.BREAK if first.is_break else DurationType.WORK,
             first.id,
             second.id
         )

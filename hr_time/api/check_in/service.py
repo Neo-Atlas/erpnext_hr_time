@@ -78,7 +78,7 @@ class CheckinService:
         if event is None:
             return State.Out
 
-        if (not event.is_in) and event.is_brake:
+        if (not event.is_in) and event.is_break:
             return State.Break
 
         if not event.is_in:
