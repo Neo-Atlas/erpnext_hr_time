@@ -2,6 +2,8 @@ export class EasyCheckinDialog {
     options = [];
     default = "";
 
+    dashboard_number_card_refresh_button;
+
     preload() {
         frappe.call({
             method: "hr_time.api.flextime.api.get_easy_checkin_options",
@@ -13,6 +15,8 @@ export class EasyCheckinDialog {
     }
 
     show() {
+        let checkin_dialog = this;
+
         let dialog = new frappe.ui.Dialog({
             title: __("Checkin"),
             fields: [
@@ -27,7 +31,32 @@ export class EasyCheckinDialog {
             size: 'small', // small, large, extra-large
             primary_action_label: __("Submit"),
             primary_action(values) {
-                console.log(values);
+                frappe.call({
+                    method: "hr_time.api.flextime.api.submit_easy_checkin",
+                    args: {
+                        action: values.action
+                    },
+                    callback: (response) => {
+                        checkin_dialog.dashboard_number_card_refresh_button.click()
+
+                        let message = "Successfully checked in";
+
+                        switch (values.action) {
+                            case "Break":
+                                message = "Successfully checked out for break";
+                                break;
+                            case "End of work":
+                                message = "Successfully checked out for end of work"
+                                break;
+                        }
+
+                        frappe.show_alert({
+                            message: __(message),
+                            indicator: 'green'
+                        }, 5);
+                    }
+                });
+
                 dialog.hide();
             }
         });
@@ -45,6 +74,10 @@ export class EasyCheckinDialog {
             .onclick = function () {
             dialog.show();
         }
+
+        dialog.dashboard_number_card_refresh_button = document
+            .querySelector('[number_card_name="Checkin status"]')
+            .querySelector('[data-action="action-refresh"]')
     }
 }
 

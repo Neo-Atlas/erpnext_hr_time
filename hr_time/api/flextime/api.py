@@ -1,6 +1,6 @@
 import frappe
 
-from hr_time.api.check_in.service import CheckinService, State
+from hr_time.api.check_in.service import CheckinService, State, Action
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 
@@ -71,3 +71,17 @@ def get_easy_checkin_options():
         "options": options,
         "default": default
     }
+
+
+@frappe.whitelist()
+def submit_easy_checkin(action: str):
+    match action:
+        case "Start of work":
+            CheckinService.prod().checkin(Action.startOfWork)
+        case "Break":
+            CheckinService.prod().checkin(Action.breakTime)
+        case "End of work":
+            CheckinService.prod().checkin(Action.endOfWork)
+        case _:
+            raise ValueError("Unknown action given")
+

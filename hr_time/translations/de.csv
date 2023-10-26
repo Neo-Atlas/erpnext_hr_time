@@ -58,3 +58,6 @@ Break,Pause
 Checkin,Stempeln
 End of work,Arbeitsende
 Start of work,Arbeitsbeginn
+Successfully checked in,Arbeitsbeginn erfolgreich gestempelt
+Successfully checked out for break,Beginn der Pause erfolgreich gestempelt
+Successfully checked out for end of work,Arbeitsende erfolgreich gestempelt

@@ -22,3 +22,12 @@ class CheckinRepository:
             events.append(CheckinEvent(doc.name, doc.time, doc.log_type == "IN", doc.custom_is_brake))
 
         return CheckinList(events)
+
+    def checkin(self, employee_id: str, log_type: str, is_break: bool):
+        doc = frappe.new_doc("Employee Checkin")
+        doc.time = datetime.datetime.now()
+        doc.employee = employee_id
+        doc.log_type = log_type
+        doc.custom_is_break = is_break
+
+        doc.save()

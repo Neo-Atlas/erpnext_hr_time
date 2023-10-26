@@ -27,6 +27,11 @@ class CheckinStatus:
         self.had_break = had_break
 
 
+class Action(enum.Enum):
+    startOfWork = 1,
+    breakTime = 2,
+    endOfWork = 3
+
 class CheckinService:
     employee: EmployeeRepository
     data: CheckinRepository
@@ -52,6 +57,21 @@ class CheckinService:
         had_break = events.has_break()
 
         return CheckinStatus(state, had_break)
+
+    # Checks in the current employee based on the given action
+    def checkin(self, action: Action):
+        employee = self.employee.get_current()
+
+        if employee is None:
+            raise RuntimeError("Current employee not found")
+
+        match action:
+            case Action.startOfWork:
+                self.data.checkin(employee.id, "IN", False)
+            case Action.breakTime:
+                self.data.checkin(employee.id, "OUT", True)
+            case Action.endOfWork:
+                self.data.checkin(employee.id, "OUT", False)
 
     @staticmethod
     def _event_to_state(event: CheckinEvent) -> State:

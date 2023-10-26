@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.list import CheckinList
 from hr_time.api.check_in.repository import CheckinRepository
-from hr_time.api.check_in.service import CheckinService, State
+from hr_time.api.check_in.service import CheckinService, State, Action
 from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeModel
 
 
@@ -87,3 +87,37 @@ class CheckinServiceTest(unittest.TestCase):
         ]))
 
         self.assertTrue(self.service.get_current_status().had_break)
+
+    def test_checkin_employee_not_found(self):
+        self.employee.get_current = MagicMock(return_value=None)
+        self.assertRaises(RuntimeError, self.service.checkin, Action.startOfWork)
+
+    def test_checkin_start_of_work(self):
+        self.employee.get_current = MagicMock(return_value=self.dummy_employee)
+        self.data.checkin = MagicMock()
+
+        self.service.checkin(Action.startOfWork)
+
+        self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
+        self.assertEqual("IN", self.data.checkin.call_args.args[1])
+        self.assertFalse(self.data.checkin.call_args.args[2])
+
+    def test_checkin_break(self):
+        self.employee.get_current = MagicMock(return_value=self.dummy_employee)
+        self.data.checkin = MagicMock()
+
+        self.service.checkin(Action.breakTime)
+
+        self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
+        self.assertEqual("OUT", self.data.checkin.call_args.args[1])
+        self.assertTrue(self.data.checkin.call_args.args[2])
+
+    def test_checkin_endOfWork(self):
+        self.employee.get_current = MagicMock(return_value=self.dummy_employee)
+        self.data.checkin = MagicMock()
+
+        self.service.checkin(Action.endOfWork)
+
+        self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
+        self.assertEqual("OUT", self.data.checkin.call_args.args[1])
+        self.assertFalse(self.data.checkin.call_args.args[2])
