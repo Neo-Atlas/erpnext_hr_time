@@ -1,6 +1,6 @@
 import frappe
 
-from hr_time.api.check_in.service import CheckinService, CheckinStatus
+from hr_time.api.check_in.service import CheckinService, State
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 
@@ -27,16 +27,16 @@ def render_number_card_flextime_time_balance():
 
 @frappe.whitelist()
 def render_number_card_checkin_status():
-    match CheckinService.prod().get_current_status():
-        case CheckinStatus.In:
+    match CheckinService.prod().get_current_status().state:
+        case State.In:
             label = "Checked in"
             status = "work"
             icon = "check"
-        case CheckinStatus.Out:
+        case State.Out:
             label = "Checked out"
             status = "out"
             icon = "remove"
-        case CheckinStatus.Break:
+        case State.Break:
             label = "Break"
             status = "break"
             icon = "coffee"
@@ -50,3 +50,24 @@ def render_number_card_checkin_status():
         "status": status,
         "icon": icon
     })
+
+
+@frappe.whitelist()
+def get_easy_checkin_options():
+    status = CheckinService.prod().get_current_status()
+
+    match status.state:
+        case State.In:
+            options = ["Break", "End of work"]
+            default = "End of work" if status.had_break else "Break"
+        case State.Out | State.Break:
+            options = ["Start of work"]
+            default = "Start of work"
+        case _:
+            options = ["Start of work", "Break", "End of work"]
+            default = ""
+
+    return {
+        "options": options,
+        "default": default
+    }

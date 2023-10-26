@@ -1,15 +1,30 @@
 import datetime
 import enum
 
+from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
 
 
-class CheckinStatus(enum.Enum):
+class State(enum.Enum):
     Unknown = 1
     In = 2
     Break = 3
     Out = 4
+
+
+class CheckinStatus:
+    # Current checkin state
+    state: State
+
+    # True if at least one break event exists today
+    had_break: bool
+
+    def __init__(self, state: State, had_break: bool):
+        super().__init__()
+
+        self.state = state
+        self.had_break = had_break
 
 
 class CheckinService:
@@ -30,17 +45,23 @@ class CheckinService:
         employee = self.employee.get_current()
 
         if employee is None:
-            return CheckinStatus.Unknown
+            return CheckinStatus(State.Unknown, False)
 
-        event = self.data.get(datetime.date.today(), employee.id).get_latest()
+        events = self.data.get(datetime.date.today(), employee.id)
+        state = self._event_to_state(events.get_latest())
+        had_break = events.has_break()
 
+        return CheckinStatus(state, had_break)
+
+    @staticmethod
+    def _event_to_state(event: CheckinEvent) -> State:
         if event is None:
-            return CheckinStatus.Out
+            return State.Out
 
         if (not event.is_in) and event.is_brake:
-            return CheckinStatus.Break
+            return State.Break
 
         if not event.is_in:
-            return CheckinStatus.Out
+            return State.Out
 
-        return CheckinStatus.In
+        return State.In

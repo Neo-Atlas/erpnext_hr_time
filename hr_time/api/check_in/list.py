@@ -58,3 +58,11 @@ class CheckinList:
             return None
 
         return self.events[-1]
+
+    # Returns true if at leas one break event exists
+    def has_break(self) -> bool:
+        for event in self.events:
+            if event.is_brake:
+                return True
+
+        return False
