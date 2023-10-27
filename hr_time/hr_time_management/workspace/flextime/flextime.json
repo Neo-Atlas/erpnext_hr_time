@@ -15,6 +15,24 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Tools",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trigger batch jobs",
+   "link_count": 0,
+   "link_to": "Trigger HR time management batch jobs",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Einstellungen",
    "link_count": 2,
    "onboard": 0,
@@ -39,27 +57,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Tools",
-   "link_count": 1,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Trigger batch jobs",
-   "link_count": 0,
-   "link_to": "Trigger HR time management batch jobs",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2023-10-25 23:25:06.439305",
+ "modified": "2023-10-27 13:13:56.839465",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",
