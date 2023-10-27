@@ -22,7 +22,7 @@ def render_number_card_flextime_time_balance():
                                                 round(balance.trend_percent * 100)),
         "trend_meta": frappe._("Within last month"),
         "is_trend_positive": balance.trend_percent > 0,
-        "color": "" if balance.balance_minutes == 0 else ("positive" if balance.balance_minutes > 0 else "negative")
+        "color": "" if balance.is_zero() else ("positive" if balance.balance_minutes > 0 else "negative")
     })
 
 

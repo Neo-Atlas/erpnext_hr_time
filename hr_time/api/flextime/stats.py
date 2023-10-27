@@ -39,6 +39,9 @@ class FlextimeBalance:
         self.trend_hours = trend[0]
         self.trend_minutes = trend[1]
 
+    def is_zero(self) -> bool:
+        return (self.balance_hours == 0) and (self.balance_minutes == 0)
+
     @staticmethod
     def _float_to_time(time: float) -> list[int]:
         sign = -1 if time < 0 else 1
