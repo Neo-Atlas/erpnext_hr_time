@@ -11,7 +11,7 @@ class CheckinEvent:
     # True if Checkin, False if Checkout
     is_in: bool
 
-    # True if checked out for brake
+    # True if checked out for break
     is_break: bool
 
     def __init__(self, name: str, timestamp: datetime, is_in: bool, is_break: bool):

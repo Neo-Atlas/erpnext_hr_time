@@ -51,8 +51,8 @@
   "sunday_core_time_start",
   "column_break_tnbsw",
   "sunday_core_time_end",
-  "definition_brake_handling_section",
-  "forced_insufficient_brake_time"
+  "definition_break_handling_section",
+  "forced_insufficient_break_time"
  ],
  "fields": [
   {
@@ -289,15 +289,15 @@
    "label": "Core time end"
   },
   {
-   "fieldname": "definition_brake_handling_section",
+   "fieldname": "definition_break_handling_section",
    "fieldtype": "Section Break",
    "label": "Break time handling"
   },
   {
    "description": "This break time is deducted if the employee should have taken a break (based on legal requirements) but none was clocked in.",
-   "fieldname": "forced_insufficient_brake_time",
+   "fieldname": "forced_insufficient_break_time",
    "fieldtype": "Duration",
-   "label": "Deducted work time (if no brake time)"
+   "label": "Deducted work time (if no break time)"
   }
  ],
  "index_web_pages_for_search": 1,

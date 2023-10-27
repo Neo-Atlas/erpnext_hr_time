@@ -6,7 +6,7 @@ import frappe
 
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.employee.repository import Employee
-from hr_time.api.flextime.brake_time import BrakeTimeDefinitions
+from hr_time.api.flextime.break_time import BreakTimeDefinitions
 
 
 class DurationType(Enum):
@@ -61,11 +61,11 @@ class FlextimeDailyStatus:
     # Corresponding date of daily status
     date: datetime.date
 
-    # Total working time (including brake) in seconds
+    # Total working time (including break) in seconds
     total_working_hours: int
 
-    # Forced deducted brake time in seconds
-    brake_time_deducted: int
+    # Forced deducted break time in seconds
+    break_time_deducted: int
 
     # Current time balance in hours
     time_balance: float
@@ -73,7 +73,7 @@ class FlextimeDailyStatus:
     # Target working time (based on definition) in seconds
     target_working_time: int
 
-    # Delta = total_working_hours - brake_time_deducted - target_working_time
+    # Delta = total_working_hours - break_time_deducted - target_working_time
     flextime_delta: float
 
     # List of single checkin/checkout events
@@ -83,7 +83,7 @@ class FlextimeDailyStatus:
         self.employee_id = employee_id
         self.date = date
         self.total_working_hours = 0
-        self.brake_time_deducted = 0
+        self.break_time_deducted = 0
         self.time_balance = 0
         self.target_working_time = target_working_time
         self.flextime_delta = 0
@@ -93,30 +93,30 @@ class FlextimeDailyStatus:
         self.durations.append(duration)
 
     # Calculates the status values based on durations
-    def calculate(self, brake_definition: BrakeTimeDefinitions, deducted_time_on_no_brake: int, is_minor: bool,
+    def calculate(self, break_definition: BreakTimeDefinitions, deducted_time_on_no_break: int, is_minor: bool,
                   previous_flextime_balance: float):
-        self.brake_time_deducted = 0
+        self.break_time_deducted = 0
         self.total_working_hours = 0
-        checked_brake_time = 0
+        checked_break_time = 0
 
-        brake_found = False
+        break_found = False
 
         for duration in self.durations:
             match duration.duration_type:
                 case DurationType.BREAK:
-                    checked_brake_time += duration.total_time
-                    brake_found = True
+                    checked_break_time += duration.total_time
+                    break_found = True
                 case DurationType.WORK:
                     self.total_working_hours += duration.total_time
 
-        min_brake_time = brake_definition.get_brake_time(self.total_working_hours, is_minor)
+        min_break_time = break_definition.get_break_time(self.total_working_hours, is_minor)
 
-        if not brake_found and (min_brake_time > 0):
-            self.brake_time_deducted = deducted_time_on_no_brake
-        elif min_brake_time > checked_brake_time:
-            self.brake_time_deducted = min_brake_time - checked_brake_time
+        if not break_found and (min_break_time > 0):
+            self.break_time_deducted = deducted_time_on_no_break
+        elif min_break_time > checked_break_time:
+            self.break_time_deducted = min_break_time - checked_break_time
 
-        self.flextime_delta = (self.total_working_hours - self.brake_time_deducted - self.target_working_time) / 3600
+        self.flextime_delta = (self.total_working_hours - self.break_time_deducted - self.target_working_time) / 3600
         self.time_balance = previous_flextime_balance + self.flextime_delta
 
 
@@ -158,7 +158,7 @@ class FlextimeStatusRepository:
         parent.employee = status.employee_id
         parent.date = status.date
         parent.total_working_hours = status.total_working_hours
-        parent.brake_time_deducted = status.brake_time_deducted
+        parent.break_time_deducted = status.break_time_deducted
         parent.time_balance = status.time_balance
         parent.target_working_time = status.target_working_time
         parent.flextime_delta = status.flextime_delta

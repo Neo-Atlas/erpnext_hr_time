@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestBraketimedefinition(FrappeTestCase):
+class TestBreaktimedefinition(FrappeTestCase):
 	pass

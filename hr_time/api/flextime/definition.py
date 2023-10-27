@@ -1,5 +1,4 @@
 import datetime
-import time
 from typing import Optional
 
 import frappe
@@ -40,11 +39,11 @@ class FlextimeDefinition:
     days: dict[int, WorkdayDefinition]
 
     # This amount of time (in seconds) is deducted, if checked working time is insufficient
-    forced_insufficient_brake_time: int
+    forced_insufficient_break_time: int
 
-    def __init__(self, forced_insufficient_brake_time: int):
+    def __init__(self, forced_insufficient_break_time: int):
         self.days = {}
-        self.forced_insufficient_brake_time = forced_insufficient_brake_time
+        self.forced_insufficient_break_time = forced_insufficient_break_time
 
     # Returns the workday definition for the given ISO weekday
     def get_for_weekday(self, weekday: int) -> WorkdayDefinition:
@@ -71,7 +70,7 @@ class FlextimeDefinitionRepository:
             self.definitions[grade] = None
             return None
 
-        definition = FlextimeDefinition(doc_definitions[0].forced_insufficient_brake_time)
+        definition = FlextimeDefinition(doc_definitions[0].forced_insufficient_break_time)
         definition.insert(WorkdayDefinition.create_from_doc(doc_definitions[0], 0, "monday"))
         definition.insert(WorkdayDefinition.create_from_doc(doc_definitions[0], 1, "tuesday"))
         definition.insert(WorkdayDefinition.create_from_doc(doc_definitions[0], 2, "wednesday"))

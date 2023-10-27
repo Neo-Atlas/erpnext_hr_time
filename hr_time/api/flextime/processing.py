@@ -3,7 +3,7 @@ import datetime
 from hr_time.api import logger
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel, Employee
-from hr_time.api.flextime.brake_time import BreakTimeRepository, BrakeTimeDefinitions
+from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefinitions
 from hr_time.api.flextime.definition import FlextimeDefinitionRepository, FlextimeDefinition
 from hr_time.api.flextime.repository import FlextimeStatusRepository, FlextimeDailyStatus, CheckinDuration, DurationType
 from hr_time.api.holiday.repository import HolidayRepository
@@ -17,18 +17,18 @@ class FlexTimeProcessingService:
     daily_status: FlextimeStatusRepository
     employee: EmployeeRepository
     definitions: FlextimeDefinitionRepository
-    brake_times: BreakTimeRepository
+    break_times: BreakTimeRepository
     holidays: HolidayRepository
     checkin: CheckinRepository
 
     def __init__(self, clock: Clock, daily_status: FlextimeStatusRepository, employee: EmployeeRepository,
-                 definitions: FlextimeDefinitionRepository, brake_times: BreakTimeRepository,
+                 definitions: FlextimeDefinitionRepository, break_times: BreakTimeRepository,
                  holidays: HolidayRepository, checkin: CheckinRepository):
         self.clock = clock
         self.daily_status = daily_status
         self.employee = employee
         self.definitions = definitions
-        self.brake_times = brake_times
+        self.break_times = break_times
         self.holidays = holidays
         self.checkin = checkin
 
@@ -42,7 +42,7 @@ class FlexTimeProcessingService:
     # Starts the processing/generation of daily flextime status documents
     def process_daily_status(self):
         employees = self.employee.get_all()
-        brake_times = self.brake_times.get_definitions()
+        break_times = self.break_times.get_definitions()
 
         for employee in employees:
             logger.info("Starting flextime processing of employee " + employee.id)
@@ -58,9 +58,9 @@ class FlexTimeProcessingService:
                     "Skipping employee " + employee.id + ", as no flextime definition was found for grade " + employee.grade)
                 continue
 
-            self._process_employee(employee, brake_times, definition)
+            self._process_employee(employee, break_times, definition)
 
-    def _process_employee(self, employee: Employee, brake_time: BrakeTimeDefinitions, definitions: FlextimeDefinition):
+    def _process_employee(self, employee: Employee, break_time: BreakTimeDefinitions, definitions: FlextimeDefinition):
         current_day = self.daily_status.get_latest_status_date(employee)
 
         if current_day is None:
@@ -92,7 +92,7 @@ class FlexTimeProcessingService:
             for duration in durations:
                 status.insert_duration(duration)
 
-            status.calculate(brake_time, definitions.forced_insufficient_brake_time, employee.is_minor(),
+            status.calculate(break_time, definitions.forced_insufficient_break_time, employee.is_minor(),
                              flextime_balance)
             self.daily_status.add(status)
 

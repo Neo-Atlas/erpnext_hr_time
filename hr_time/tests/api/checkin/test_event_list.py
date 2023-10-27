@@ -22,7 +22,7 @@ class TestCheckinEventList(unittest.TestCase):
         self.assertEqual("002", durations[0].event_first)
         self.assertEqual("003", durations[0].event_second)
 
-    def test_get_durations_correct_brake_handling(self):
+    def test_get_durations_correct_break_handling(self):
         event_list = CheckinList([
             CheckinEvent("001", self.timestamp(9, 0), True, False),
             CheckinEvent("002", self.timestamp(12, 0), False, True),

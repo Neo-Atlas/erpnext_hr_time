@@ -37,16 +37,17 @@ Checkout event,Protokoll Ausstempeln
 Target working time,Sollarbeitszeit
 Time gain,Stundenaufbau
 Time loss,Stundenabbau
-Brake time definition,Definition Pausenzeit
+Break time definition,Definition Pausenzeit
 Minimal working time,Gilt ab einer Mindestarbeitszeit von
-Forced brake time,Gesetzliche Pausenzeit
+Forced break time,Gesetzliche Pausenzeit
+Deducted break time,Von der Arbeitszeit zusätzlich abgezogene Pausenzeit
 Applies to minors only,Gilt nur für Minderjährige
 Is break,Ist Pause
 Trigger HR time management batch jobs,HR Zeitverwaltung Hintergrundaufgaben starten
 Process daily flextime status,Starte die Verarbeitung der Gleitzeitkonten
 Trigger batch jobs,Hintergrundaufgaben starten
 "This break time is deducted if the employee should have taken a break (based on legal requirements) but none was clocked in.","Diese Pausenzeit wird abgezogen, falls der Mitarbeiter eine Pause (aufgrund der gesetzlichen Bestimmungen) hätte nehmen müssen, jedoch keine gestempelt wurde."
-Deducted work time (if no brake time),Abgezogene Arbeitszeit (bei nicht gestempelter Pausenzeit)
+Deducted work time (if no break time),Abgezogene Arbeitszeit (bei nicht gestempelter Pausenzeit)
 Latest daily status,Letzter Tagesstatus
 {0} hour(s),{0} Stunde(n)
 {0} minute(s),{0} Minute(n)

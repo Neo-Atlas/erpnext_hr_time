@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from hr_time.api.check_in.list import CheckinList
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeModel
-from hr_time.api.flextime.brake_time import BreakTimeRepository, BrakeTimeDefinitions
+from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefinitions
 from hr_time.api.flextime.definition import FlextimeDefinitionRepository, FlextimeDefinition, WorkdayDefinition
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.repository import FlextimeStatusRepository
@@ -20,7 +20,7 @@ class FlextimeProcessingTest(unittest.TestCase):
     daily_status: FlextimeStatusRepository
     employee: EmployeeRepository
     definitions: FlextimeDefinitionRepository
-    brake_times: BreakTimeRepository
+    break_times: BreakTimeRepository
     holidays: HolidayRepository
     checkin: CheckinRepository
 
@@ -41,16 +41,16 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status = FlextimeStatusRepository()
         self.employee = EmployeeRepository()
         self.definitions = FlextimeDefinitionRepository()
-        self.brake_times = BreakTimeRepository()
+        self.break_times = BreakTimeRepository()
         self.holidays = HolidayRepository()
         self.checkin = CheckinRepository()
 
         self.service = FlexTimeProcessingService(self.clock, self.daily_status, self.employee, self.definitions,
-                                                 self.brake_times,
+                                                 self.break_times,
                                                  self.holidays, self.checkin)
 
     def test_process_daily_status_no_flextime_time_model(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         self.employee.get_all = MagicMock(return_value=[
             Employee("001", TimeModel.Undefined, "Executive", datetime.date(1990, 5, 21), datetime.date.today())
@@ -64,7 +64,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add.assert_not_called()
 
     def test_process_daily_status_no_flextime_def_found(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         self.employee.get_all = MagicMock(return_value=[
             Employee("001", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21), datetime.date.today())
@@ -79,7 +79,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add.assert_not_called()
 
     def test_process_daily_status_already_up2date(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         employee = Employee("001", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21), datetime.date.today())
         self.employee.get_all = MagicMock(return_value=[employee])
@@ -101,7 +101,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add.assert_not_called()
 
     def test_process_daily_status_holiday(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         employee = Employee("001", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21), datetime.date.today())
         self.employee.get_all = MagicMock(return_value=[employee])
@@ -131,7 +131,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(0, self.daily_status.add.call_args.args[0].target_working_time)
 
     def test_process_join_date_used(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         employee = Employee("001", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21),
                             datetime.date(2023, 10, 1))
@@ -165,7 +165,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(datetime.date(2023, 10, 4), self.daily_status.add.call_args_list[3].args[0].date)
 
     def test_process_correct_target_working_time_and_balance(self):
-        self.brake_times.get_definitions = MagicMock(return_value=BrakeTimeDefinitions())
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
         employee = Employee("001", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21),
                             datetime.date(2023, 10, 1))

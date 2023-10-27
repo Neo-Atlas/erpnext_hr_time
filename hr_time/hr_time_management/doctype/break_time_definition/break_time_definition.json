@@ -8,7 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "min_working_time",
-  "forced_brake_time",
+  "forced_break_time",
   "only_for_minors"
  ],
  "fields": [
@@ -22,12 +22,12 @@
    "reqd": 1
   },
   {
-   "fieldname": "forced_brake_time",
+   "fieldname": "forced_break_time",
    "fieldtype": "Duration",
    "hide_days": 1,
    "hide_seconds": 1,
    "in_list_view": 1,
-   "label": "Forced brake time",
+   "label": "Forced break time",
    "reqd": 1
   },
   {
@@ -44,7 +44,7 @@
  "modified": "2023-10-17 17:12:37.585046",
  "modified_by": "Administrator",
  "module": "HR time management",
- "name": "Brake time definition",
+ "name": "Break time definition",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

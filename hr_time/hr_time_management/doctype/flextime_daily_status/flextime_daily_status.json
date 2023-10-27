@@ -13,7 +13,7 @@
   "date",
   "section_break_wkna4",
   "total_working_hours",
-  "brake_time_deducted",
+  "break_time_deducted",
   "column_break_4owxv",
   "time_balance",
   "section_break_y3rom",
@@ -115,9 +115,9 @@
    "read_only": 1
   },
   {
-   "fieldname": "brake_time_deducted",
+   "fieldname": "break_time_deducted",
    "fieldtype": "Duration",
-   "label": "Deducted brake time"
+   "label": "Deducted break time"
   }
  ],
  "index_web_pages_for_search": 1,

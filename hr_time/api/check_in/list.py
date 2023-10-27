@@ -24,7 +24,7 @@ class CheckinList:
                 current = event
                 continue
 
-            # Cannot start with a non-brake OUT event
+            # Cannot start with a non-break OUT event
             if (not current.is_in) and (not current.is_break):
                 logger.info("Unable to match checkin event " + current.id)
                 current = event
@@ -45,7 +45,7 @@ class CheckinList:
                     logger.info("Skipping double checkin event " + event.id)
                     continue
 
-            # Currently in brake, searching for IN event
+            # Currently in break, searching for IN event
             if (not current.is_in) and current.is_break:
                 if event.is_in:
                     durations.append(CheckinDuration.build_from_events(current, event))
