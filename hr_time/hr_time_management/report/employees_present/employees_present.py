@@ -39,7 +39,7 @@ def execute(filters=None):
             'label': frappe._('Work start today'),
             'fieldtype': 'time',
             'options': ''
-        },
+        }
     ]
 
     data = []

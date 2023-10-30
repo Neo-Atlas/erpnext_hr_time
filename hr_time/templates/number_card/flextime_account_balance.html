@@ -1,9 +1,6 @@
 <div id="hr_time_dashboard_flextime_balance">
     <script>
-        document.getElementById("hr_time_dashboard_flextime_balance")
-            .parentElement
-            .parentElement
-            .setAttribute("style", "display: block; padding-top: 13px;")
+        document.hr_time.utils.number_card.adjust_block_style("hr_time_dashboard_flextime_balance")
     </script>
     <div class="balance">
         <span class="{{ color }} hours">{{ time_balance_hours }}</span><br>

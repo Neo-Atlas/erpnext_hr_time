@@ -1,0 +1,19 @@
+<div id="hr_time_nc_employees_present">
+    <script>
+        document.hr_time.utils.number_card.adjust_block_style("hr_time_nc_employees_present")
+
+        document.getElementById("hr_time_nc_employees_present").onclick = () => {
+            let route = frappe.utils.generate_route({
+                type: "report",
+                is_query_report: true,
+                name: "Employees present"
+            });
+
+            frappe.set_route(route)
+        }
+    </script>
+    <div class="count">
+        {{ count }}
+    </div>
+    <div class="show_all_btn">{{ button_label }}</div>
+</div>

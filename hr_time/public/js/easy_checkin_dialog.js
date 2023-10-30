@@ -4,7 +4,7 @@ export class EasyCheckinDialog {
     options = [];
     default = "";
 
-    dashboard_number_card_refresh_button;
+    refresh_buttons;
 
     /**
      * Preloads the current checkin status
@@ -45,8 +45,10 @@ export class EasyCheckinDialog {
                         action: values.action
                     },
                     callback: (response) => {
-                        if (checkin_dialog.dashboard_number_card_refresh_button !== undefined) {
-                            checkin_dialog.dashboard_number_card_refresh_button.click()
+                        if (checkin_dialog.refresh_buttons !== undefined) {
+                            for (let button of checkin_dialog.refresh_buttons) {
+                                button.click()
+                            }
                         }
                         EasyCheckinStatus.render();
                         checkin_dialog.preload();
@@ -89,9 +91,14 @@ export class EasyCheckinDialog {
             dialog.show();
         }
 
-        dialog.dashboard_number_card_refresh_button = document
-            .querySelector('[number_card_name="Checkin status"]')
-            .querySelector('[data-action="action-refresh"]')
+        dialog.refresh_buttons = [
+            document
+                .querySelector('[number_card_name="Checkin status"]')
+                .querySelector('[data-action="action-refresh"]'),
+            document
+                .querySelector('[number_card_name="Employees present"]')
+                .querySelector('[data-action="action-refresh"]')
+        ]
     }
 
     /**

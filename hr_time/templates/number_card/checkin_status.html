@@ -1,10 +1,6 @@
 <div id="hr_time_number_card_checkin_status">
     <script>
-        document.getElementById("hr_time_number_card_checkin_status")
-            .parentElement
-            .parentElement
-            .setAttribute("style", "display: block; padding-top: 15px;");
-
+        document.hr_time.utils.number_card.adjust_block_style("hr_time_number_card_checkin_status")
         document.bind_dashboard_easy_checkin();
     </script>
     <div class="checkin_status {{ status }}">

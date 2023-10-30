@@ -49,3 +49,22 @@
 #hr_time_dashboard_flextime_balance .negative {
   color: var(--red);
 }
+
+#hr_time_nc_employees_present .count {
+  text-align: center;
+}
+
+#hr_time_nc_employees_present .show_all_btn {
+  border-radius: var(--border-radius);
+  background-color: var(--btn-default-bg);
+  width: 100%;
+  font-size: var(--text-md);
+  line-height: 1.2;
+  padding: var(--padding-xs) var(--padding-sm);
+  font-weight: 400;
+  text-align: center;
+}
+
+#hr_time_nc_employees_present .show_all_btn:hover {
+    background-color: var(--btn-default-hover-bg);
+}
