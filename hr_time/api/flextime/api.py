@@ -28,7 +28,8 @@ def render_number_card_flextime_time_balance():
 
 @frappe.whitelist()
 def render_number_card_checkin_status():
-    return frappe.render_template("templates/number_card/checkin_status.html", _get_checkin_status_parameters())
+    return frappe.render_template("templates/number_card/checkin_status.html",
+                                  CheckinService.prod().get_current_status().state.render())
 
 
 @frappe.whitelist()
@@ -41,33 +42,8 @@ def render_navbar_checkin_status():
     if employee.time_model is not TimeModel.Flextime:
         return ""
 
-    return frappe.render_template("templates/navbar/checkin_status.html", _get_checkin_status_parameters())
-
-
-def _get_checkin_status_parameters():
-    match CheckinService.prod().get_current_status().state:
-        case State.In:
-            label = "Checked in"
-            status = "work"
-            icon = "check"
-        case State.Out:
-            label = "Checked out"
-            status = "out"
-            icon = "remove"
-        case State.Break:
-            label = "Break"
-            status = "break"
-            icon = "coffee"
-        case _:
-            label = "Unknown"
-            status = "out"
-            icon = "question"
-
-    return {
-        "label": frappe._(label),
-        "status": status,
-        "icon": icon
-    }
+    return frappe.render_template("templates/navbar/checkin_status.html",
+                                  CheckinService.prod().get_current_status().state.render())
 
 
 @frappe.whitelist()

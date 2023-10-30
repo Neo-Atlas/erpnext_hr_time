@@ -16,6 +16,16 @@
   cursor: pointer;
 }
 
+.datatable .checkin_status {
+  line-height: 21px;
+  padding-left: 9px;
+  padding-right: 11px;
+  border-radius: 5px;
+  height: 21px;
+  margin-left: 0;
+  margin-top: -1px;
+}
+
 .checkin_status.work {
   background-color: var(--bg-green);
   color: var(--text-on-green)

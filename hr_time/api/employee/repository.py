@@ -14,6 +14,9 @@ class Employee:
     # Unique employee ID
     id: str
 
+    # Full name of employee
+    full_name: str
+
     # Assigned time model
     time_model: TimeModel
 
@@ -25,9 +28,10 @@ class Employee:
     # Employee joined company at this date
     join_date: datetime.date
 
-    def __init__(self, id: str, time_model: TimeModel, grade: str, date_of_birth: datetime.date,
+    def __init__(self, id: str, full_name: str, time_model: TimeModel, grade: str, date_of_birth: datetime.date,
                  join_date: datetime.date):
         self.id = id
+        self.full_name = full_name
         self.time_model = time_model
         self.grade = grade
         self.date_of_birth = date_of_birth
@@ -48,7 +52,7 @@ class Employee:
 
 
 class EmployeeRepository:
-    doc_fields = ["name", "custom_time_model", "grade", "date_of_birth", "date_of_joining"]
+    doc_fields = ["name", "employee_name", "custom_time_model", "grade", "date_of_birth", "date_of_joining"]
 
     def get_all(self) -> list[Employee]:
         docs_employees = frappe.get_all("Employee", fields=self.doc_fields)
@@ -72,4 +76,4 @@ class EmployeeRepository:
     @staticmethod
     def _build_from_doc(doc) -> Employee:
         time_model = TimeModel.Flextime if doc.custom_time_model == "Flextime account" else TimeModel.Undefined
-        return Employee(doc.name, time_model, doc.grade, doc.date_of_birth, doc.date_of_joining)
+        return Employee(doc.name, doc.employee_name, time_model, doc.grade, doc.date_of_birth, doc.date_of_joining)

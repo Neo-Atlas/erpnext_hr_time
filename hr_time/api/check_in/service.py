@@ -1,6 +1,8 @@
 import datetime
 import enum
 
+import frappe
+
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
@@ -11,6 +13,33 @@ class State(enum.Enum):
     In = 2
     Break = 3
     Out = 4
+
+    # Renders status to checkin status template parameters
+    def render(self) -> dict:
+        match self:
+            case State.In:
+                label = "Checked in"
+                status = "work"
+                icon = "check"
+            case State.Out:
+                label = "Checked out"
+                status = "out"
+                icon = "remove"
+            case State.Break:
+                label = "Break"
+                status = "break"
+                icon = "coffee"
+            case _:
+                label = "Unknown"
+                status = "out"
+                icon = "question"
+
+        return {
+            "label": frappe._(label),
+            "status": status,
+            "icon": icon
+        }
+
 
 
 class CheckinStatus:
