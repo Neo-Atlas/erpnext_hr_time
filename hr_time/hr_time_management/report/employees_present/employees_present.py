@@ -17,12 +17,6 @@ def execute(filters=None):
             'options': 'Employee'
         },
         {
-            'fieldname': 'employee_name',
-            'label': frappe._('Employee name'),
-            'fieldtype': 'data',
-            'options': ''
-        },
-        {
             'fieldname': 'status',
             'label': frappe._('Status'),
             'fieldtype': 'data',
