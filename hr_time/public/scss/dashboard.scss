@@ -1,8 +1,30 @@
-div[number_card_name="Current flextime account balance"] .widget-title span,
-div[number_card_name="Checkin status"] .widget-title span,
-div[number_card_name="Employees present"] .widget-title span {
+
+body[data-route="Workspaces/Flextime"] .number-widget-box .widget-title span, {
   font-size: var(--text-lg);
   margin-top: -4px;
+}
+
+body[data-route="Workspaces/Flextime"] .number-widget-box,
+body[data-route="Workspaces/Flextime"] .quick-list-widget-box {
+  box-shadow: var(--shadow-base) !important;
+}
+
+[data-theme=dark] body[data-route="Workspaces/Flextime"] .number-widget-box,
+[data-theme=dark] body[data-route="Workspaces/Flextime"] .quick-list-widget-box {
+  box-shadow: 0 4px 8px rgb(0 0 0 / 6%), 0 0 4px rgb(0 0 0 / 27%) !important;
+}
+
+body[data-route="Workspaces/Flextime"] .number-widget-box .widget-content {
+  display: block !important;
+  padding-top: 15px !important;
+}
+
+div[number_card_name="Employees present"] .number-widget-box .widget-content {
+  padding-top: 0 !important;
+}
+
+div[number_card_name="Employees present"] .widget-content {
+  padding-top: 0;
 }
 
 #hr_time_dashboard_flextime_balance .balance {
