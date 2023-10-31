@@ -32,8 +32,8 @@ Work time,Arbeit
 Break time,Pause
 Total time,Gesamtzeit
 No workday,Kein Arbeitstag
-Checkin event,Protokoll Einstempeln
-Checkout event,Protokoll Ausstempeln
+Checkin event,Protokoll (Ein)
+Checkout event,Protokoll (Aus)
 Target working time,Sollarbeitszeit
 Time gain,Stundenaufbau
 Time loss,Stundenabbau
@@ -52,9 +52,9 @@ Latest daily status,Letzter Tagesstatus
 {0} hour(s),{0} Stunde(n)
 {0} minute(s),{0} Minute(n)
 Within last month,Im letzten Monat
-Checkin status,Aktueller Stempelstatus
-Checked in,Eingestempelt
-Checked out,Ausgestempelt
+Checkin status,Aktueller Anwesenheitsstatus
+Checked in,Anwesend
+Checked out,Abwesend
 Break,Pause
 Checkin,Status Zeiterfassung
 End of work,Arbeitsende/-unterbrechung
