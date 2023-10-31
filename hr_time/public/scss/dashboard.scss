@@ -1,3 +1,10 @@
+div[number_card_name="Current flextime account balance"] .widget-title span,
+div[number_card_name="Checkin status"] .widget-title span,
+div[number_card_name="Employees present"] .widget-title span {
+  font-size: var(--text-lg);
+  margin-top: -4px;
+}
+
 #hr_time_dashboard_flextime_balance .balance {
   float: left;
 }
@@ -66,5 +73,5 @@
 }
 
 #hr_time_nc_employees_present .show_all_btn:hover {
-    background-color: var(--btn-default-hover-bg);
+  background-color: var(--btn-default-hover-bg);
 }
