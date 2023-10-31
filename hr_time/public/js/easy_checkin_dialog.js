@@ -37,7 +37,7 @@ export class EasyCheckinDialog {
                 }
             ],
             size: 'small', // small, large, extra-large
-            primary_action_label: __("Submit"),
+            primary_action_label: __("Submit", undefined, "checkin"),
             primary_action(values) {
                 frappe.call({
                     method: "hr_time.api.flextime.api.submit_easy_checkin",
