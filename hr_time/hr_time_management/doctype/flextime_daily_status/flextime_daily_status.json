@@ -71,7 +71,7 @@
    "fetch_from": "employee.employee_name",
    "fieldname": "employee_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
+   "hidden": 1,
    "label": "Employee name",
    "read_only": 1
   },
@@ -123,7 +123,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-18 23:18:41.326518",
+ "modified": "2023-10-31 16:38:41.330754",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime daily status",
