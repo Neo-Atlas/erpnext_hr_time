@@ -91,7 +91,7 @@
   "name": "Employee-custom_time_model",
   "no_copy": 0,
   "non_negative": 0,
-  "options": "Flextime account",
+  "options": "\nFlextime account\nTimesheet\nNo time tracking",
   "permlevel": 0,
   "precision": "",
   "print_hide": 0,
