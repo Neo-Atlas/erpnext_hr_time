@@ -27,6 +27,22 @@ div[number_card_name="Employees present"] .widget-content {
   padding-top: 0;
 }
 
+body[data-route="Workspaces/Flextime"] .ce-header {
+  padding-bottom: 5px;
+}
+
+[data-theme=dark] body[data-route="Workspaces/Flextime"] .ce-header {
+  border-bottom: 1px solid #ffffff1f;
+}
+
+[data-theme=light] body[data-route="Workspaces/Flextime"] .ce-header {
+  border-bottom: 1px solid #00000026;
+}
+
+body[data-route="Workspaces/Flextime"] .ce-header span.h4 {
+  font-weight: normal;
+}
+
 #hr_time_dashboard_flextime_balance .balance {
   float: left;
 }

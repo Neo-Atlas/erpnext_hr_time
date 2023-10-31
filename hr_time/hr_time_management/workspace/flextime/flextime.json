@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"-pZs9Pq_5z\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Status</b></span>\",\"col\":12}},{\"id\":\"-utdX4KjtV\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Checkin status\",\"col\":4}},{\"id\":\"VME_p7Ry-U\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":4}},{\"id\":\"GYQK6CGow0\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"CKsdGQymXg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Employees present\",\"col\":4}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
+ "content": "[{\"id\":\"-pZs9Pq_5z\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Status</span>\",\"col\":12}},{\"id\":\"-utdX4KjtV\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Checkin status\",\"col\":4}},{\"id\":\"VME_p7Ry-U\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":4}},{\"id\":\"GYQK6CGow0\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"CKsdGQymXg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Employees present\",\"col\":4}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
  "creation": "2023-10-16 22:03:41.419125",
  "custom_blocks": [],
  "docstatus": 0,
@@ -59,7 +59,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-10-30 14:16:19.499859",
+ "modified": "2023-10-31 14:03:21.312835",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",
