@@ -55,7 +55,7 @@ class FlexTimeProcessingService:
 
             if definition is None:
                 logger.info(
-                    "Skipping employee " + employee.id + ", as no flextime definition was found for grade " + employee.grade)
+                    "Skipping employee " + employee.id + ", as no flextime definition was found for grade " + str(employee.grade))
                 continue
 
             self._process_employee(employee, break_times, definition)
