@@ -25,7 +25,7 @@ class PresentEmployee:
     # Returns rendered row for "Employee Present" report
     def render(self) -> dict:
         return {
-            "employee": self.employee.id,
+            "employee": '<a href=' + self.employee.get_url() + '>' + self.employee.id + '</a>',
             "employee_name": self.employee.full_name,
             "status_since": self._render_time(self.current_status_since),
             "work_start_today": self._render_time(self.work_start_today),

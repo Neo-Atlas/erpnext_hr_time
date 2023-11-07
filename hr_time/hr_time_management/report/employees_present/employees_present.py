@@ -13,8 +13,14 @@ def execute(filters=None):
         {
             'fieldname': 'employee',
             'label': frappe._('Employee'),
-            'fieldtype': 'Link',
-            'options': 'Employee'
+            'fieldtype': 'data',
+            'options': ''
+        },
+        {
+            'fieldname': 'employee_name',
+            'label': frappe._('Employee name'),
+            'fieldtype': 'data',
+            'options': ''
         },
         {
             'fieldname': 'status',

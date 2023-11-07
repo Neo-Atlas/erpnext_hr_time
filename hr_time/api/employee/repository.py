@@ -50,6 +50,9 @@ class Employee:
 
         return today < birthday_18
 
+    def get_url(self) -> str:
+        return "/app/employee/" + self.id
+
 
 class EmployeeRepository:
     doc_fields = ["name", "employee_name", "custom_time_model", "grade", "date_of_birth", "date_of_joining"]
