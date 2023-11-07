@@ -9,6 +9,25 @@ from hr_time.api.check_in.service import State
 
 
 def execute(filters=None):
+    data = []
+
+    filter_status = None
+
+    if filters is not None and "status" in filters:
+        if filters["status"] == "Break":
+            filter_status = State.Break
+        elif filters["status"] == "Work":
+            filter_status = State.In
+
+    max_name_length = 0
+
+    for row in CheckinReportService.prod().get_present(filter_status=filter_status):
+        row_rendered = row.render()
+        data.append(row_rendered)
+
+        if len(row_rendered['employee_name']) > max_name_length:
+            max_name_length = len(row_rendered['employee_name'])
+
     columns = [
         {
             'fieldname': 'employee',
@@ -20,7 +39,8 @@ def execute(filters=None):
             'fieldname': 'employee_name',
             'label': frappe._('Employee name'),
             'fieldtype': 'data',
-            'options': ''
+            'options': '',
+            'width': max_name_length * 8
         },
         {
             'fieldname': 'status',
@@ -41,18 +61,5 @@ def execute(filters=None):
             'options': ''
         }
     ]
-
-    data = []
-
-    filter_status = None
-
-    if filters is not None and "status" in filters:
-        if filters["status"] == "Break":
-            filter_status = State.Break
-        elif filters["status"] == "Work":
-            filter_status = State.In
-
-    for row in CheckinReportService.prod().get_present(filter_status=filter_status):
-        data.append(row.render())
 
     return columns, data
