@@ -27,9 +27,11 @@ class WorkdayDefinition:
 
     @staticmethod
     def create_from_doc(doc, weekday_int: int, weekday_prefix: str):
+        working_hours = doc[weekday_prefix + "_working_hours"]
+        
         return WorkdayDefinition(
             weekday_int,
-            doc[weekday_prefix + "_working_hours"],
+            0 if working_hours is None else working_hours,
             doc[weekday_prefix + "_core_time_start"],
             doc[weekday_prefix + "_core_time_end"],
         )
