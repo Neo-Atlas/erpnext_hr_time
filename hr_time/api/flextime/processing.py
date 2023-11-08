@@ -1,6 +1,7 @@
 import datetime
 
 from hr_time.api import logger
+from hr_time.api.attendance.repository import AttendanceRepository, Status
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel, Employee
 from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefinitions
@@ -19,11 +20,13 @@ class FlexTimeProcessingService:
     definitions: FlextimeDefinitionRepository
     break_times: BreakTimeRepository
     holidays: HolidayRepository
+    attendance: AttendanceRepository
     checkin: CheckinRepository
 
     def __init__(self, clock: Clock, daily_status: FlextimeStatusRepository, employee: EmployeeRepository,
                  definitions: FlextimeDefinitionRepository, break_times: BreakTimeRepository,
-                 holidays: HolidayRepository, checkin: CheckinRepository):
+                 holidays: HolidayRepository, attendance: AttendanceRepository, checkin: CheckinRepository):
+        self.attendance = attendance
         self.clock = clock
         self.daily_status = daily_status
         self.employee = employee
@@ -37,7 +40,7 @@ class FlexTimeProcessingService:
     def prod():
         return FlexTimeProcessingService(Clock(), FlextimeStatusRepository(), EmployeeRepository(),
                                          FlextimeDefinitionRepository(), BreakTimeRepository(), HolidayRepository(),
-                                         CheckinRepository())
+                                         AttendanceRepository(), CheckinRepository())
 
     # Starts the processing/generation of daily flextime status documents
     def process_daily_status(self):
@@ -76,9 +79,13 @@ class FlexTimeProcessingService:
 
             if self.holidays.is_holiday(current_day):
                 target_working_time = 0
+                logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
+            elif self._is_vacation(employee, current_day):
+                target_working_time = 0
+                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to zero")
             else:
                 target_working_time = definitions.get_for_weekday(current_day.weekday()).working_time
-            logger.info("Set target working time to " + str(target_working_time))
+                logger.info("Set target working time to " + str(target_working_time))
 
             status = FlextimeDailyStatus(
                 employee.id,
@@ -100,3 +107,12 @@ class FlexTimeProcessingService:
             logger.info("New flextime balance: " + str(flextime_balance))
 
             current_day += datetime.timedelta(days=1)
+
+    # Returns true if a regular leave exists for the given day
+    def _is_vacation(self, employee: Employee, day: datetime.date) -> bool:
+        attendance = self.attendance.get(employee.id, day)
+
+        if attendance is None:
+            return False
+
+        return attendance.status is Status.OnLeave

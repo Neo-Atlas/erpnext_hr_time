@@ -2,6 +2,7 @@ import datetime
 import unittest
 from unittest.mock import MagicMock
 
+from hr_time.api.attendance.repository import AttendanceRepository, Attendance, LeaveType, Status
 from hr_time.api.check_in.list import CheckinList
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeModel
@@ -22,6 +23,7 @@ class FlextimeProcessingTest(unittest.TestCase):
     definitions: FlextimeDefinitionRepository
     break_times: BreakTimeRepository
     holidays: HolidayRepository
+    attendance: AttendanceRepository
     checkin: CheckinRepository
 
     service: FlexTimeProcessingService
@@ -43,11 +45,11 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.definitions = FlextimeDefinitionRepository()
         self.break_times = BreakTimeRepository()
         self.holidays = HolidayRepository()
+        self.attendance = AttendanceRepository()
         self.checkin = CheckinRepository()
 
         self.service = FlexTimeProcessingService(self.clock, self.daily_status, self.employee, self.definitions,
-                                                 self.break_times,
-                                                 self.holidays, self.checkin)
+                                                 self.break_times, self.holidays, self.attendance, self.checkin)
 
     def test_process_daily_status_no_flextime_time_model(self):
         self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
@@ -134,6 +136,39 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(1.5, self.daily_status.add.call_args.args[0].time_balance)
         self.assertEqual(0, self.daily_status.add.call_args.args[0].target_working_time)
 
+    def test_process_daily_status_regular_vacation(self):
+        self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
+
+        employee = Employee("001", "Test employee", TimeModel.Flextime, "Executive", datetime.date(1990, 5, 21),
+                            datetime.date.today())
+        self.employee.get_all = MagicMock(return_value=[employee])
+
+        self.definitions.get_by_grade = MagicMock(return_value=self.flextime_definition)
+
+        today = datetime.date(2023, 10, 17)
+        self.clock.date_today = MagicMock(return_value=today)
+
+        self.daily_status.get_latest_status_date = MagicMock(return_value=datetime.date(2023, 10, 15))
+        self.daily_status.get_flextime_balance = MagicMock(return_value=1.5)
+        self.daily_status.add = MagicMock()
+
+        self.holidays.is_holiday = MagicMock(return_value=None)
+        self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.OnLeave, LeaveType.Sick))
+
+        self.checkin.get = MagicMock(return_value=CheckinList([]))
+
+        self.service.process_daily_status()
+
+        self.holidays.is_holiday.assert_called_once_with(datetime.date(2023, 10, 16))
+
+        self.daily_status.add.assert_called_once()
+        self.assertEqual("001", self.attendance.get.call_args.args[0])
+        self.assertEqual(datetime.date(2023, 10, 16), self.attendance.get.call_args.args[1])
+        self.assertEqual(datetime.date(2023, 10, 16), self.daily_status.add.call_args.args[0].date)
+        self.assertEqual(0, self.daily_status.add.call_args.args[0].total_working_hours)
+        self.assertEqual(1.5, self.daily_status.add.call_args.args[0].time_balance)
+        self.assertEqual(0, self.daily_status.add.call_args.args[0].target_working_time)
+
     def test_process_join_date_used(self):
         self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
 
@@ -151,6 +186,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add = MagicMock()
 
         self.holidays.is_holiday = MagicMock(return_value=False)
+        self.attendance.get = MagicMock(return_value=None)
 
         self.checkin.get = MagicMock(return_value=CheckinList([]))
 
@@ -185,6 +221,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add = MagicMock()
 
         self.holidays.is_holiday = MagicMock(return_value=False)
+        self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.Present, None))
 
         self.checkin.get = MagicMock(return_value=CheckinList([]))
 
