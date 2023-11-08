@@ -1,7 +1,7 @@
 import datetime
 
 from hr_time.api import logger
-from hr_time.api.attendance.repository import AttendanceRepository, Status
+from hr_time.api.attendance.repository import AttendanceRepository, Status, Attendance
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel, Employee
 from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefinitions
@@ -102,6 +102,7 @@ class FlexTimeProcessingService:
             status.calculate(break_time, definitions.forced_insufficient_break_time, employee.is_minor(),
                              flextime_balance)
             self.daily_status.add(status)
+            self._create_attendance(status)
 
             flextime_balance = status.time_balance
             logger.info("New flextime balance: " + str(flextime_balance))
@@ -116,3 +117,14 @@ class FlexTimeProcessingService:
             return False
 
         return attendance.status is Status.OnLeave
+
+    def _create_attendance(self, flextime_status: FlextimeDailyStatus):
+        if flextime_status.target_working_time == 0:
+            return
+
+        if flextime_status.total_working_hours > 0:
+            status = Status.Present
+        else:
+            status = Status.Absent
+
+        self.attendance.create(Attendance(flextime_status.employee_id, flextime_status.date, status, None))

@@ -24,6 +24,17 @@ class Status(enum.Enum):
 
         return Status.Other
 
+    def to_doc(self) -> str:
+        match self:
+            case Status.Present:
+                return "Present"
+            case Status.Absent:
+                return "Absent"
+            case Status.OnLeave:
+                return "On Leave"
+
+        raise Exception("Unable to convert " + str(self) + " attendance status to doc string")
+
 
 class LeaveType(enum.Enum):
     Undefined = 0,
@@ -35,6 +46,12 @@ class LeaveType(enum.Enum):
             return LeaveType.Sick
 
         return LeaveType.Undefined
+
+    def to_doc(self) -> str:
+        if self is LeaveType.Sick:
+            return "Sick Leave"
+
+        raise Exception("Unable to convert " + str(self) + " attendance leave type to doc string")
 
 
 class Attendance:
@@ -67,3 +84,16 @@ class AttendanceRepository:
                           status,
                           None if status is not Status.OnLeave else LeaveType.from_doc(docs[0].leave_type)
                           )
+
+    # Saves the given attendance record
+    def create(self, attendance: Attendance):
+        doc = frappe.new_doc("Attendance")
+        doc.employee = attendance.employee_id
+        doc.status = attendance.status.to_doc()
+        doc.attendance_date = attendance.date
+
+        if attendance.leave_type is not None:
+            doc.leave_type = attendance.leave_type.to_doc()
+
+        doc.save()
+        doc.submit()
