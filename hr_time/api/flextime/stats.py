@@ -1,8 +1,10 @@
 import datetime
 import math
 
+from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.api.flextime.repository import FlextimeStatusRepository
+from hr_time.api.utils.clock import Clock
 
 
 class FlextimeBalance:
@@ -53,18 +55,24 @@ class FlextimeBalance:
 
 
 class FlextimeStatisticsService:
+    clock: Clock
+
     employee: EmployeeRepository
     status: FlextimeStatusRepository
+    checkin: CheckinRepository
 
-    def __init__(self, employee: EmployeeRepository, status: FlextimeStatusRepository):
+    def __init__(self, clock: Clock, employee: EmployeeRepository, status: FlextimeStatusRepository,
+                 checkin: CheckinRepository):
         super().__init__()
 
+        self.clock = clock
         self.employee = employee
         self.status = status
+        self.checkin = checkin
 
     @staticmethod
     def prod():
-        return FlextimeStatisticsService(EmployeeRepository(), FlextimeStatusRepository())
+        return FlextimeStatisticsService(Clock(), EmployeeRepository(), FlextimeStatusRepository(), CheckinRepository())
 
     def get_balance(self) -> FlextimeBalance:
         employee = self.employee.get_current()
@@ -81,3 +89,28 @@ class FlextimeStatisticsService:
             trend = current - last_month
 
         return FlextimeBalance(current, trend)
+
+    # Returns the total duration of the current status this day in seconds
+    def get_current_duration(self) -> int:
+        employee = self.employee.get_current()
+
+        if employee is None:
+            return 0
+
+        events = self.checkin.get(self.clock.date_today(), employee.id)
+        events.close_current(self.clock)
+
+        durations = events.get_durations()
+        if not durations:
+            return 0
+
+        current_type = durations[-1].duration_type
+        total_seconds = 0
+
+        for duration in durations:
+            if duration.duration_type != current_type:
+                continue
+
+            total_seconds += duration.total_time
+
+        return total_seconds

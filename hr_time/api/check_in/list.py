@@ -1,8 +1,10 @@
+import datetime
 from typing import Optional
 
 from hr_time.api import logger
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.flextime.repository import CheckinDuration
+from hr_time.api.utils.clock import Clock
 
 
 class CheckinList:
@@ -66,3 +68,19 @@ class CheckinList:
                 return True
 
         return False
+
+    # Adds a closing checkin event for the current duration
+    def close_current(self, clock: Clock = Clock()):
+        latest = self.get_latest()
+
+        if latest is None:
+            return
+
+        if (not latest.is_in) and (not latest.is_break):
+            return
+
+        if latest.is_in:
+            self.events.append(CheckinEvent("Simulated", clock.now(), False, False))
+            return
+
+        self.events.append(CheckinEvent("Simulated", clock.now(), True, False))
