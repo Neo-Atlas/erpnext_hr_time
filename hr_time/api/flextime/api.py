@@ -43,8 +43,7 @@ def render_navbar_checkin_status():
     if employee.time_model is not TimeModel.Flextime:
         return ""
 
-    return frappe.render_template("templates/navbar/checkin_status.html",
-                                  CheckinService.prod().get_current_status().state.render())
+    return frappe.render_template("templates/navbar/checkin_status.html", get_checkin_status_template_data())
 
 
 @frappe.whitelist()
@@ -85,5 +84,5 @@ def get_checkin_status_template_data() -> dict:
     data = CheckinService.prod().get_current_status().state.render()
     duration = str(datetime.timedelta(seconds=FlextimeStatisticsService.prod().get_current_duration())).split(":")
 
-    data["duration"] = duration[0] + ':' + duration[1]
+    data["label"] = data["label"] + ' (' + duration[0] + ':' + duration[1] + ')'
     return data
