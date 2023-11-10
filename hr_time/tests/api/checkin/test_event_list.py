@@ -84,7 +84,7 @@ class TestCheckinEventList(unittest.TestCase):
         event_list = CheckinList([
             CheckinEvent("001", self.timestamp(9, 0), False, True),
             CheckinEvent("002", self.timestamp(9, 30), True, False),
-            CheckinEvent("003", self.timestamp(11, 0), False, False),
+            CheckinEvent("003", self.timestamp(11, 0, 43), False, False),
         ])
 
         durations = event_list.get_durations()
@@ -96,7 +96,7 @@ class TestCheckinEventList(unittest.TestCase):
         self.assertEqual("002", durations[0].event_second)
 
         self.assertEqual(DurationType.WORK, durations[1].duration_type)
-        self.assertEqual(5400, durations[1].total_time)
+        self.assertEqual(5443, durations[1].total_time)
         self.assertEqual("002", durations[1].event_first)
         self.assertEqual("003", durations[1].event_second)
 
@@ -108,5 +108,5 @@ class TestCheckinEventList(unittest.TestCase):
         durations = event_list.get_durations()
         self.assertEqual(0, len(durations))
 
-    def timestamp(self, hour: int, minute: int) -> datetime.datetime:
-        return datetime.datetime(year=2023, month=5, day=1, hour=hour, minute=minute)
+    def timestamp(self, hour: int, minute: int, second: int = 0) -> datetime.datetime:
+        return datetime.datetime(year=2023, month=5, day=1, hour=hour, minute=minute, second=second)

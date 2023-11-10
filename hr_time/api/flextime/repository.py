@@ -46,8 +46,10 @@ class CheckinDuration:
     @staticmethod
     def build_from_events(first: CheckinEvent, second: CheckinEvent):
         return CheckinDuration(
-            datetime.timedelta(hours=first.timestamp.time().hour, minutes=first.timestamp.time().minute),
-            datetime.timedelta(hours=second.timestamp.time().hour, minutes=second.timestamp.time().minute),
+            datetime.timedelta(hours=first.timestamp.time().hour, minutes=first.timestamp.time().minute,
+                               seconds=first.timestamp.time().second),
+            datetime.timedelta(hours=second.timestamp.time().hour, minutes=second.timestamp.time().minute,
+                               seconds=second.timestamp.time().second),
             DurationType.BREAK if first.is_break else DurationType.WORK,
             first.id,
             second.id
@@ -143,14 +145,14 @@ class FlextimeStatusRepository:
 
     # Returns the flextime balance by the given date
     def get_balance_by_date(self, employee_id: str, date: datetime.date) -> Optional[float]:
-        docs = frappe.get_all("Flextime daily status", fields=["time_balance"], filters={"employee": employee_id, "date": date.isoformat()},
+        docs = frappe.get_all("Flextime daily status", fields=["time_balance"],
+                              filters={"employee": employee_id, "date": date.isoformat()},
                               order_by="date desc", limit=1)
 
         if not docs:
             return None
 
         return docs[0].time_balance
-
 
     # Saves a new daily status
     def add(self, status: FlextimeDailyStatus):

@@ -194,7 +194,7 @@ class FlextimeStatisticsServiceTest(unittest.TestCase):
             CheckinEvent("002", datetime.datetime(2023, 1, 1, 10, 2, 21), False, False),
         ]))
 
-        self.assertEqual(6720, self.service.get_current_duration())
+        self.assertEqual(6741, self.service.get_current_duration())
 
         self.employee.get_current.assert_called_once()
         self.checkin.get.assert_called_once()
