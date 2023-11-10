@@ -11,4 +11,8 @@ $(document).ready(function () {
     frappe.run_serially([
       () => EasyCheckinStatus.render(),
     ]);
+
+    setInterval(function () {
+        EasyCheckinStatus.render()
+    }, 15_000)
 });
