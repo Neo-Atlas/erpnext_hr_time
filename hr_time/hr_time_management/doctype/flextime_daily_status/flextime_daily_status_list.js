@@ -1,5 +1,4 @@
 frappe.listview_settings['Flextime daily status'] = {
-
     add_fields: ["target_working_time"],
 
     options: {
@@ -10,16 +9,24 @@ frappe.listview_settings['Flextime daily status'] = {
     has_indicator_for_draft: false,
 
     refresh(view) {
-      $("a[data-doctype=\"Employee\"]").each(function () {
-          let element = $(this);
-          let text = element.html();
+        $("a[data-doctype=\"Employee\"]").each(function () {
+            let element = $(this);
+            let text = element.html();
 
-          if (!text.includes(":")) {
-              return;
-          }
+            if (!text.includes(":")) {
+                return;
+            }
 
-          element.html(text.split(":")[0]);
-      })
+            element.html(text.split(":")[0]);
+        })
+    },
+
+    onload(view) {
+        this.hide_sidebar();
+    },
+
+    before_render() {
+        this.hide_sidebar();
     },
 
     get_indicator(doc) {
@@ -37,6 +44,14 @@ frappe.listview_settings['Flextime daily status'] = {
 
         if (doc.flextime_delta < 0) {
             return [__("Time loss"), "red", "flextime_delta,<,0"];
+        }
+    },
+
+    hide_sidebar() {
+        console.log("Called!");
+
+        if ($(".list-sidebar.overlay-sidebar").is(":visible")) {
+            $("span.sidebar-toggle-btn").click();
         }
     }
 }

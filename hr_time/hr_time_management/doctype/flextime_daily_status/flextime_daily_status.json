@@ -120,10 +120,11 @@
    "label": "Deducted break time"
   }
  ],
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-10-31 16:38:41.330754",
+ "modified": "2023-11-10 21:49:42.840007",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime daily status",
