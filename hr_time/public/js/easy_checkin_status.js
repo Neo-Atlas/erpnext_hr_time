@@ -5,11 +5,10 @@ export class EasyCheckinStatus {
         frappe.call({
             method: "hr_time.api.flextime.api.render_navbar_checkin_status",
             callback: (response) => {
-                let statusElement = $('.navbar .checkin_status')
-                statusElement.remove();
+                $('.navbar .checkin_status').remove();
 
                 $('.navbar .vertical-bar').after(response.message);
-                statusElement.click(() => {
+                $('.navbar .checkin_status').click(() => {
                     EasyCheckinDialog.singleton().show();
                 });
             }
