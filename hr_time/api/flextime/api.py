@@ -1,3 +1,5 @@
+import datetime
+
 import frappe
 
 from hr_time.api.check_in.service import CheckinService, State, Action
@@ -28,8 +30,7 @@ def render_number_card_flextime_time_balance():
 
 @frappe.whitelist()
 def render_number_card_checkin_status():
-    return frappe.render_template("templates/number_card/checkin_status.html",
-                                  CheckinService.prod().get_current_status().state.render())
+    return frappe.render_template("templates/number_card/checkin_status.html", get_checkin_status_template_data())
 
 
 @frappe.whitelist()
@@ -78,3 +79,11 @@ def submit_easy_checkin(action: str):
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
             raise ValueError("Unknown action given")
+
+
+def get_checkin_status_template_data() -> dict:
+    data = CheckinService.prod().get_current_status().state.render()
+    duration = str(datetime.timedelta(seconds=FlextimeStatisticsService.prod().get_current_duration())).split(":")
+
+    data["duration"] = duration[0] + ':' + duration[1]
+    return data
