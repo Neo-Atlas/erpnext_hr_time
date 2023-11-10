@@ -45,7 +45,7 @@ export class EasyCheckinDialog {
                         action: values.action
                     },
                     callback: (response) => {
-
+                        checkin_dialog.refresh_dashboard()
                         EasyCheckinStatus.render();
                         checkin_dialog.preload();
 
