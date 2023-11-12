@@ -48,3 +48,37 @@
   padding-right: 7px;
   font-style: normal;
 }
+
+.navbar .checkin_status .label {
+  float: right;
+}
+
+@media (min-width: 326px) and (max-width: 400px) {
+  .navbar .checkin_status {
+    white-space: unset;
+    overflow: unset;
+    text-align: center;
+    max-width: 115px;
+    height: 43px;
+    line-height: 21px;
+    margin-top: 0;
+  }
+
+  .navbar .checkin_status .label {
+    text-align: center;
+    width: 64px;
+  }
+
+  .checkin_status .fa {
+    padding-top: 13px;
+  }
+}
+
+@media (max-width: 326px) {
+  .navbar .checkin_status .label {
+    float: right;
+    max-width: 26px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
