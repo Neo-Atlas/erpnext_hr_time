@@ -124,6 +124,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.get_flextime_balance = MagicMock(return_value=1.5)
         self.daily_status.add = MagicMock()
 
+        self.attendance.get = MagicMock(return_value=None)
         self.holidays.is_holiday = MagicMock(return_value=True)
 
         self.checkin.get = MagicMock(return_value=CheckinList([]))
@@ -236,7 +237,17 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.daily_status.add = MagicMock()
 
         self.holidays.is_holiday = MagicMock(return_value=False)
-        self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.Present, None))
+        self.attendance.get = MagicMock()
+        self.attendance.get.side_effect = [
+            Attendance("001", today, Status.Present, None),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None
+        ]
+
         self.attendance.create = MagicMock()
 
         self.checkin.get = MagicMock()
@@ -286,18 +297,15 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(-33.9, self.daily_status.add.call_args_list[6].args[0].time_balance)
 
         self.attendance.create.assert_called()
-        self.assertEqual(5, len(self.attendance.create.call_args_list))
-        self.assertEqual(datetime.date(2023, 10, 9), self.attendance.create.call_args_list[0].args[0].date)
+        self.assertEqual(4, len(self.attendance.create.call_args_list))
+        self.assertEqual(datetime.date(2023, 10, 10), self.attendance.create.call_args_list[0].args[0].date)
         self.assertEqual(Status.Absent, self.attendance.create.call_args_list[0].args[0].status)
 
-        self.assertEqual(datetime.date(2023, 10, 10), self.attendance.create.call_args_list[1].args[0].date)
+        self.assertEqual(datetime.date(2023, 10, 11), self.attendance.create.call_args_list[1].args[0].date)
         self.assertEqual(Status.Absent, self.attendance.create.call_args_list[1].args[0].status)
 
-        self.assertEqual(datetime.date(2023, 10, 11), self.attendance.create.call_args_list[2].args[0].date)
+        self.assertEqual(datetime.date(2023, 10, 12), self.attendance.create.call_args_list[2].args[0].date)
         self.assertEqual(Status.Absent, self.attendance.create.call_args_list[2].args[0].status)
 
-        self.assertEqual(datetime.date(2023, 10, 12), self.attendance.create.call_args_list[3].args[0].date)
-        self.assertEqual(Status.Absent, self.attendance.create.call_args_list[3].args[0].status)
-
-        self.assertEqual(datetime.date(2023, 10, 13), self.attendance.create.call_args_list[4].args[0].date)
-        self.assertEqual(Status.Present, self.attendance.create.call_args_list[4].args[0].status)
+        self.assertEqual(datetime.date(2023, 10, 13), self.attendance.create.call_args_list[3].args[0].date)
+        self.assertEqual(Status.Present, self.attendance.create.call_args_list[3].args[0].status)

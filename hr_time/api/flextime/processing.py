@@ -77,14 +77,16 @@ class FlexTimeProcessingService:
         while current_day < self.clock.date_today():
             logger.info(employee.id + ": Processing day " + current_day.isoformat())
 
+            attendance = self.attendance.get(employee.id, current_day)
+            target_working_time = definitions.get_for_weekday(current_day.weekday()).working_time
+
             if self.holidays.is_holiday(current_day):
                 target_working_time = 0
                 logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
-            elif self._is_vacation(employee, current_day):
-                target_working_time = 0
-                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to zero")
+            elif attendance is not None:
+                target_working_time = attendance.get_work_time_factor() * target_working_time
+                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to " + str(target_working_time))
             else:
-                target_working_time = definitions.get_for_weekday(current_day.weekday()).working_time
                 logger.info("Set target working time to " + str(target_working_time))
 
             status = FlextimeDailyStatus(
@@ -102,21 +104,14 @@ class FlexTimeProcessingService:
             status.calculate(break_time, definitions.forced_insufficient_break_time, employee.is_minor(),
                              flextime_balance)
             self.daily_status.add(status)
-            self._create_attendance(status)
+
+            if attendance is None:
+                self._create_attendance(status)
 
             flextime_balance = status.time_balance
             logger.info("New flextime balance: " + str(flextime_balance))
 
             current_day += datetime.timedelta(days=1)
-
-    # Returns true if a regular leave exists for the given day
-    def _is_vacation(self, employee: Employee, day: datetime.date) -> bool:
-        attendance = self.attendance.get(employee.id, day)
-
-        if attendance is None:
-            return False
-
-        return attendance.status is Status.OnLeave
 
     def _create_attendance(self, flextime_status: FlextimeDailyStatus):
         if flextime_status.target_working_time == 0:
