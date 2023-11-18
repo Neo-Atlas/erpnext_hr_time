@@ -68,16 +68,6 @@ class Attendance:
         self.status = status
         self.employee_id = employee_id
 
-    # Returns the work time factor base on leave type
-    # 0 => No target working time
-    # 0.5 => 50% of target working time for the given date
-    # 1 => 100% of target working time (regular working day)
-    def get_work_time_factor(self) -> float:
-        if self.leave_type is not None:
-            return 0.0
-
-        return 1.0
-
 
 class AttendanceRepository:
     def get(self, employee_id: str, day: datetime.date) -> Optional[Attendance]:

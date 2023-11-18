@@ -6,7 +6,7 @@ from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel, Employee
 from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefinitions
 from hr_time.api.flextime.definition import FlextimeDefinitionRepository, FlextimeDefinition
-from hr_time.api.flextime.repository import FlextimeStatusRepository, FlextimeDailyStatus, CheckinDuration, DurationType
+from hr_time.api.flextime.repository import FlextimeStatusRepository, FlextimeDailyStatus
 from hr_time.api.holiday.repository import HolidayRepository
 from hr_time.api.utils.clock import Clock
 
@@ -83,9 +83,9 @@ class FlexTimeProcessingService:
             if self.holidays.is_holiday(current_day):
                 target_working_time = 0
                 logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
-            elif attendance is not None:
-                target_working_time = attendance.get_work_time_factor() * target_working_time
-                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to " + str(target_working_time))
+            elif attendance is not None and attendance.status is Status.OnLeave:
+                target_working_time = 0
+                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to zero")
             else:
                 logger.info("Set target working time to " + str(target_working_time))
 
