@@ -9,6 +9,7 @@ from hr_time.api.flextime.definition import FlextimeDefinitionRepository, Flexti
 from hr_time.api.flextime.repository import FlextimeStatusRepository, FlextimeDailyStatus
 from hr_time.api.holiday.repository import HolidayRepository
 from hr_time.api.utils.clock import Clock
+from hr_time.api.vacation.repository import VacationRepository
 
 
 # Service for processing flextime account status
@@ -21,12 +22,15 @@ class FlexTimeProcessingService:
     break_times: BreakTimeRepository
     holidays: HolidayRepository
     attendance: AttendanceRepository
+    vacation: VacationRepository
     checkin: CheckinRepository
 
     def __init__(self, clock: Clock, daily_status: FlextimeStatusRepository, employee: EmployeeRepository,
                  definitions: FlextimeDefinitionRepository, break_times: BreakTimeRepository,
-                 holidays: HolidayRepository, attendance: AttendanceRepository, checkin: CheckinRepository):
+                 holidays: HolidayRepository, attendance: AttendanceRepository, vacation: VacationRepository,
+                 checkin: CheckinRepository):
         self.attendance = attendance
+        self.vacation = vacation
         self.clock = clock
         self.daily_status = daily_status
         self.employee = employee
@@ -40,7 +44,7 @@ class FlexTimeProcessingService:
     def prod():
         return FlexTimeProcessingService(Clock(), FlextimeStatusRepository(), EmployeeRepository(),
                                          FlextimeDefinitionRepository(), BreakTimeRepository(), HolidayRepository(),
-                                         AttendanceRepository(), CheckinRepository())
+                                         AttendanceRepository(), VacationRepository(), CheckinRepository())
 
     # Starts the processing/generation of daily flextime status documents
     def process_daily_status(self):
@@ -58,7 +62,8 @@ class FlexTimeProcessingService:
 
             if definition is None:
                 logger.info(
-                    "Skipping employee " + employee.id + ", as no flextime definition was found for grade " + str(employee.grade))
+                    "Skipping employee " + employee.id + ", as no flextime definition was found for grade " + str(
+                        employee.grade))
                 continue
 
             self._process_employee(employee, break_times, definition)
@@ -84,8 +89,17 @@ class FlexTimeProcessingService:
                 target_working_time = 0
                 logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
             elif attendance is not None and attendance.status is Status.OnLeave:
-                target_working_time = 0
-                logger.info("Detected " + str(current_day) + " as regular leave and set target working time to zero")
+                request = self.vacation.get_request(employee.id, current_day)
+
+                if request is None:
+                    target_working_time = 0
+                    logger.info("Detected " + str(current_day) + " as regular leave, but found no vacation request")
+                elif request.is_half_day:
+                    target_working_time /= 2
+                    logger.info("Detected " + str(current_day) + " as regular leave with half-day vacation request")
+                else:
+                    target_working_time = 0
+                    logger.info("Detected " + str(current_day) + " as regular leave with full-day vacation request")
             else:
                 logger.info("Set target working time to " + str(target_working_time))
 
