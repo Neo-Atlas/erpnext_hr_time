@@ -28,7 +28,7 @@ class WorkdayDefinition:
     @staticmethod
     def create_from_doc(doc, weekday_int: int, weekday_prefix: str):
         working_hours = doc[weekday_prefix + "_working_hours"]
-        
+
         return WorkdayDefinition(
             weekday_int,
             0 if working_hours is None else working_hours,
@@ -55,7 +55,15 @@ class FlextimeDefinition:
         self.days[day.weekday] = day
 
 
+DEFAULT_GRADE = "Standard full-time 40 hours"
+DEFAULT_WORKING_TIME = 28_800
+DEFAULT_CORE_TIME_START = datetime.timedelta(hours=10)
+DEFAULT_CORE_TIME_END = datetime.timedelta(hours=15)
+
+
 class FlextimeDefinitionRepository:
+    _doc_type = "Flextime definition"
+
     # Cache for loaded definitions by employee grade
     definitions: [str, Optional[FlextimeDefinition]]
 
@@ -66,7 +74,7 @@ class FlextimeDefinitionRepository:
         if grade in self.definitions:
             return self.definitions[grade]
 
-        doc_definitions = frappe.get_all("Flextime definition", fields=["*"], filters={"name": grade})
+        doc_definitions = frappe.get_all(self._doc_type, fields=["*"], filters={"name": grade})
 
         if not doc_definitions:
             self.definitions[grade] = None
@@ -83,3 +91,34 @@ class FlextimeDefinitionRepository:
 
         self.definitions[grade] = definition
         return definition
+
+    def create_default(self):
+        if not frappe.get_all("Employee Grade", filters={"name": DEFAULT_GRADE}):
+            doc = frappe.new_doc("Employee Grade")
+            doc.name = DEFAULT_GRADE
+            doc.save()
+
+        doc = frappe.new_doc(self._doc_type)
+        doc.employee_grade = DEFAULT_GRADE
+
+        doc.monday_working_hours = DEFAULT_WORKING_TIME
+        doc.monday_core_time_start = DEFAULT_CORE_TIME_START
+        doc.monday_core_time_end = DEFAULT_CORE_TIME_END
+
+        doc.tuesday_working_hours = DEFAULT_WORKING_TIME
+        doc.tuesday_core_time_start = DEFAULT_CORE_TIME_START
+        doc.tuesday_core_time_end = DEFAULT_CORE_TIME_END
+
+        doc.wednesday_working_hours = DEFAULT_WORKING_TIME
+        doc.wednesday_core_time_start = DEFAULT_CORE_TIME_START
+        doc.wednesday_core_time_end = DEFAULT_CORE_TIME_END
+
+        doc.thursday_working_hours = DEFAULT_WORKING_TIME
+        doc.thursday_core_time_start = DEFAULT_CORE_TIME_START
+        doc.thursday_core_time_end = DEFAULT_CORE_TIME_END
+
+        doc.friday_working_hours = DEFAULT_WORKING_TIME
+        doc.friday_core_time_start = DEFAULT_CORE_TIME_START
+        doc.friday_core_time_end = DEFAULT_CORE_TIME_END
+
+        doc.save()
