@@ -66,6 +66,14 @@ The process can be triggered manually by using the button "Process daily flextim
 ## Development
 Any form of support is greatly appreciated. Feel free to create issues and PRs. See DEVELOPMENT for more details.
 
+### Testing
+
+Executing unit tests:
+
+```bash
+python -m unittest discover hr_time/tests
+```
+
 #### License
 Licensed under MIT license (LICENSE-MIT or http://opensource.org/licenses/MIT).
 Each contributor agrees that his/her contribution covers the license.
