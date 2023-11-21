@@ -61,3 +61,22 @@ class BreakTimeRepository:
             definitions.insert(BreakTime(doc.min_working_time, doc.forced_break_time), doc.only_for_minors)
 
         return definitions
+
+    def create_default(self):
+        # Adults: 6h work => 30m break time
+        self._create_definition(21_600, 1_800, False)
+        # Adults: 9h work => 45m break time
+        self._create_definition(32_400, 2_700, False)
+
+        # Minors: 4h 30m work => 30m break time
+        self._create_definition(16_200, 1_800, True)
+        # Minors: 6h work => 45m break time
+        self._create_definition(21_600, 2_700, True)
+
+    def _create_definition(self, min_working_time: int, forced_break_tine: int, only_for_minors: bool):
+        doc = frappe.new_doc("Break time definition")
+        doc.min_working_time = min_working_time
+        doc.forced_break_time = forced_break_tine
+        doc.only_for_minors = 1 if only_for_minors else 0
+
+        doc.save()

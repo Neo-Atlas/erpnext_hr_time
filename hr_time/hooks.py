@@ -11,6 +11,8 @@ fixtures = ["Custom Field"]
 app_include_css = ['hr_time.bundle.css']
 app_include_js = ["hr_time.bundle.js"]
 
+after_install = "hr_time.setup.install.after_install"
+
 scheduler_events = {
     "hourly": [
         "hr_time.api.flextime.api.generate_daily_flextime_status"

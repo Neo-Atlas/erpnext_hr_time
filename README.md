@@ -56,7 +56,7 @@ Assign flextime model to employee:
 
 ### How to fix wrong/missing checkin times?
 
-1. Correct or Recreate the missing/wrong checkin docs.
+1. Correct or recreate the missing/wrong checkin docs.
 2. Delete all corresponding "daily flextime status" docs of all past days up to the date with the incorrect entries
 3. Optional: Delete the attendance docs of the given date
 
