@@ -21,7 +21,7 @@ class BreakTimeDefinitions:
     minor_times: list[BreakTime]
 
     def __init__(self):
-        self.regular_times = [];
+        self.regular_times = []
         self.minor_times = []
 
     def insert(self, definition: BreakTime, is_minor: bool):
