@@ -77,7 +77,7 @@ class AttendanceRepository:
         if not docs:
             return None
 
-        status = Status.from_doc(docs[0].status);
+        status = Status.from_doc(docs[0].status)
 
         return Attendance(employee_id,
                           docs[0].attendance_date,
