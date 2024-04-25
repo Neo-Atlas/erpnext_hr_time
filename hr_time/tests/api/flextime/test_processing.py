@@ -217,7 +217,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         ]
         self.attendance.create = MagicMock()
 
-        self.vacation.get_request = MagicMock(return_value=None)
+        self.vacation.get_approved_request = MagicMock(return_value=None)
 
         self.checkin.get = MagicMock()
         self.checkin.get.side_effect = [
@@ -301,7 +301,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.OnLeave, None))
         self.attendance.create = MagicMock()
 
-        self.vacation.get_request = MagicMock(return_value=None)
+        self.vacation.get_approved_request = MagicMock(return_value=None)
 
         self.service.process_daily_status()
 
@@ -309,9 +309,9 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(datetime.date(2023, 11, 20), self.daily_status.add.call_args_list[0].args[0].date)
         self.assertEqual(0, self.daily_status.add.call_args_list[0].args[0].target_working_time)
 
-        self.vacation.get_request.assert_called_once()
-        self.assertEqual("001", self.vacation.get_request.call_args_list[0].args[0])
-        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_request.call_args_list[0].args[1])
+        self.vacation.get_approved_request.assert_called_once()
+        self.assertEqual("001", self.vacation.get_approved_request.call_args_list[0].args[0])
+        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_approved_request.call_args_list[0].args[1])
 
     def test_process_correct_vacation_request_full_day(self):
         self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
@@ -335,7 +335,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.OnLeave, None))
         self.attendance.create = MagicMock()
 
-        self.vacation.get_request = MagicMock(return_value=Request(False))
+        self.vacation.get_approved_request = MagicMock(return_value=Request(False))
 
         self.service.process_daily_status()
 
@@ -343,9 +343,9 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(datetime.date(2023, 11, 20), self.daily_status.add.call_args_list[0].args[0].date)
         self.assertEqual(0, self.daily_status.add.call_args_list[0].args[0].target_working_time)
 
-        self.vacation.get_request.assert_called_once()
-        self.assertEqual("001", self.vacation.get_request.call_args_list[0].args[0])
-        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_request.call_args_list[0].args[1])
+        self.vacation.get_approved_request.assert_called_once()
+        self.assertEqual("001", self.vacation.get_approved_request.call_args_list[0].args[0])
+        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_approved_request.call_args_list[0].args[1])
 
     def test_process_correct_vacation_request_half_day(self):
         self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
@@ -369,7 +369,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.OnLeave, None))
         self.attendance.create = MagicMock()
 
-        self.vacation.get_request = MagicMock(return_value=Request(True))
+        self.vacation.get_approved_request = MagicMock(return_value=Request(True))
 
         self.service.process_daily_status()
 
@@ -377,9 +377,9 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(datetime.date(2023, 11, 20), self.daily_status.add.call_args_list[0].args[0].date)
         self.assertEqual(14400, self.daily_status.add.call_args_list[0].args[0].target_working_time)
 
-        self.vacation.get_request.assert_called_once()
-        self.assertEqual("001", self.vacation.get_request.call_args_list[0].args[0])
-        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_request.call_args_list[0].args[1])
+        self.vacation.get_approved_request.assert_called_once()
+        self.assertEqual("001", self.vacation.get_approved_request.call_args_list[0].args[0])
+        self.assertEqual(datetime.date(2023, 11, 20), self.vacation.get_approved_request.call_args_list[0].args[1])
 
     def test_process_other_leave(self):
         self.break_times.get_definitions = MagicMock(return_value=BreakTimeDefinitions())
@@ -403,7 +403,7 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.attendance.get = MagicMock(return_value=Attendance("001", today, Status.Other, None))
         self.attendance.create = MagicMock()
 
-        self.vacation.get_request = MagicMock()
+        self.vacation.get_approved_request = MagicMock()
 
         self.service.process_daily_status()
 
@@ -411,4 +411,4 @@ class FlextimeProcessingTest(unittest.TestCase):
         self.assertEqual(datetime.date(2023, 11, 20), self.daily_status.add.call_args_list[0].args[0].date)
         self.assertEqual(28800, self.daily_status.add.call_args_list[0].args[0].target_working_time)
 
-        self.vacation.get_request.assert_not_called()
+        self.vacation.get_approved_request.assert_not_called()
