@@ -12,10 +12,11 @@ class Request:
 
 
 class VacationRepository:
-    def get_request(self, employee_id: str, date: datetime.date) -> Optional[Request]:
+    # Returns approved requests
+    def get_approved_request(self, employee_id: str, date: datetime.date) -> Optional[Request]:
         docs = frappe.get_all("Leave Application", fields=["half_day"],
                               filters=[["employee", "=", employee_id], ["from_date", "<=", date],
-                                       ["to_date", ">=", date]])
+                                       ["to_date", ">=", date], ["status", "=", "Approved"]])
 
         if not docs:
             return None

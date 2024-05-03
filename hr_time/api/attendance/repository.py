@@ -72,7 +72,8 @@ class Attendance:
 class AttendanceRepository:
     def get(self, employee_id: str, day: datetime.date) -> Optional[Attendance]:
         docs = frappe.get_all("Attendance", fields=["employee", "status", "leave_type", "attendance_date"],
-                              filters=[["employee", "=", employee_id], ["attendance_date", "=", day]])
+                              filters=[["employee", "=", employee_id], ["attendance_date", "=", day],
+                                       ["docstatus", "=", 1]])
 
         if not docs:
             return None
