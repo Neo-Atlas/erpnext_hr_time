@@ -41,7 +41,6 @@ class State(enum.Enum):
         }
 
 
-
 class CheckinStatus:
     # Current checkin state
     state: State
@@ -60,6 +59,7 @@ class Action(enum.Enum):
     startOfWork = 1,
     breakTime = 2,
     endOfWork = 3
+
 
 class CheckinService:
     employee: EmployeeRepository

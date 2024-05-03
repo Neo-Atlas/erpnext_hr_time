@@ -1,0 +1,31 @@
+name: QA
+
+on: [ push, pull_request ]
+
+jobs:
+  Code-style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install pycodestyle
+        run: pip3 install pycodestyle
+      - name: Checking code style
+        run: pycodestyle hr_time
+  Unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10", "3.11", "3.12" ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Executing unit tests
+        run: python -m unittest discover hr_time/tests

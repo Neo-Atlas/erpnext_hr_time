@@ -89,7 +89,7 @@ class FlexTimeProcessingService:
                 target_working_time = 0
                 logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
             elif attendance is not None and attendance.status is Status.OnLeave:
-                request = self.vacation.get_request(employee.id, current_day)
+                request = self.vacation.get_approved_request(employee.id, current_day)
 
                 if request is None:
                     target_working_time = 0
