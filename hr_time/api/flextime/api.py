@@ -6,7 +6,8 @@ from hr_time.api.check_in.service import CheckinService, State, Action
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
-
+from hr_time.api.worklog.service import WorklogService
+from hr_time.api.employee.service import EmployeeService
 
 @frappe.whitelist()
 def generate_daily_flextime_status():
@@ -35,7 +36,7 @@ def render_number_card_checkin_status():
 
 @frappe.whitelist()
 def render_navbar_checkin_status():
-    employee = EmployeeRepository().get_current()
+    employee = EmployeeService.prod().get_current_employee()
 
     if employee is None:
         return ""
@@ -69,12 +70,16 @@ def get_easy_checkin_options():
 
 @frappe.whitelist()
 def submit_easy_checkin(action: str):
+    employee_id = EmployeeService.prod().get_current_employee_id()
     match action:
         case "Start of work":
             CheckinService.prod().checkin(Action.startOfWork)
         case "Break":
             CheckinService.prod().checkin(Action.breakTime)
         case "End of work":
+            # Check if the employee has any worklogs
+            if not WorklogService.prod().check_if_employee_has_worklogs_today(employee_id):
+                frappe.throw("WARNING: You have no worklogs today. Please create least one worklog before checking out.")
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
             raise ValueError("Unknown action given")
