@@ -1,5 +1,4 @@
 import datetime
-
 import frappe
 
 from hr_time.api.check_in.service import CheckinService, State, Action
@@ -8,6 +7,7 @@ from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 from hr_time.api.worklog.service import WorklogService
 from hr_time.api.employee.service import EmployeeService
+
 
 @frappe.whitelist()
 def generate_daily_flextime_status():
@@ -79,7 +79,8 @@ def submit_easy_checkin(action: str):
         case "End of work":
             # Check if the employee has any worklogs
             if not WorklogService.prod().check_if_employee_has_worklogs_today(employee_id):
-                frappe.throw("WARNING: You have no worklogs today. Please create least one worklog before checking out.")
+                frappe.throw(
+                    "WARNING: You have no worklogs today. Please create least one worklog before checking out.")
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
             raise ValueError("Unknown action given")
@@ -87,7 +88,9 @@ def submit_easy_checkin(action: str):
 
 def get_checkin_status_template_data() -> dict:
     data = CheckinService.prod().get_current_status().state.render()
-    duration = str(datetime.timedelta(seconds=FlextimeStatisticsService.prod().get_current_duration())).split(":")
+    duration = str(datetime.timedelta(
+        seconds=FlextimeStatisticsService.prod().get_current_duration())).split(":")
 
-    data["label"] = data["label"] + ' (' + duration[0] + ':' + duration[1] + ')'
+    data["label"] = data["label"] + \
+        ' (' + duration[0] + ':' + duration[1] + ')'
     return data

@@ -1,9 +1,8 @@
 # Copyright (c) 2024, AtlasAero GmbH and Contributors
 # See license.txt
 
-# import frappe
 from frappe.tests.utils import FrappeTestCase
 
 
 class TestWorklog(FrappeTestCase):
-	pass
+    pass

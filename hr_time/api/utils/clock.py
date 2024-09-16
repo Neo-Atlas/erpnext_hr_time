@@ -7,7 +7,7 @@ class Clock:
 
     def now(self) -> datetime.datetime:
         return datetime.datetime.now()
-    
+
     @staticmethod
     def format_time_am_pm(dt: datetime.datetime) -> str:
         """
