@@ -1,5 +1,6 @@
 from hr_time.api.employee.repository import EmployeeRepository
 
+
 class EmployeeService:
     def __init__(self, employee: EmployeeRepository):
         super().__init__()
