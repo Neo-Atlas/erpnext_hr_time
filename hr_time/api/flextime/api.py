@@ -106,7 +106,7 @@ def get_easy_checkin_options() -> dict:
 def submit_easy_checkin(action: str) -> None:
     """
     Submits the employee's check-in action (e.g., start work, break, end work)
-    and triggers appropriate checkin processes for the employee. If "End of work" 
+    and triggers appropriate checkin processes for the employee. If "End of work"
     is selected and no worklogs are present for the day, a warning is displayed.
 
     Args:

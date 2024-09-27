@@ -55,10 +55,10 @@ class WorklogService:
         Creates a new worklog for an employee with the given description and optional task reference.
 
         Args:
-            employee_id (Optional[str], optional): The ID of the employee creating the worklog. 
+            employee_id (Optional[str], optional): The ID of the employee creating the worklog.
             If None, the current employee ID is used. Defaults to None.
             worklog_text (str): The description of the task performed in the worklog.
-            task (Optional[str], optional): Optional reference to a specific task associated with the worklog. 
+            task (Optional[str], optional): Optional reference to a specific task associated with the worklog.
             Defaults to None.
 
         Returns:
