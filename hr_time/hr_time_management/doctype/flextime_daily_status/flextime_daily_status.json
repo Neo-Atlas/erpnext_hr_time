@@ -24,7 +24,7 @@
   "checkin_list",
   "amended_from",
   "section_break_o3fv",
-  "daily_worklogs_html"
+  "worklog_report"
  ],
  "fields": [
   {
@@ -126,16 +126,17 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "daily_worklogs_html",
-   "fieldtype": "HTML",
-   "label": "Daily Worklogs"
+   "fieldname": "worklog_report",
+   "fieldtype": "Table",
+   "label": "Daily Worklogs",
+   "options": "Worklog Report"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-09-13 11:03:33.159126",
+ "modified": "2024-09-20 21:34:10.144317",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime daily status",

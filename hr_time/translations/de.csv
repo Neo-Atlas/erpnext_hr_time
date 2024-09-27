@@ -60,8 +60,8 @@ Checkin,Status Zeiterfassung
 End of work,Arbeitsende/-unterbrechung
 Start of work,Arbeitsbeginn/-fortführung
 Successfully checked in,Arbeitsbeginn/-fortführung erfolgreich erfasst
-Successfully checked out for break,Beginn der Pause erfolgreich erfasst
-Successfully checked out for end of work,Arbeitsende/-unterbrechung erfolgreich erfasst
+Successfully checked out for Break,Beginn der Pause erfolgreich erfasst
+Successfully checked out for End of Work,Arbeitsende/-unterbrechung erfolgreich erfasst
 Employees present,Anwesende Mitarbeiter
 Current status since,Aktueller Status seit
 Work start today,Heutiger Arbeitsbeginn
@@ -76,3 +76,19 @@ Employee,Mitarbeiter*in
 Employee Checkin,Zeiterfassung
 "Documents and Events","Dokumente und Protokolle"
 Standard full-time 40 hours,Standard Vollzeit 40 Stunden
+Timestamp,Zeitstempel
+Time,Zeit
+Task Description,Aufgabenbeschreibung
+Task,Aufgabe
+Action,Aktion
+No employee ID found for the current user,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden
+Worklog,Arbeitsbericht
+Add Worklog,Arbeitsbericht hinzufügen
+Worklog added successfully,Arbeitsbericht erfolgreich hinzugefügt
+Worklog created successfully,Arbeitsbericht erfolgreich erstellt
+Failed to add Worklog,Konnte kein Arbeitsbericht hinzufügen
+Worklog description cannot be empty,Arbeitsbericht-Beschreibung kann nicht leer sein
+Enter complete detail,Vollständige Details eingeben
+Unknown action provided,Unbekannte Aktion angegeben
+"WARNING: You have no worklogs today. Please create at least one worklog before checking out.","WARNUNG: Sie haben heute noch keinen Arbeitsbericht. Bitte erstellen Sie mindestens einen, bevor Sie auschecken."
+Describe your task here,Beschreiben Sie hier Ihre Aufgabe
