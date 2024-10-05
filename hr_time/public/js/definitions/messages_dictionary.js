@@ -4,7 +4,7 @@
  */
  const MESSAGES = {
    preloadCheckinOptionsFailed: 'Failed to preload check-in options',
-   noEmployeeIdFound: 'No employee ID found for the current user',
+   noEmployeeIdFound: 'No employee ID found for the current user : Please ensure you are logged in.',
    breakSuccess: 'Successfully checked out for Break',
    checkoutSuccess: 'Successfully checked out for End of Work',
    checkinSuccess: 'Successfully checked in',
