@@ -114,7 +114,7 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
 
     Returns:
         Union[None, dict]: Returns None when the action is successfully processed.
-                           Returns a dict with an error message if "End of work" 
+                           Returns a dict with an error message if "End of work"
                            is selected and no worklogs exist for the day.
     """
     employee = EmployeeRepository().get_current()

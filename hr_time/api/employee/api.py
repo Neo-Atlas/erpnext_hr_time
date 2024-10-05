@@ -21,6 +21,7 @@ def get_current_employee_id() -> Optional[str]:
     """
     employee = EmployeeRepository().get_current()
     if employee is None:
-        frappe.throw(_("No employee ID found for the current user"), frappe.DoesNotExistError)
+        frappe.throw(_("No employee ID found for the current user : Please ensure you are logged in."),
+                     frappe.DoesNotExistError)
     else:
         return employee.id

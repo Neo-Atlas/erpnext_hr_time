@@ -30,7 +30,7 @@ class TestGetCurrentEmployeeID(unittest.TestCase):
     @patch('hr_time.api.employee.api.EmployeeRepository')
     @patch('frappe.get_user')
     # Raising the error directly
-    @patch('frappe.throw', side_effect=frappe.DoesNotExistError("No employee ID found for the current user"))
+    @patch('frappe.throw', side_effect=frappe.DoesNotExistError("No employee ID found for the current user : Please ensure you are logged in."))
     # Mocking _ to return the input string
     @patch('hr_time.api.employee.api._', side_effect=lambda x: x)
     def test_get_current_employee_id_no_employee(self, mock_translate, mock_throw, mock_get_user, mock_employee_repo):
@@ -48,7 +48,7 @@ class TestGetCurrentEmployeeID(unittest.TestCase):
 
         # Ensure the throw function was called with correct arguments
         mock_throw.assert_called_once_with(
-            "No employee ID found for the current user", frappe.DoesNotExistError)
+            "No employee ID found for the current user : Please ensure you are logged in.", frappe.DoesNotExistError)
 
         # Ensure that the EmployeeRepository was instantiated and get_current was called
         # Check that EmployeeRepository was called once

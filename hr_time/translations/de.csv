@@ -82,7 +82,7 @@ Time,Zeit
 Task Description,Aufgabenbeschreibung
 Task,Aufgabe
 Action,Aktion
-No employee ID found for the current user,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden
+"No employee ID found for the current user : Please ensure you are logged in.","Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind."
 Worklog,Arbeitsbericht
 Add Worklog,Arbeitsbericht hinzufügen
 Worklog added successfully,Arbeitsbericht erfolgreich hinzugefügt
