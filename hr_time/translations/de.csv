@@ -25,6 +25,7 @@ Flextime delta,Kontodifferenz
 Current flextime account balance [hours],Aktueller Gleitzeitkontostand [Stunden]
 Current flextime account balance,Aktueller Gleitzeitkontostand
 Checkin/Checkout list,Anwesenheits- und Pausenzeiten
+Failed to preload check-in options, Anwesenheits-Optionen konnten nicht vorgeladen werden
 Time start,Beginn
 Time end,Ende
 Type,Typ
@@ -86,9 +87,9 @@ Worklog,Arbeitsbericht
 Add Worklog,Arbeitsbericht hinzufügen
 Worklog added successfully,Arbeitsbericht erfolgreich hinzugefügt
 Worklog created successfully,Arbeitsbericht erfolgreich erstellt
-Failed to add Worklog,Konnte kein Arbeitsbericht hinzufügen
-Worklog description cannot be empty,Arbeitsbericht-Beschreibung kann nicht leer sein
+Failed to add Worklog,Konnte keinen Arbeitsbericht hinzufügen
+Task description must not be empty,Die Aufgabenbeschreibung darf nicht leer sein
 Enter complete detail,Vollständige Details eingeben
-Unknown action provided,Unbekannte Aktion angegeben
-"WARNING: You have no worklogs today. Please create at least one worklog before checking out.","WARNUNG: Sie haben heute noch keinen Arbeitsbericht. Bitte erstellen Sie mindestens einen, bevor Sie auschecken."
+Unknown action provided,Aktion unbekannt
+"You have no Worklogs today : Task description must not be empty.","Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein."
 Describe your task here,Beschreiben Sie hier Ihre Aufgabe

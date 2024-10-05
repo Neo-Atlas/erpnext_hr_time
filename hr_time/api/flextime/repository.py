@@ -41,7 +41,6 @@ class CheckinDuration:
         self.duration_type = duration_type
         self.event_first = event_first
         self.event_second = event_second
-
         self.total_time = (self.end - self.start).seconds.numerator
 
     @staticmethod
@@ -119,16 +118,14 @@ class FlextimeDailyStatus:
                 case DurationType.WORK:
                     self.total_working_hours += duration.total_time
 
-        min_break_time = break_definition.get_break_time(
-            self.total_working_hours, is_minor)
+        min_break_time = break_definition.get_break_time(self.total_working_hours, is_minor)
 
         if not break_found and (min_break_time > 0):
             self.break_time_deducted = deducted_time_on_no_break
         elif min_break_time > checked_break_time:
             self.break_time_deducted = min_break_time - checked_break_time
 
-        self.flextime_delta = (
-            self.total_working_hours - self.break_time_deducted - self.target_working_time) / 3600
+        self.flextime_delta = (self.total_working_hours - self.break_time_deducted - self.target_working_time) / 3600
         self.time_balance = previous_flextime_balance + self.flextime_delta
 
 
@@ -156,8 +153,7 @@ class FlextimeStatusRepository:
     # Returns the flextime balance by the given date
     def get_balance_by_date(self, employee_id: str, date: datetime.date) -> Optional[float]:
         docs = frappe.get_all("Flextime daily status", fields=["time_balance"],
-                              filters={"employee": employee_id,
-                                       "date": date.isoformat()},
+                              filters={"employee": employee_id, "date": date.isoformat()},
                               order_by="date desc", limit=1)
 
         if not docs:
@@ -178,8 +174,7 @@ class FlextimeStatusRepository:
         parent.save()
 
         for duration in status.durations:
-            child = frappe.new_doc(
-                "Checkin duration", parent_doc=parent, parentfield="checkin_list")
+            child = frappe.new_doc("Checkin duration", parent_doc=parent, parentfield="checkin_list")
             child.time_checkin = duration.start
             child.time_checkout = duration.end
             child.total_time = duration.total_time
@@ -189,8 +184,7 @@ class FlextimeStatusRepository:
             child.save()
 
         for worklog in status.daily_worklogs:
-            child = frappe.new_doc(
-                "Worklog Report", parent_doc=parent, parentfield="worklog_report")
+            child = frappe.new_doc("Worklog Report", parent_doc=parent, parentfield="worklog_report")
             child.employee = worklog.employee_id
             child.log_time = worklog.log_time
             child.task = worklog.task

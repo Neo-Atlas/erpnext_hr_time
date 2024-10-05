@@ -1,14 +1,28 @@
 import { EasyCheckinStatus } from "./easy_checkin_status";
+import { warn_user, alert_success, alert_failure, throw_error_msg } from './utils/frappe_utils'
+import { fetchCurrentEmployeeId, fetchWorklogStatus } from "./api/flextime.api";
+import MESSAGES from "./definitions/messages_dictionary";
 
 /**
  * Class representing the EasyCheckinDialog for managing employee check-ins.
  */
 export class EasyCheckinDialog {
+  /** 
+   * Fixed text definitions for various labels in the Dialog
+   * @type {Object<string, string>}
+   */
+  static LABELS = {
+    TITLE: "Checkin",
+    PRIMARY_ACTION_BTN: "Submit",
+    PLACEHOLDER_WORKLOG_TASK_DESC: 'Describe your task here'
+  }
+
   /**
    * Array of options available for check-in actions.
    * @type {Array<string>}
    */
   options = [];
+  
 
   /**
    * Default check-in action.
@@ -23,7 +37,7 @@ export class EasyCheckinDialog {
   hasWorklogs = false;
 
   /**
-   * Reference to the Frappe dialog UI instance.
+   * Reference to the Frappe's dialog UI instance.
    * @type {Object}
    */
   dialogUI;
@@ -35,74 +49,106 @@ export class EasyCheckinDialog {
   refresh_buttons;
 
   /**
+   * Interval duration (in milliseconds) to refresh the dashboard in.
+   */
+  static REFRESH_DASHBOARD_INTERVAL = 15000;
+
+  /**
+   * Predefined Action options for Checkin events
+   */
+  static ACTIONS = {
+    EOW: 'End of work',
+    BRK: 'Break',
+    SOW: 'Start of work'
+  };
+
+  /**
    * Preloads the current checkin status
    */
-  preload() {
-    frappe.call({
-      method: "hr_time.api.flextime.api.get_easy_checkin_options",
-      callback: (response) => {
-        this.options = response.message.options;
-        this.default = response.message.default;
-      },
-    });
+  async preloadCheckinOptions() {
+    try {
+      const response = await frappe.call({
+        method: "hr_time.api.flextime.api.get_easy_checkin_options",
+      });
+      this.options = response.message.options;
+      this.default = response.message.default;
+    } catch (error) {
+      console.error(`${MESSAGES.preloadCheckinOptionsFailed}" : ${error}`);
+    }
+  }
+
+  /** 
+   * Utility method to check if a Checkin dialog is already open
+   */
+  isCheckinDialogOpen() {
+    return $(".modal:visible").filter(function() {
+      return $(this).find(".modal-title").text().trim() === "Checkin";
+    }).length > 0;
   }
 
   /**
-   * Displays the check-in dialog if the employee has worklogs for today.
-   * Checks if the current employee has worklogs before showing the dialog.
+   * Initiates Checkin dialog creation after fetching current employee's ID.
    */
-  show() {
-    frappe.call({
-      method: "hr_time.api.employee.api.get_current_employee_id",
-      callback: (response) => {
-        const employee_id = response.message;
-
-        if (!employee_id) {
-          frappe.throw(__("No employee ID found for the current user"));
-          return;
-        }
-
-        this.checkIfEmployeeHasWorklogs(employee_id);
-      },
-    });
+  async show() {
+    try{
+      const employee_id = await fetchCurrentEmployeeId()
+      this.checkWorklogsThenCreateDialog(employee_id); // Call the next step if employee ID is available
+    }catch(error){
+      throw_error_msg(MESSAGES.noEmployeeIdFound); // Show error message if no employee ID
+      console.error(`${MESSAGES.errFetchingEmpId} : ${error}`);
+    }
   }
 
   /**
-   * Checks if the employee has worklogs for today using the provided employee ID.
-   * @param {string} employee_id - The ID of the employee to check for worklogs.
+   * Checks if the employee has worklogs for today using the provided employee ID, then creates Checkin dialog.
+   * @param {string} employee_id - The ID of the employee to check worklogs for.
    */
-  checkIfEmployeeHasWorklogs(employee_id) {
-    frappe.call({
-      method: "hr_time.api.worklog.api.has_employee_made_worklogs_today",
-      args: { employee_id: employee_id },
-      callback: (response) => {
-        this.hasWorklogs = response.message;
-        this.createCheckinDialog(employee_id);
-      },
-    });
+  async checkWorklogsThenCreateDialog(employee_id) {
+    try{
+      const hasWorklogs = await fetchWorklogStatus(employee_id)
+      this.hasWorklogs = hasWorklogs
+      this.createCheckinDialog(employee_id);
+    }catch(error){
+      console.error(`${MESSAGES.errFetchingWorklogStatus}: ${error}`);
+    };
   }
 
   /**
    * Creates and displays the check-in dialog with options and actions.
-   * @param {string} employee_id - The ID of the employee.
+   * @param {string} employee_id - The ID of the employee to create Checkin actions for.
    */
   createCheckinDialog(employee_id) {
     this.dialogUI = new frappe.ui.Dialog({
-      title: `&#9745;&nbsp;${__("Checkin")}`, //checkbox-icon; space; label
+      title: __(EasyCheckinDialog.LABELS.TITLE),
       fields: this.getDialogFields(employee_id),
       size: "small",
-      primary_action_label: __("Submit", undefined, "checkin"),
-      primary_action: (values) => this.submitCheckin(values, employee_id),
+      primary_action_label: __(EasyCheckinDialog.LABELS.PRIMARY_ACTION_BTN, undefined, "checkin"),
+      primary_action: (values) => {
+        const actionValue = values.action;
+        const worklog_text = this.dialogUI.get_value("worklog_box") !== undefined 
+        ? this.dialogUI.get_value("worklog_box").trim() 
+        : '';
+      
+        // Submit only Checkin for actions other than 'End of work' OR if 'Task Description' is empty when Checking out
+        if(actionValue !== EasyCheckinDialog.ACTIONS.EOW || !worklog_text){
+          if (actionValue === EasyCheckinDialog.ACTIONS.EOW && !this.hasWorklogs) {
+            warn_user(MESSAGES.taskDescEmptyAndNoWorklogs);
+            return;
+          }
+          this.submitCheckin(values, employee_id);
+        }else{
+          this.submitCheckinAfterAddingWorklog(values, employee_id, worklog_text);
+        }
+      }
     });
 
-    this.dialogUI.show();
-    this.initializeDialog();
+    this.initializeDialog(employee_id);
   }
 
   /**
    * Returns the configuration of fields to be displayed in the check-in dialog.
-   * @param {string} employee_id - The ID of the employee.
    * @returns {Array<Object>} - The fields configuration for Frappe's UI dialog.
+   * @param {string} employee_id - The ID of the employee
    */
   getDialogFields(employee_id) {
     return [
@@ -112,115 +158,81 @@ export class EasyCheckinDialog {
         fieldtype: "Select",
         options: this.options,
         default: this.default,
-        change: () => this.updateDialogBasedOnAction(),
+        change: () => this.updateDialogBasedOnAction(employee_id),
       },
       {
         fieldtype: "Section Break",
-        depends_on: 'eval: doc.action === "End of work"',
+        depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
       },
       {
         fieldname: "worklog_section",
         fieldtype: "HTML",
-        options: this.getWorklogSectionHTML(),
       },
       {
         fieldname: "worklog_box",
         fieldtype: "Text",
-        placeholder: __("Describe your task here") + "...",
-      },
-      {
-        fieldtype: "Button",
-        label: "✔",
-        fieldname: "add_log",
-        click: () => this.addWorklog(employee_id),
-      },
+        placeholder: __(EasyCheckinDialog.LABELS.PLACEHOLDER_WORKLOG_TASK_DESC) + " 🖉",
+        depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
+      }
     ];
   }
 
-  /**
-   * Generates the HTML content for the worklog section of the dialog.
-   * @returns {string} - The HTML content for the worklog section.
-   */
-  getWorklogSectionHTML() {
-    return `<div class="d-flex justify-between">
-                <label id="worklog_section_label">${__("Add Worklog")}</label>
-                <button class="btn btn-outline-info btn-xs edit-full-form-btn">${__(
-                  "Enter complete detail"
-                )}
-                    &nearr;
-                </button>
-            </div>
-            `;
-  }
 
   /**
-   * Updates the dialog UI based on the selected action.
-   * If "End of work" is selected and no worklogs exist, disables the submit button.
+   * Updates the dialog UI based on the selected action & Worklog status.
+   * @param {string} employee_id - The ID of the current employee.
    */
-  updateDialogBasedOnAction() {
-    let action_value = this.dialogUI.get_value("action");
-    const isEndOfWork = action_value === "End of work";
-    const isIncompleteCheckout = isEndOfWork && !this.hasWorklogs;
+  updateDialogBasedOnAction(employee_id) {
+    const action_value = this.dialogUI.get_value("action");
+    const isEndOfWork = action_value === EasyCheckinDialog.ACTIONS.EOW;
 
-    this.dialogUI.get_primary_btn().prop("disabled", isIncompleteCheckout);
-    this.dialogUI.get_field("worklog_section").$wrapper.toggle(isEndOfWork);
-
-    if (this.hasWorklogs) {
-      this.dialogUI.$wrapper
-        .find("label#worklog_section_label")
-        .removeClass("not-filled");
-      this.dialogUI.$wrapper
-        .find("label#worklog_section_label")
-        .addClass("filled");
-      this.dialogUI.$wrapper
-        .find('button[data-fieldname="add_log"]')
-        .removeClass("not-filled");
-      this.dialogUI.$wrapper
-        .find('button[data-fieldname="add_log"]')
-        .addClass("filled");
-    } else {
-      this.dialogUI.$wrapper
-        .find("label#worklog_section_label")
-        .addClass("not-filled");
-      this.dialogUI.$wrapper
-        .find("label#worklog_section_label")
-        .removeClass("filled");
-      this.dialogUI.$wrapper
-        .find('button[data-fieldname="add_log"]')
-        .addClass("not-filled");
-      this.dialogUI.$wrapper
-        .find('button[data-fieldname="add_log"]')
-        .removeClass("filled");
+    if(isEndOfWork){
+      fetchWorklogStatus(employee_id)
+      .then((hasWorklogs) => {
+        this.hasWorklogs = hasWorklogs
+        this.dialogUI.$wrapper.find("label#worklog_section_label")
+          .toggleClass("filled", this.hasWorklogs)
+          .toggleClass("not-filled", !this.hasWorklogs);
+      })
+      .catch((error) => {
+        console.error(`${MESSAGES.errFetchingWorklogStatus}: ${error}`);
+      });
     }
   }
 
   /**
-   * Initializes the dialog with necessary UI adjustments and event bindings.
+   * Initializes the dialog with necessary UI adjustments and event bindings if one is not rendered.
+   * @param {string} employee_id - The ID of the current employee.
    */
-  initializeDialog() {
-    this.dialogUI
-      .get_field("add_log")
-      .$wrapper.addClass("absolute-bottom-right");
-    this.dialogUI.$wrapper
-      .find(".edit-full-form-btn")
-      .click(() => frappe.new_doc("Worklog"));
-    this.dialogUI.$wrapper
-      .find('button[data-fieldname="add_log"]')
-      .addClass(this.hasWorklogs ? "filled" : "not-filled");
-    this.dialogUI.$wrapper
-      .find("label#worklog_section_label")
-      .addClass(this.hasWorklogs ? "filled" : "not-filled");
-
-    if (this.dialogUI.get_value("action") === "End of work")
-      this.dialogUI
-        .get_primary_btn()
-        .prop("disabled", this.hasWorklogs ? false : true);
+  initializeDialog(employee_id) {
+    // Stop re-initialization of dialog UI if one is already open
+    if(this.isCheckinDialogOpen()) return;
+    
+    this.dialogUI.show();
+    
+    // Fetch the worklog section's label HTML from the API
+    frappe.call({
+      method: "hr_time.api.worklog.api.render_worklog_header",
+      callback: (response) => {
+        if (response.message) {
+          const worklog_section = this.dialogUI.get_field("worklog_section");
+          if (worklog_section) {
+            // Set the rendered HTML to the worklog_section field
+            worklog_section.$wrapper.html(response.message);
+            this.dialogUI.$wrapper
+              .find(".edit-full-form-btn")
+              .click(() => frappe.new_doc("Worklog"));
+            this.updateDialogBasedOnAction(employee_id);
+          }
+        }
+      }
+    });
   }
 
   /**
    * Submits the check-in action for the employee and updates the dashboard.
    * @param {Object} values - The selected action and other dialog values.
-   * @param {string} employee_id - The ID of the employee.
+   * @param {string} employee_id - The ID of the current employee.
    */
   submitCheckin(values, employee_id) {
     frappe.call({
@@ -230,45 +242,44 @@ export class EasyCheckinDialog {
         employee_id: employee_id,
       },
       callback: (response) => {
-        this.refresh_dashboard();
-        EasyCheckinStatus.render();
-        this.preload();
-
-        let message = "Successfully checked in";
-
-        switch (values.action) {
-          case "Break":
-            message = "Successfully checked out for Break";
-            break;
-          case "End of work":
-            message = "Successfully checked out for End of Work";
-            break;
+        // Exit early if there is an error in the response
+        if (response && typeof response.mesage === 'object' && response.message.status === 'error') {
+          alert_failure(response.mesage.mesage)
+          return;
         }
 
-        this.dialogUI.hide();
+        this.refresh_dashboard();
+        EasyCheckinStatus.render();
+        this.preloadCheckinOptions();   // Preload Checkin Options in the background
 
-        frappe.show_alert(
-          {
-            message: __(message),
-            indicator: "green",
-          },
-          5
-        );
+        let message;
+
+        // Check the action and set the appropriate message
+        switch (values.action) {
+          case EasyCheckinDialog.ACTIONS.BRK:
+            message = MESSAGES.breakSuccess;
+            break;
+          case EasyCheckinDialog.ACTIONS.EOW:
+            message = MESSAGES.checkoutSuccess;
+            break;
+          case EasyCheckinDialog.ACTIONS.SOW:
+            message = MESSAGES.checkinSuccess;
+            break;
+          default:
+            return; // Exit if none of the expected actions match
+        }
+        // Hide the dialog and show a success alert
+        this.dialogUI.hide();
+        alert_success(message);
       },
     });
   }
 
   /**
    * Adds a new worklog entry for the employee.
-   * @param {string} employee_id - The ID of the employee.
+   * @param {string} employee_id - The ID of the current employee.
    */
-  addWorklog(employee_id) {
-    const worklog_text = this.dialogUI.get_value("worklog_box");
-    if (!worklog_text.trim()) {
-      frappe.show_alert(__("Worklog description cannot be empty"));
-      return;
-    }
-
+  submitCheckinAfterAddingWorklog(values, employee_id, worklog_text) {
     frappe.call({
       method: "hr_time.api.worklog.api.create_worklog",
       args: {
@@ -276,25 +287,17 @@ export class EasyCheckinDialog {
         worklog_text: worklog_text,
       },
       callback: (response) => {
-        const res = response.message;
-        if (res.status == "error") {
-          frappe.show_alert(
-            {
-              message: __(res.message),
-              indicator: "red",
-            },
-            5
-          );
-        } else {
-          frappe.show_alert(
-            {
-              message: __("Worklog added successfully"),
-              indicator: "green",
-            },
-            5
-          );
-          this.hasWorklogs = true;
-          this.updateDialogBasedOnAction();
+        if (response && typeof response.message === 'object') {
+          const res = response.message;
+
+          if(typeof res.status === 'string' && res.status !== "success"){
+            alert_failure(res.message);
+            alert_failure(MESSAGES.checkoutFailed);
+          }else {
+            alert_success(MESSAGES.worklogCreationSuccess)
+            this.hasWorklogs = true;
+            this.submitCheckin(values, employee_id);
+          }
         }
       },
     });
@@ -322,8 +325,8 @@ export class EasyCheckinDialog {
     document
       .getElementById("hr_time_number_card_checkin_status")
       .querySelector(".checkin_status").onclick = function () {
-      dialog.show();
-    };
+        dialog.show();
+      };
 
     dialog.refresh_buttons = [
       document
@@ -339,7 +342,7 @@ export class EasyCheckinDialog {
 
     setTimeout(() => {
       dialog.refresh_dashboard();
-    }, 15000);
+    }, EasyCheckinDialog.REFRESH_DASHBOARD_INTERVAL);
   }
 
   /**

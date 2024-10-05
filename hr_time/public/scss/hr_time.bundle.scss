@@ -4,7 +4,7 @@
 label#worklog_section_label{
     &.not-filled::after {
         content: "\0021"; /* unicode for (! icon) */
-        margin-left: 5px;
+        margin-left: 2px;
         color: red;
         font-size: 1.2em;
     }
@@ -17,37 +17,4 @@ label#worklog_section_label{
 [data-fieldname="worklog_box"] textarea{
     min-height: 70px;
     max-height: 200px;
-}
-
-.absolute-bottom-right{
-    position: absolute !important;
-    right: 0.5rem !important;
-    bottom: 0rem !important;
-    translate: 0 -100%;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 30px;
-    height: 30px;
-
-    button[data-fieldname="add_log"]{
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 5px;
-        border: 4px solid #333 !important;
-        padding: 0rem !important;
-        box-shadow: 0 2px 3px aliceblue;
-        font-size: 20px;
-        background: transparent;
-
-        &.filled{
-            color: rgb(87, 196, 60) !important;
-        }
-    
-        &.not-filled{
-            color: rgba(145, 143, 143, 0.6) !important;
-        }
-    }
 }

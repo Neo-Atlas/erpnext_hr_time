@@ -78,12 +78,10 @@ class FlexTimeProcessingService:
 
         for employee in employees:
 
-            logger.info(
-                "Starting flextime processing of employee " + employee.id)
+            logger.info("Starting flextime processing of employee " + employee.id)
 
             if employee.time_model is not TimeModel.Flextime:
-                logger.info("Skipping employee " + employee.id +
-                            ", as time model is not flextime")
+                logger.info("Skipping employee " + employee.id + ", as time model is not flextime")
                 continue
 
             definition = self.definitions.get_by_grade(employee.grade)
@@ -120,13 +118,11 @@ class FlexTimeProcessingService:
             current_day += datetime.timedelta(days=1)
 
         flextime_balance = self.daily_status.get_flextime_balance(employee.id)
-        logger.info(employee.id + ": Found current flextime balance of " +
-                    str(flextime_balance) + " hours")
+        logger.info(employee.id + ": Found current flextime balance of " + str(flextime_balance) + " hours")
 
         while current_day < self.clock.date_today():
             worklogs = []
-            logger.info(employee.id + ": Processing day " +
-                        current_day.isoformat())
+            logger.info(employee.id + ": Processing day " + current_day.isoformat())
 
             attendance = self.attendance.get(employee.id, current_day)
             target_working_time = definitions.get_for_weekday(
@@ -134,33 +130,26 @@ class FlexTimeProcessingService:
 
             if self.holidays.is_holiday(current_day):
                 target_working_time = 0
-                logger.info("Detected " + str(current_day) +
-                            " as holiday and set target working time to zero")
-                # worklogs = self.worklog.get_worklogs_of_employee_on_date(
-                #     employee.id, current_day)
+                logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
             elif attendance is not None and attendance.status is Status.OnLeave:
                 request = self.vacation.get_approved_request(
                     employee.id, current_day)
 
                 if request is None:
                     target_working_time = 0
-                    logger.info("Detected " + str(current_day) +
-                                " as regular leave, but found no vacation request")
+                    logger.info("Detected " + str(current_day) + " as regular leave, but found no vacation request")
                 elif request.is_half_day:
                     target_working_time /= 2
                     worklogs = self.worklog.get_worklogs_of_employee_on_date(
                         employee.id, current_day)
-                    logger.info("Detected " + str(current_day) +
-                                " as regular leave with half-day vacation request")
+                    logger.info("Detected " + str(current_day) + " as regular leave with half-day vacation request")
                 else:
                     target_working_time = 0
-                    logger.info("Detected " + str(current_day) +
-                                " as regular leave with full-day vacation request")
+                    logger.info("Detected " + str(current_day) + " as regular leave with full-day vacation request")
             else:
                 worklogs = self.worklog.get_worklogs_of_employee_on_date(
                     employee.id, current_day)
-                logger.info("Set target working time to " +
-                            str(target_working_time))
+                logger.info("Set target working time to " + str(target_working_time))
 
             status = FlextimeDailyStatus(
                 employee.id,

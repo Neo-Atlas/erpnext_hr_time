@@ -69,17 +69,11 @@ class WorklogRepository:
         """
         worklogs = []
         # Define the date filter to include the whole day (date_start to date_end)
-        date_start = datetime.combine(
-            date, datetime.min.time())
-        date_end = datetime.combine(
-            date, datetime.max.time())
+        date_start = datetime.combine(date, datetime.min.time())
+        date_end = datetime.combine(date, datetime.max.time())
 
-        # Fetch worklogs for the employee on the specific date
-        docs = self.get_worklogs({
-            "employee": employee_id,
-            # Filter by full day
-            "log_time": ["between", [date_start, date_end]]
-        })
+        # Fetch worklogs for the employee on the specific date (# Filter logtime by full day)
+        docs = self.get_worklogs({"employee": employee_id, "log_time": ["between", [date_start, date_end]]})
 
         if not docs:
             return []
@@ -113,7 +107,6 @@ class WorklogRepository:
             new_worklog.task_desc = worklog_text
             new_worklog.task = task
             new_worklog.save()
-            frappe.db.commit()
 
             return {'status': 'success', 'message': 'Worklog created successfully'}
 

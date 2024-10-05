@@ -46,8 +46,7 @@ class WorklogService:
             bool: True if the employee has worklogs for the current day, False otherwise.
         """
         today = datetime.date.today()
-        worklogs = self.worklog.get_worklogs_of_employee_on_date(
-            employee_id, today)
+        worklogs = self.worklog.get_worklogs_of_employee_on_date(employee_id, today)
         return len(worklogs) > 0
 
     def create_worklog(self, employee_id=None, worklog_text='', task=None):
@@ -65,29 +64,26 @@ class WorklogService:
             dict: A dictionary indicating the success or failure of the worklog creation process.
 
         Raises:
-            ValueError: If the worklog description is empty.
+            ValueError: If the task description is empty.
         """
         try:
             if employee_id is None:
                 employee_id = get_current_employee_id()
             if not worklog_text.strip():
-                raise ValueError("Worklog description cannot be empty")
+                raise ValueError("Task description must not be empty")
 
             log_time = datetime.datetime.now()  # Get current time as log_time
             # Call repository to create the worklog
-            result = self.worklog.create_worklog(
-                employee_id, log_time, worklog_text, task)
+            result = self.worklog.create_worklog(employee_id, log_time, worklog_text, task)
 
             return result
 
         except ValueError as ve:
             # Handle specific ValueError
-            logger.error(f"Validation error: {
-                         str(ve)}", 'Worklog Creation Error')
+            logger.error(f"Validation error: {str(ve)}", 'Worklog Creation Error')
             return {'status': 'error', 'message': str(ve)}
 
         except Exception as e:
             # Centralized error handling and logging
-            logger.error(f"Error creating worklog: {
-                         str(e)}", 'Worklog Creation Error')
+            logger.error(f"Error creating worklog: {str(e)}", 'Worklog Creation Error')
             return {'status': 'error', 'message': str(e)}

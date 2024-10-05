@@ -37,3 +37,17 @@ def create_worklog(employee_id, worklog_text, task=None) -> dict:
         information such as success status or the created worklog details.
     """
     return WorklogService.prod().create_worklog(employee_id, worklog_text, task)
+
+
+@frappe.whitelist()
+def render_worklog_header() -> str:
+    """
+    Renders the HTML template for the worklog textbox's header (label and to full-form page button).
+
+    Returns:
+        str: The rendered HTML content for the worklog textbox's header.
+    """
+    context = {
+        "_": frappe._  # Include the translation helper
+    }
+    return frappe.render_template("templates/worklog/worklog_textbox.html", context)
