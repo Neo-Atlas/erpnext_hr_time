@@ -12,7 +12,7 @@ from hr_time.api.flextime.definition import FlextimeDefinitionRepository, Flexti
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.repository import FlextimeStatusRepository
 from hr_time.api.holiday.repository import HolidayRepository
-from hr_time.api.utils.clock import Clock
+from hr_time.api.shared.utils.clock import Clock
 from hr_time.api.vacation.repository import VacationRepository, Request
 from hr_time.api.worklog.repository import WorklogRepository, Worklog
 

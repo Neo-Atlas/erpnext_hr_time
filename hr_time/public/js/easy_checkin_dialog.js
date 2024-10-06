@@ -1,7 +1,7 @@
 import { EasyCheckinStatus } from "./easy_checkin_status";
 import { warn_user, alert_success, alert_failure, throw_error_msg } from './utils/frappe_utils'
 import { fetchCurrentEmployeeId, fetchWorklogStatus } from "./api/flextime.api";
-import MESSAGES from "./definitions/messages_dictionary";
+import MESSAGES from "./constants/messages.json";
 
 /**
  * Class representing the EasyCheckinDialog for managing employee check-ins.
@@ -73,7 +73,7 @@ export class EasyCheckinDialog {
       this.options = response.message.options;
       this.default = response.message.default;
     } catch (error) {
-      console.error(`${MESSAGES.preloadCheckinOptionsFailed}" : ${error}`);
+      console.error(`${MESSAGES.FAILED_PRELOAD_CHECKIN_OPTIONS}" : ${error}`);
     }
   }
 
@@ -82,7 +82,7 @@ export class EasyCheckinDialog {
    */
   isCheckinDialogOpen() {
     return $(".modal:visible").filter(function() {
-      return $(this).find(".modal-title").text().trim() === "Checkin";
+      return $(this).find(".modal-title").text().trim() === EasyCheckinDialog.LABELS.TITLE;
     }).length > 0;
   }
 
@@ -94,8 +94,8 @@ export class EasyCheckinDialog {
       const employee_id = await fetchCurrentEmployeeId()
       this.checkWorklogsThenCreateDialog(employee_id); // Call the next step if employee ID is available
     }catch(error){
-      throw_error_msg(MESSAGES.noEmployeeIdFound); // Show error message if no employee ID
-      console.error(`${MESSAGES.errFetchingEmpId} : ${error}`);
+      throw_error_msg(MESSAGES.NOT_FOUND_EMPLOYEE_ID); // Show error message if no employee ID
+      console.error(`${MESSAGES.ERR_GET_EMPLOYEE_ID} : ${error}`);
     }
   }
 
@@ -109,7 +109,7 @@ export class EasyCheckinDialog {
       this.hasWorklogs = hasWorklogs
       this.createCheckinDialog(employee_id);
     }catch(error){
-      console.error(`${MESSAGES.errFetchingWorklogStatus}: ${error}`);
+      console.error(`${MESSAGES.ERR_GET_WORKLOG_STATUS}: ${error}`);
     };
   }
 
@@ -125,19 +125,18 @@ export class EasyCheckinDialog {
       primary_action_label: __(EasyCheckinDialog.LABELS.PRIMARY_ACTION_BTN, undefined, "checkin"),
       primary_action: (values) => {
         const actionValue = values.action;
-        const worklog_text = this.dialogUI.get_value("worklog_box") !== undefined 
-        ? this.dialogUI.get_value("worklog_box").trim() 
-        : '';
+        const worklog_text = this.dialogUI.get_value("worklog_box")
+        const trimmed_worklog_text = worklog_text ? worklog_text.trim() : '';
       
         // Submit only Checkin for actions other than 'End of work' OR if 'Task Description' is empty when Checking out
-        if(actionValue !== EasyCheckinDialog.ACTIONS.EOW || !worklog_text){
+        if(actionValue !== EasyCheckinDialog.ACTIONS.EOW || !trimmed_worklog_text){
           if (actionValue === EasyCheckinDialog.ACTIONS.EOW && !this.hasWorklogs) {
-            warn_user(MESSAGES.taskDescEmptyAndNoWorklogs);
+            warn_user(MESSAGES.EMPTY_TASK_DESC_WHEN_WORKLOGS);
             return;
           }
           this.submitCheckin(values, employee_id);
         }else{
-          this.submitCheckinAfterAddingWorklog(values, employee_id, worklog_text);
+          this.submitCheckinAfterAddingWorklog(values, employee_id, trimmed_worklog_text);
         }
       }
     });
@@ -195,7 +194,7 @@ export class EasyCheckinDialog {
           .toggleClass("not-filled", !this.hasWorklogs);
       })
       .catch((error) => {
-        console.error(`${MESSAGES.errFetchingWorklogStatus}: ${error}`);
+        console.error(`${MESSAGES.ERR_GET_WORKLOG_STATUS}: ${error}`);
       });
     }
   }
@@ -243,8 +242,8 @@ export class EasyCheckinDialog {
       },
       callback: (response) => {
         // Exit early if there is an error in the response
-        if (response && typeof response.mesage === 'object' && response.message.status === 'error') {
-          alert_failure(response.mesage.mesage)
+        if (response && typeof response.message === 'object' && response.message.status === 'error') {
+          alert_failure(response.message.message)
           return;
         }
 
@@ -257,13 +256,15 @@ export class EasyCheckinDialog {
         // Check the action and set the appropriate message
         switch (values.action) {
           case EasyCheckinDialog.ACTIONS.BRK:
-            message = MESSAGES.breakSuccess;
+            console.log('here');
+            
+            message = MESSAGES.SUCCESS_BREAK;
             break;
           case EasyCheckinDialog.ACTIONS.EOW:
-            message = MESSAGES.checkoutSuccess;
+            message = MESSAGES.SUCCESS_CHECKOUT;
             break;
           case EasyCheckinDialog.ACTIONS.SOW:
-            message = MESSAGES.checkinSuccess;
+            message = MESSAGES.SUCCESS_CHECKIN;
             break;
           default:
             return; // Exit if none of the expected actions match
@@ -287,14 +288,14 @@ export class EasyCheckinDialog {
         worklog_text: worklog_text,
       },
       callback: (response) => {
-        if (response && typeof response.message === 'object') {
-          const res = response.message;
+        if (response &&  response.message && typeof response.message === 'object') {
+          const { status, message: resMessage } = response.message;
 
-          if(typeof res.status === 'string' && res.status !== "success"){
-            alert_failure(res.message);
-            alert_failure(MESSAGES.checkoutFailed);
+          if(typeof status === 'string' && status !== "success"){
+            alert_failure(resMessage);
+            alert_failure(MESSAGES.FAILED_CHECKOUT);
           }else {
-            alert_success(MESSAGES.worklogCreationSuccess)
+            alert_success(MESSAGES.SUCCESS_WORKLOG_ADDITION)
             this.hasWorklogs = true;
             this.submitCheckin(values, employee_id);
           }

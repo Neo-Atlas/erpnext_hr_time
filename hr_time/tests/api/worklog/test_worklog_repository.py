@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 from hr_time.api.worklog.repository import WorklogRepository, Worklog
+from hr_time.api.shared.constants.messages import Messages
 
 
 class TestWorklogRepository(unittest.TestCase):
@@ -74,7 +75,7 @@ class TestWorklogRepository(unittest.TestCase):
         mock_new_doc.assert_called_once_with("Worklog")
         mock_worklog_doc.save.assert_called_once()
         mock_commit.assert_called_once()
-        self.assertEqual(result, {'status': 'success', 'message': 'Worklog created successfully'})
+        self.assertEqual(result, {'status': 'success', 'message': Messages.Worklog.SUCCESS_WORKLOG_CREATION})
 
     @patch('hr_time.api.worklog.repository.frappe.new_doc')
     @patch('hr_time.api.worklog.repository.frappe.db.rollback')

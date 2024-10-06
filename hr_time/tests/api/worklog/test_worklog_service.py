@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 from hr_time.api.worklog.service import WorklogService
 from hr_time.api.worklog.repository import WorklogRepository
 from hr_time.api.employee.repository import EmployeeRepository
+from hr_time.api.shared.constants.messages import Messages
 
 
 class TestWorklogService(unittest.TestCase):
@@ -43,7 +44,7 @@ class TestWorklogService(unittest.TestCase):
         employee_id = '001'
         worklog_text = 'Completed task A'
         task = 'TASK001'
-        expected_result = {'status': 'success', 'message': 'Worklog created successfully'}
+        expected_result = {'status': 'success', 'message': Messages.Worklog.SUCCESS_WORKLOG_CREATION}
         self.worklog_repository.create_worklog.return_value = expected_result
 
         # Act
@@ -51,7 +52,7 @@ class TestWorklogService(unittest.TestCase):
 
         # Assert
         self.assertEqual(result['status'], 'success')
-        self.assertEqual(result['message'], 'Worklog created successfully')
+        self.assertEqual(result['message'], Messages.Worklog.SUCCESS_WORKLOG_CREATION)
         self.worklog_repository.create_worklog.assert_called_once()  # Verify it was called
 
     def test_create_worklog_empty_description(self):
@@ -75,7 +76,8 @@ class TestWorklogService(unittest.TestCase):
         MockGetCurrentEmployeeId.return_value = 'emp123'
 
         # Mock the return value of WorklogRepository.create_worklog to simulate a successful creation
-        mock_worklog_repo.create_worklog.return_value = {'status': 'success', 'message': 'Worklog created successfully'}
+        mock_worklog_repo.create_worklog.return_value = {
+            'status': 'success', 'message': Messages.Worklog.SUCCESS_WORKLOG_CREATION}
 
         service = WorklogService(mock_worklog_repo)
         worklog_text = "Worked on project X"
@@ -94,7 +96,7 @@ class TestWorklogService(unittest.TestCase):
 
         # Verify the result is as expected
         self.assertEqual(result['status'], 'success')
-        self.assertEqual(result['message'], 'Worklog created successfully')
+        self.assertEqual(result['message'], Messages.Worklog.SUCCESS_WORKLOG_CREATION)
 
     def test_create_worklog_general_exception(self):
         # Arrange

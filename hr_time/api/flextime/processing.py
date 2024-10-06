@@ -8,7 +8,7 @@ from hr_time.api.flextime.break_time import BreakTimeRepository, BreakTimeDefini
 from hr_time.api.flextime.definition import FlextimeDefinitionRepository, FlextimeDefinition
 from hr_time.api.flextime.repository import FlextimeStatusRepository, FlextimeDailyStatus
 from hr_time.api.holiday.repository import HolidayRepository
-from hr_time.api.utils.clock import Clock
+from hr_time.api.shared.utils.clock import Clock
 from hr_time.api.vacation.repository import VacationRepository
 from hr_time.api.worklog.repository import WorklogRepository
 

@@ -5,6 +5,8 @@ from datetime import datetime
 import frappe
 from frappe.model.document import Document
 from frappe.model.docstatus import DocStatus
+from hr_time.api.shared.utils.frappe_utils import throw_error_msg
+from hr_time.api.shared.constants.messages import Messages
 
 
 class Worklog(Document):
@@ -30,4 +32,4 @@ class Worklog(Document):
         if employee:
             self.employee = employee
         else:
-            frappe.throw("No Employee record found for the current user.")
+            throw_error_msg(Messages.employee.NOT_FOUND_EMPLOYEE)

@@ -1,11 +1,9 @@
 from typing import Optional
 import frappe
+from frappe import _
 from hr_time.api.employee.repository import EmployeeRepository
-try:
-    from frappe import _
-except ImportError:
-    # Fallback if frappe._ isn't available (for tests)
-    def _(text): return text
+from hr_time.api.shared.constants.messages import Messages
+from hr_time.api.shared.utils.frappe_utils import throw_error_msg
 
 
 @frappe.whitelist()
@@ -21,7 +19,6 @@ def get_current_employee_id() -> Optional[str]:
     """
     employee = EmployeeRepository().get_current()
     if employee is None:
-        frappe.throw(_("No employee ID found for the current user : Please ensure you are logged in."),
-                     frappe.DoesNotExistError)
+        throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
     else:
         return employee.id

@@ -82,7 +82,8 @@ Time,Zeit
 Task Description,Aufgabenbeschreibung
 Task,Aufgabe
 Action,Aktion
-"No employee ID found for the current user : Please ensure you are logged in.","Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind."
+No Employee record found for the current user.,Kein Mitarbeiterdatensatz für den aktuellen Benutzer gefunden.
+No employee ID found for the current user : Please ensure you are logged in.,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind.
 Worklog,Arbeitsbericht
 Add Worklog,Arbeitsbericht hinzufügen
 Worklog added successfully,Arbeitsbericht erfolgreich hinzugefügt
@@ -91,5 +92,6 @@ Failed to add Worklog,Konnte keinen Arbeitsbericht hinzufügen
 Task description must not be empty,Die Aufgabenbeschreibung darf nicht leer sein
 Enter complete detail,Vollständige Details eingeben
 Unknown action provided,Aktion unbekannt
-"You have no Worklogs today : Task description must not be empty.","Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein."
+Could not Checkout of work : You have no Worklogs today.,Abwesend der Arbeit nicht möglich : Sie haben heute noch keinen Arbeitsbericht.
+You have no Worklogs today : Task description must not be empty.,Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein.
 Describe your task here,Beschreiben Sie hier Ihre Aufgabe

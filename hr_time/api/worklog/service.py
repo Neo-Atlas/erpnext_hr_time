@@ -3,6 +3,7 @@ import datetime
 from hr_time.api.worklog.repository import WorklogRepository
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api import logger
+from hr_time.api.shared.constants.messages import Messages
 
 
 class WorklogService:
@@ -70,7 +71,7 @@ class WorklogService:
             if employee_id is None:
                 employee_id = get_current_employee_id()
             if not worklog_text.strip():
-                raise ValueError("Task description must not be empty")
+                raise ValueError(Messages.Worklog.EMPTY_TASK_DESC)
 
             log_time = datetime.datetime.now()  # Get current time as log_time
             # Call repository to create the worklog

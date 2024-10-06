@@ -4,7 +4,7 @@
  */
 
 
-import MESSAGES from "../definitions/messages_dictionary";
+import MESSAGES from "../constants/messages.json";
 
 /**
  * Fetchse the current employee ID by calling the backend API.
@@ -20,7 +20,7 @@ const fetchCurrentEmployeeId = () => {
                 if (employee_id) {
                     resolve(employee_id); // Resolve with the employee ID
                 } else {
-                    reject(new Error(MESSAGES.noEmployeeIdFound));
+                    reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE_ID));
                 }
             },
             error: (error) => {
@@ -46,7 +46,7 @@ const fetchWorklogStatus = (employee_id) => {
                 if (response && response.message !== undefined) {
                     resolve(response.message); // Resolve with the worklog status
                 } else {
-                    reject(new Error(MESSAGES.errFetchingWorklogStatus));
+                    reject(new Error(MESSAGES.ERR_GET_WORKLOG_STATUS));
                 }
             },
             error: (error) => {

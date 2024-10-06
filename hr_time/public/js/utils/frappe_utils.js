@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utility functions for displaying alerts and messages in the application. * 
+ * @fileoverview Utility (wrapper) functions for displaying (translatable) alerts and messages in the application. * 
  * @module FrappeUtils
  */
 
@@ -72,12 +72,13 @@ const alert_failure = (msg)=>{
 }
 
 /**
- * Throws an error message.
+ * Throws an error message using Frappe's throw method.
  * 
  * @param {string} msg - The error message to be thrown.
+ * @param {Error} [errorType=Error] - The type of error to be thrown. Defaults to the generic Error.
  */
-const throw_error_msg = (msg)=>{
-  frappe.throw(__(msg))
-}
+const throw_error_msg = (msg, errorType = Error) => {
+  frappe.throw(__(msg), errorType);
+};
 
 export {warn_user, alert_failure, alert_info, alert_success, throw_error_msg}

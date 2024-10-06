@@ -1,11 +1,6 @@
 import frappe
-# from frappe import _
+from frappe import _
 from hr_time.api.worklog.service import WorklogService
-try:
-    from frappe import _
-except ImportError:
-    # Fallback if frappe._ isn't available (for tests)
-    def _(text): return text
 
 
 @frappe.whitelist()
@@ -42,12 +37,12 @@ def create_worklog(employee_id, worklog_text, task=None) -> dict:
 @frappe.whitelist()
 def render_worklog_header() -> str:
     """
-    Renders the HTML template for the worklog textbox's header (label and to full-form page button).
+    Renders the HTML template for the worklog textbox's header (label and enter-complete-detail button).
 
     Returns:
         str: The rendered HTML content for the worklog textbox's header.
     """
     context = {
-        "_": frappe._  # Include the translation helper
+        "_": frappe._  # Including the translation helper
     }
     return frappe.render_template("templates/worklog/worklog_textbox.html", context)

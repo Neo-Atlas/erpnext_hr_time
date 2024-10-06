@@ -1,18 +1,14 @@
 import datetime
 import frappe
-try:
-    from frappe import _
-except ImportError:
-    # Fallback if frappe._ isn't available (for tests)
-    def _(text): return text
-
+from frappe import _
 from typing import Union
 from hr_time.api.check_in.service import CheckinService, State, Action
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 from hr_time.api.worklog.service import WorklogService
-from hr_time.api.utils.frappe_utils import warn_user
+from hr_time.api.shared.utils.frappe_utils import warn_user
+from hr_time.api.shared.constants.messages import Messages
 
 
 @frappe.whitelist()
@@ -128,11 +124,11 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
             if not WorklogService.prod().check_if_employee_has_worklogs_today(employee.id):
                 return {
                     'status': 'error',
-                    'message': 'You have no worklogs today. Please create at least one worklog before checking out.'
+                    'message': Messages.Checkin.FAILED_CHECKOUT_DUE_TO_NO_WORKLOGS
                 }
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
-            warn_user("Unknown action provided")
+            warn_user(Messages.Common.UNKNOWN_ACTION)
 
 
 def get_checkin_status_template_data() -> dict:

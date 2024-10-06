@@ -1,11 +1,8 @@
-import frappe
 from datetime import datetime, timedelta
 from typing import Optional, List
-try:
-    from frappe import _
-except ImportError:
-    # Fallback if frappe._ isn't available (for tests)
-    def _(text): return text
+import frappe
+from frappe import _
+from hr_time.api.shared.constants.messages import Messages
 
 
 class Worklog:
@@ -108,7 +105,7 @@ class WorklogRepository:
             new_worklog.task = task
             new_worklog.save()
 
-            return {'status': 'success', 'message': 'Worklog created successfully'}
+            return {'status': 'success', 'message': Messages.Worklog.SUCCESS_WORKLOG_CREATION}
 
         except Exception as e:
             frappe.db.rollback()  # Rollback transaction in case of failure

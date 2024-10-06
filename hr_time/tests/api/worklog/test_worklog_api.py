@@ -3,6 +3,7 @@ from unittest.mock import patch
 from hr_time.api.worklog.api import has_employee_made_worklogs_today, create_worklog
 from hr_time.api.worklog.repository import Worklog, WorklogRepository
 from hr_time.api.worklog.service import WorklogService
+from hr_time.api.shared.constants.messages import Messages
 
 
 class TestWorklogAPI(unittest.TestCase):
@@ -66,24 +67,23 @@ class TestWorklogAPI(unittest.TestCase):
         employee_id = '001'
         worklog_text = 'Completed task A'
         task = 'TASK001'
-        # Create a mock instance of WorklogService
         mock_service_instance = MockWorklogService.return_value
         mock_service_instance.create_worklog.return_value = {
-            'status': 'success', 'message': 'Worklog created successfully'}  # Mock the return value
+            'status': 'success', 'message': Messages.Worklog.SUCCESS_WORKLOG_CREATION}
 
         # Act
-        result = create_worklog(employee_id, worklog_text, task)  # Call the API method
+        result = create_worklog(employee_id, worklog_text, task)
 
         # Assert
-        self.assertEqual(result['status'], 'success')  # Assert the status
+        self.assertEqual(result['status'], 'success')
         # Assert the message
-        self.assertEqual(result['message'], 'Worklog created successfully')
+        self.assertEqual(result['message'], Messages.Worklog.SUCCESS_WORKLOG_CREATION)
         mock_service_instance.create_worklog.assert_called_once_with(employee_id, worklog_text, task)
 
     def test_create_worklog_empty_description(self):
         # Arrange
         employee_id = '001'
-        worklog_text = ''  # Empty worklog description
+        worklog_text = ''  # Empty Task description
         task = 'TASK001'
 
         # Act
@@ -91,8 +91,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Assert
         self.assertEqual(result['status'], 'error')  # Expect an error status
-        # Expect the error message
-        self.assertEqual(result['message'], "Task description must not be empty")
+        self.assertEqual(result['message'], "Task description must not be empty")   # Expect the error message
 
     @patch('hr_time.api.worklog.repository.WorklogRepository.create_worklog')
     def test_create_worklog_general_exception(self, mock_create_worklog):
@@ -107,5 +106,4 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Assert
         self.assertEqual(result['status'], 'error')  # Expect an error status
-        # Expect the error message
-        self.assertEqual(result['message'], "Database connection failed")
+        self.assertEqual(result['message'], "Database connection failed")   # Expect the error message

@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 import frappe
 from frappe import _
 from hr_time.api.employee.api import get_current_employee_id
+from hr_time.api.shared.constants.messages import Messages
 
 
 class TestGetCurrentEmployeeID(unittest.TestCase):
@@ -27,26 +28,23 @@ class TestGetCurrentEmployeeID(unittest.TestCase):
 
     @patch('hr_time.api.employee.api.EmployeeRepository')
     @patch('frappe.get_user')
-    # Raising the error directly
-    @patch('frappe.throw', side_effect=frappe.DoesNotExistError(
-        "No employee ID found for the current user : Please ensure you are logged in."))
+    # Mocking the frappe.throw directly
+    @patch('frappe.throw', side_effect=frappe.DoesNotExistError(Messages.Employee.NOT_FOUND_EMPLOYEE_ID))
     def test_get_current_employee_id_no_employee(self, mock_throw, mock_get_user, mock_employee_repo):
         # Arrange
         mock_user = MagicMock()
         mock_user.doc.email = "test@example.com"
         mock_get_user.return_value = mock_user
-        # Simulating no current employee found
         mock_employee_repo.return_value.get_current.return_value = None
 
         # Act & Assert
         with self.assertRaises(frappe.DoesNotExistError):
             get_current_employee_id()
 
-        # Ensure the throw function was called with correct arguments
         mock_throw.assert_called_once_with(
-            "No employee ID found for the current user : Please ensure you are logged in.", frappe.DoesNotExistError)
+            Messages.Employee.NOT_FOUND_EMPLOYEE_ID,
+            frappe.DoesNotExistError
+        )
 
-        # Check that EmployeeRepository was called once
         mock_employee_repo.assert_called_once()
-        # Check that get_current was called
         mock_employee_repo.return_value.get_current.assert_called_once()

@@ -77,9 +77,9 @@ class FakeFrappe(object):
         return lambda func: func
 
     @staticmethod
-    def _():
+    def _(text):
         # A simple translation function for mock
-        return lambda text: text
+        return text
 
     @staticmethod
     def get_all(doctype, fields=None, filters=None):
