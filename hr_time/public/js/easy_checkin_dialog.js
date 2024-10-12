@@ -1,6 +1,6 @@
 import { EasyCheckinStatus } from "./easy_checkin_status";
-import { warn_user, alert_success, alert_failure, throw_error_msg } from './utils/frappe_utils'
-import { fetchCurrentEmployeeId, fetchWorklogStatus } from "./api/flextime.api";
+import { FrappeUtils } from './utils/frappe_utils'
+import {FlextimeApi} from "./api/flextime.api";
 import MESSAGES from "./constants/messages.json";
 
 /**
@@ -91,10 +91,10 @@ export class EasyCheckinDialog {
    */
   async show() {
     try{
-      const employee_id = await fetchCurrentEmployeeId()
+      const employee_id = await FlextimeApi.fetchCurrentEmployeeId()
       this.checkWorklogsThenCreateDialog(employee_id); // Call the next step if employee ID is available
     }catch(error){
-      throw_error_msg(MESSAGES.NOT_FOUND_EMPLOYEE_ID); // Show error message if no employee ID
+      FrappeUtils.throw_error_msg(MESSAGES.NOT_FOUND_EMPLOYEE_ID); // Show error message if no employee ID
       console.error(`${MESSAGES.ERR_GET_EMPLOYEE_ID} : ${error}`);
     }
   }
@@ -105,7 +105,7 @@ export class EasyCheckinDialog {
    */
   async checkWorklogsThenCreateDialog(employee_id) {
     try{
-      const hasWorklogs = await fetchWorklogStatus(employee_id)
+      const hasWorklogs = await FlextimeApi.fetchWorklogStatus(employee_id)
       this.hasWorklogs = hasWorklogs
       this.createCheckinDialog(employee_id);
     }catch(error){
@@ -131,7 +131,7 @@ export class EasyCheckinDialog {
         // Submit only Checkin for actions other than 'End of work' OR if 'Task Description' is empty when Checking out
         if(actionValue !== EasyCheckinDialog.ACTIONS.EOW || !trimmed_worklog_text){
           if (actionValue === EasyCheckinDialog.ACTIONS.EOW && !this.hasWorklogs) {
-            warn_user(MESSAGES.EMPTY_TASK_DESC_WHEN_WORKLOGS);
+            FrappeUtils.warn_user(MESSAGES.EMPTY_TASK_DESC_WHEN_WORKLOGS);
             return;
           }
           this.submitCheckin(values, employee_id);
@@ -186,7 +186,7 @@ export class EasyCheckinDialog {
     const isEndOfWork = action_value === EasyCheckinDialog.ACTIONS.EOW;
 
     if(isEndOfWork){
-      fetchWorklogStatus(employee_id)
+      FlextimeApi.fetchWorklogStatus(employee_id)
       .then((hasWorklogs) => {
         this.hasWorklogs = hasWorklogs
         this.dialogUI.$wrapper.find("label#worklog_section_label")
@@ -243,7 +243,7 @@ export class EasyCheckinDialog {
       callback: (response) => {
         // Exit early if there is an error in the response
         if (response && typeof response.message === 'object' && response.message.status === 'error') {
-          alert_failure(response.message.message)
+          FrappeUtils.alert_failure(response.message.message)
           return;
         }
 
@@ -256,8 +256,6 @@ export class EasyCheckinDialog {
         // Check the action and set the appropriate message
         switch (values.action) {
           case EasyCheckinDialog.ACTIONS.BRK:
-            console.log('here');
-            
             message = MESSAGES.SUCCESS_BREAK;
             break;
           case EasyCheckinDialog.ACTIONS.EOW:
@@ -271,8 +269,12 @@ export class EasyCheckinDialog {
         }
         // Hide the dialog and show a success alert
         this.dialogUI.hide();
-        alert_success(message);
+        FrappeUtils.alert_success(message);
       },
+      error: (error) => {
+        console.error("An error occurred when submitting Checkin:", error); // Handle exceptions or any uncaught errors from the backend
+        FrappeUtils.alert_failure(error.message);
+      }
     });
   }
 
@@ -288,19 +290,23 @@ export class EasyCheckinDialog {
         worklog_text: worklog_text,
       },
       callback: (response) => {
-        if (response &&  response.message && typeof response.message === 'object') {
+        if (response.message && typeof response.message === 'object') {
           const { status, message: resMessage } = response.message;
 
           if(typeof status === 'string' && status !== "success"){
-            alert_failure(resMessage);
-            alert_failure(MESSAGES.FAILED_CHECKOUT);
+            FrappeUtils.alert_failure(resMessage);
+            FrappeUtils.alert_failure(MESSAGES.FAILED_CHECKOUT);
           }else {
-            alert_success(MESSAGES.SUCCESS_WORKLOG_ADDITION)
+            FrappeUtils.alert_success(MESSAGES.SUCCESS_WORKLOG_ADDITION)
             this.hasWorklogs = true;
             this.submitCheckin(values, employee_id);
           }
         }
       },
+      error: (error) => {
+        console.error("An error occurred when creating Worklog:", error);
+        FrappeUtils.alert_failure(error.message);
+      }
     });
   }
 

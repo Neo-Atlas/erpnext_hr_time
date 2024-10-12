@@ -77,7 +77,6 @@ class FlexTimeProcessingService:
         break_times = self.break_times.get_definitions()
 
         for employee in employees:
-
             logger.info("Starting flextime processing of employee " + employee.id)
 
             if employee.time_model is not TimeModel.Flextime:
@@ -125,40 +124,31 @@ class FlexTimeProcessingService:
             logger.info(employee.id + ": Processing day " + current_day.isoformat())
 
             attendance = self.attendance.get(employee.id, current_day)
-            target_working_time = definitions.get_for_weekday(
-                current_day.weekday()).working_time
+            target_working_time = definitions.get_for_weekday(current_day.weekday()).working_time
 
             if self.holidays.is_holiday(current_day):
                 target_working_time = 0
                 logger.info("Detected " + str(current_day) + " as holiday and set target working time to zero")
             elif attendance is not None and attendance.status is Status.OnLeave:
-                request = self.vacation.get_approved_request(
-                    employee.id, current_day)
+                request = self.vacation.get_approved_request(employee.id, current_day)
 
                 if request is None:
                     target_working_time = 0
                     logger.info("Detected " + str(current_day) + " as regular leave, but found no vacation request")
                 elif request.is_half_day:
                     target_working_time /= 2
-                    worklogs = self.worklog.get_worklogs_of_employee_on_date(
-                        employee.id, current_day)
+                    worklogs = self.worklog.get_worklogs_of_employee_on_date(employee.id, current_day)
                     logger.info("Detected " + str(current_day) + " as regular leave with half-day vacation request")
                 else:
                     target_working_time = 0
                     logger.info("Detected " + str(current_day) + " as regular leave with full-day vacation request")
             else:
-                worklogs = self.worklog.get_worklogs_of_employee_on_date(
-                    employee.id, current_day)
+                worklogs = self.worklog.get_worklogs_of_employee_on_date(employee.id, current_day)
                 logger.info("Set target working time to " + str(target_working_time))
 
-            status = FlextimeDailyStatus(
-                employee.id,
-                current_day,
-                target_working_time
-            )
+            status = FlextimeDailyStatus(employee.id, current_day, target_working_time)
 
-            durations = self.checkin.get(
-                current_day, employee.id).get_durations()
+            durations = self.checkin.get(current_day, employee.id).get_durations()
             logger.info("Found " + str(len(durations)) + " durations")
 
             for duration in durations:
@@ -201,5 +191,4 @@ class FlexTimeProcessingService:
         else:
             status = Status.Absent
 
-        self.attendance.create(Attendance(
-            flextime_status.employee_id, flextime_status.date, status, None))
+        self.attendance.create(Attendance(flextime_status.employee_id, flextime_status.date, status, None))

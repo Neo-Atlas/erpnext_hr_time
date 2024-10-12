@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from typing import Optional, List
 import frappe
 from frappe import _
@@ -11,12 +11,24 @@ class Worklog:
 
     Attributes:
         employee_id (str): ID of the employee who created the worklog.
-        log_time (datetime.date): The date and time the worklog refers to.
+        log_time (datetime.datetime): The date and time the worklog refers to.
         task_desc (str): A description of the task completed in the worklog.
         task (Optional[str]): Optional reference to a specific task (TASK doctype) related to the worklog.
     """
 
-    def __init__(self, employee_id: str, log_time: datetime.date, task_desc: str, task: Optional[str] = None):
+    # ID of the Employee for whom the Worklog is to be created
+    employee_id: str
+
+    # Log time for the task (includes both date and time)
+    log_time: datetime
+
+    # Description of the task
+    task_desc: str
+
+    # Optional task the log is associated to
+    task: Optional[str]
+
+    def __init__(self, employee_id: str, log_time: datetime, task_desc: str, task: Optional[str] = None):
         self.employee_id = employee_id
         self.log_time = log_time
         self.task_desc = task_desc
@@ -66,8 +78,8 @@ class WorklogRepository:
         """
         worklogs = []
         # Define the date filter to include the whole day (date_start to date_end)
-        date_start = datetime.combine(date, datetime.min.time())
-        date_end = datetime.combine(date, datetime.max.time())
+        date_start = datetime.combine(date, time(0, 0, 0))
+        date_end = datetime.combine(date, time(23, 59, 59))
 
         # Fetch worklogs for the employee on the specific date (# Filter logtime by full day)
         docs = self.get_worklogs({"employee": employee_id, "log_time": ["between", [date_start, date_end]]})
@@ -87,7 +99,7 @@ class WorklogRepository:
 
         Args:
             employee_id (str): The ID of the employee creating the worklog.
-            log_time (datetime): The date and time the worklog refers to.
+            log_time (datetime.datetime): The date and time the worklog refers to.
             worklog_text (str): The content or description of the worklog.
             task (Optional[str]): Optional reference to a specific task associated with the worklog.
 

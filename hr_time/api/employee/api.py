@@ -3,7 +3,7 @@ import frappe
 from frappe import _
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.api.shared.constants.messages import Messages
-from hr_time.api.shared.utils.frappe_utils import throw_error_msg
+from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 
 
 @frappe.whitelist()
@@ -19,6 +19,6 @@ def get_current_employee_id() -> Optional[str]:
     """
     employee = EmployeeRepository().get_current()
     if employee is None:
-        throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
+        FrappeUtils.throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
     else:
         return employee.id

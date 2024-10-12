@@ -103,11 +103,11 @@ class TestWorklogService(unittest.TestCase):
         employee_id = '001'
         worklog_text = 'Completed task B'
         task = 'TASK002'
-        self.worklog_repository.create_worklog.side_effect = Exception("Database error")
+        self.worklog_repository.create_worklog.side_effect = Exception(Messages.Common.ERR_DB)
 
         # Act
         result = self.worklog_service.create_worklog(employee_id, worklog_text, task)
 
         # Assert
         self.assertEqual(result['status'], 'error')
-        self.assertEqual(result['message'], "Database error")
+        self.assertEqual(result['message'], Messages.Common.ERR_DB)

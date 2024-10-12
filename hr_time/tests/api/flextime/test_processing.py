@@ -17,7 +17,7 @@ from hr_time.api.vacation.repository import VacationRepository, Request
 from hr_time.api.worklog.repository import WorklogRepository, Worklog
 
 
-class FlextimeProcessingTest(unittest.TestCase):
+class TestFlextimeProcessing(unittest.TestCase):
     flextime_definition: FlextimeDefinition
 
     clock: Clock

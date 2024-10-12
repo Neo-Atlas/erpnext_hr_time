@@ -7,7 +7,7 @@ from hr_time.api.employee.repository import EmployeeRepository, TimeModel
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 from hr_time.api.worklog.service import WorklogService
-from hr_time.api.shared.utils.frappe_utils import warn_user
+from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 from hr_time.api.shared.constants.messages import Messages
 
 
@@ -112,6 +112,9 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
         Union[None, dict]: Returns None when the action is successfully processed.
                            Returns a dict with an error message if "End of work"
                            is selected and no worklogs exist for the day.
+
+    Raises:
+        frappe.DoesNotExistError: If an unknown action is provided.
     """
     employee = EmployeeRepository().get_current()
     match action:
@@ -128,7 +131,7 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
                 }
             CheckinService.prod().checkin(Action.endOfWork)
         case _:
-            warn_user(Messages.Common.UNKNOWN_ACTION)
+            FrappeUtils.throw_error_msg(Messages.Common.UNKNOWN_ACTION, frappe.DoesNotExistError)
 
 
 def get_checkin_status_template_data() -> dict:

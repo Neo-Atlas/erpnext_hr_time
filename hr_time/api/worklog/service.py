@@ -1,5 +1,5 @@
 
-import datetime
+from datetime import datetime
 from hr_time.api.worklog.repository import WorklogRepository
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api import logger
@@ -73,7 +73,7 @@ class WorklogService:
             if not worklog_text.strip():
                 raise ValueError(Messages.Worklog.EMPTY_TASK_DESC)
 
-            log_time = datetime.datetime.now()  # Get current time as log_time
+            log_time = datetime.now()  # Get current time as log_time
             # Call repository to create the worklog
             result = self.worklog.create_worklog(employee_id, log_time, worklog_text, task)
 
@@ -81,10 +81,10 @@ class WorklogService:
 
         except ValueError as ve:
             # Handle specific ValueError
-            logger.error(f"Validation error: {str(ve)}", 'Worklog Creation Error')
+            logger.error(f"Validation error: {str(ve)}", Messages.Worklog.ERR_CREATE_WORKLOG)
             return {'status': 'error', 'message': str(ve)}
 
         except Exception as e:
             # Centralized error handling and logging
-            logger.error(f"Error creating worklog: {str(e)}", 'Worklog Creation Error')
+            logger.error(f"Error : {str(e)}", Messages.Worklog.ERR_CREATE_WORKLOG)
             return {'status': 'error', 'message': str(e)}

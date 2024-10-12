@@ -10,7 +10,7 @@ from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeMo
 from hr_time.tests.fixtures import Fixtures
 
 
-class CheckinServiceTest(unittest.TestCase):
+class TestCheckinService(unittest.TestCase):
     employee: EmployeeRepository
     data: CheckinRepository
 

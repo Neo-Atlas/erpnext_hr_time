@@ -12,7 +12,7 @@ from hr_time.api.shared.utils.clock import Clock
 from hr_time.tests.fixtures import Fixtures
 
 
-class FlextimeStatisticsServiceTest(unittest.TestCase):
+class TestFlextimeStatisticsService(unittest.TestCase):
     clock: Clock
     employee: EmployeeRepository
     status: FlextimeStatusRepository

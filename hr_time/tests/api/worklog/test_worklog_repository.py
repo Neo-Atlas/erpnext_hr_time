@@ -81,15 +81,16 @@ class TestWorklogRepository(unittest.TestCase):
     @patch('hr_time.api.worklog.repository.frappe.db.rollback')
     def test_create_worklog_failure(self, mock_rollback, mock_new_doc):
         # Arrange
-        mock_new_doc.side_effect = Exception("Database error")
+        mock_new_doc.side_effect = Exception(Messages.Common.ERR_DB)
         employee_id = 'EMP001'
         log_time = datetime(2024, 10, 10, 9, 0)
         worklog_text = 'Completed task'
         task = 'TASK001'
 
         # Act & Assert
-        with self.assertRaises(Exception):
+        with self.assertRaises(Exception) as context:
             self.repo.create_worklog(employee_id, log_time, worklog_text, task)
-
+        # Ensure the exception contains the ERR_DB message
+        self.assertEqual(str(context.exception), Messages.Common.ERR_DB)
         # Ensure rollback is called on failure
         mock_rollback.assert_called_once()
