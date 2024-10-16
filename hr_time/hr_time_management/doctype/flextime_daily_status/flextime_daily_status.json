@@ -22,7 +22,9 @@
   "flextime_delta",
   "section_break_s9nzl",
   "checkin_list",
-  "amended_from"
+  "amended_from",
+  "section_break_o3fv",
+  "worklog_report"
  ],
  "fields": [
   {
@@ -118,13 +120,23 @@
    "fieldname": "break_time_deducted",
    "fieldtype": "Duration",
    "label": "Deducted break time"
+  },
+  {
+   "fieldname": "section_break_o3fv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "worklog_report",
+   "fieldtype": "Table",
+   "label": "Daily Worklogs",
+   "options": "Worklog Report"
   }
  ],
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-11-15 16:31:13.385285",
+ "modified": "2024-09-20 21:34:10.144317",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime daily status",
@@ -162,6 +174,7 @@
   {
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,

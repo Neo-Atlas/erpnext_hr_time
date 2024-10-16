@@ -4,7 +4,7 @@ import math
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.api.flextime.repository import FlextimeStatusRepository
-from hr_time.api.utils.clock import Clock
+from hr_time.api.shared.utils.clock import Clock
 
 
 class FlextimeBalance:

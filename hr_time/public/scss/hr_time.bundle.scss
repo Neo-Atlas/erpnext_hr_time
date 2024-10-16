@@ -1,2 +1,20 @@
 @import "./dashboard";
 @import "./checkin_status";
+
+label#worklog_section_label{
+    &.not-filled::after {
+        content: "\0021"; /* unicode for (! icon) */
+        margin-left: 2px;
+        color: red;
+        font-size: 1.2em;
+    }
+
+    &.filled::after{
+        content:''
+    }
+}
+
+[data-fieldname="worklog_box"] textarea{
+    min-height: 70px;
+    max-height: 200px;
+}
