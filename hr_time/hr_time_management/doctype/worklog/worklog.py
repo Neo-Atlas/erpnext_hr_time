@@ -19,9 +19,6 @@ class Worklog(Document):
         if not self.employee:
             self.set_employee_from_user()
 
-    def before_submit(self):
-        pass
-
     def set_employee_from_user(self):
         # Fetch the employee record linked to the current user
         user_id = frappe.session.user

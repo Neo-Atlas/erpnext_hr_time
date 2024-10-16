@@ -7,10 +7,7 @@ app_description = "Time management module for HR"
 app_email = "info@atlasaero.eu"
 app_license = "MIT"
 
-fixtures = [
-    "Custom Field",
-    {"doctype": "DocType", "filters": [["name", "in", ["Worklog", "Flextime daily status", "Worklog Report"]]]}
-]
+fixtures = ["Custom Field"]
 app_include_css = ['hr_time.bundle.css']
 app_include_js = ["hr_time.bundle.js"]
 

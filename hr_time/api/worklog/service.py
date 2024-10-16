@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, date
 from hr_time.api.worklog.repository import WorklogRepository
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api import logger
@@ -46,7 +46,7 @@ class WorklogService:
         Returns:
             bool: True if the employee has worklogs for the current day, False otherwise.
         """
-        today = datetime.date.today()
+        today = date.today()
         worklogs = self.worklog.get_worklogs_of_employee_on_date(employee_id, today)
         return len(worklogs) > 0
 
@@ -65,7 +65,8 @@ class WorklogService:
             dict: A dictionary indicating the success or failure of the worklog creation process.
 
         Raises:
-            ValueError: If the task description is empty.
+            ValueError: If the worklog text (task description) is empty.
+            Exception: If any other error occurs during worklog creation.
         """
         try:
             if employee_id is None:
@@ -73,7 +74,8 @@ class WorklogService:
             if not worklog_text.strip():
                 raise ValueError(Messages.Worklog.EMPTY_TASK_DESC)
 
-            log_time = datetime.now()  # Get current time as log_time
+            # Get current time as log_time
+            log_time = datetime.now()
             # Call repository to create the worklog
             result = self.worklog.create_worklog(employee_id, log_time, worklog_text, task)
 
