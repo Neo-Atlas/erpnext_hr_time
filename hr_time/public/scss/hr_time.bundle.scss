@@ -1,20 +1,31 @@
+@import 'mixins';
 @import "./dashboard";
 @import "./checkin_status";
 
-label#worklog_section_label{
-    &.not-filled::after {
-        content: "\0021"; /* unicode for (! icon) */
-        margin-left: 2px;
-        color: red;
-        font-size: 1.2em;
-    }
-
-    &.filled::after{
-        content:''
-    }
+.modal .modal-body{
+    padding-bottom: 0 !important;
 }
 
-[data-fieldname="worklog_box"] textarea{
-    min-height: 70px;
-    max-height: 200px;
+label#worklog_section_label{
+    margin-bottom: 0 !important;
+}
+
+.worklog-status-alert{
+    @include flex-center;
+    @include badge;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
+    border: 1px solid #dee2e6;  /* border with default color */
+}
+
+[data-fieldname="worklog_box"]{
+    .clearfix{
+        height: 10px !important;
+    }
+
+    textarea{
+        min-height: 70px;
+        max-height: 200px;
+    }
 }

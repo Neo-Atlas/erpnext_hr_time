@@ -11,7 +11,7 @@ import MESSAGES from "../constants/messages.json";
  */
 export class FlextimeApi{
     /**
-     * Fetchse the current employee ID by calling the backend API.
+     * Fetches the current employee ID by calling the backend API.
      * 
      * @returns {Promise<string>} A promise that resolves with the employee ID or rejects with an error message.
      */

@@ -88,7 +88,8 @@ export class FrappeUtils{
    * Throws an error message using Frappe's throw method.
    * 
    * @param {string} msg - The error message to be thrown.
-   * @param {Error} [errorType=Error] - The type of error to be thrown. Defaults to the generic Error.
+   * @param {ErrorConstructor} [errorType=Error] - The constructor of the error to be thrown. 
+   *                                                Defaults to the generic Error.
    */
   static throw_error_msg = (msg, errorType = Error) => {
     frappe.throw(__(msg), errorType);

@@ -170,7 +170,7 @@ export class EasyCheckinDialog {
       {
         fieldname: "worklog_box",
         fieldtype: "Text",
-        placeholder: __(EasyCheckinDialog.LABELS.PLACEHOLDER_WORKLOG_TASK_DESC) + " 🖉",
+        placeholder: __(EasyCheckinDialog.LABELS.PLACEHOLDER_WORKLOG_TASK_DESC),
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
       }
     ];
@@ -192,6 +192,10 @@ export class EasyCheckinDialog {
         this.dialogUI.$wrapper.find("label#worklog_section_label")
           .toggleClass("filled", this.hasWorklogs)
           .toggleClass("not-filled", !this.hasWorklogs);
+        this.dialogUI.$wrapper.find(".worklog-status-alert.alert-danger")
+          .toggle(!this.hasWorklogs)
+        this.dialogUI.$wrapper.find(".worklog-status-alert.alert-success")
+          .toggle(this.hasWorklogs)
       })
       .catch((error) => {
         console.error(`${MESSAGES.ERR_GET_WORKLOG_STATUS}: ${error}`);

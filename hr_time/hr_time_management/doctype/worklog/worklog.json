@@ -10,7 +10,8 @@
   "log_time",
   "task_desc",
   "amended_from",
-  "task"
+  "task",
+  "ticket_link"
  ],
  "fields": [
   {
@@ -55,11 +56,17 @@
    "in_standard_filter": 1,
    "label": "Task",
    "options": "Task"
+  },
+  {
+   "fieldname": "ticket_link",
+   "fieldtype": "Data",
+   "label": "Ticket Link",
+   "options": "URL"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-16 11:17:43.710780",
+ "modified": "2024-10-21 18:14:08.546258",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Worklog",

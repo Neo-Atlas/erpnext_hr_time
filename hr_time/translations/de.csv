@@ -82,6 +82,7 @@ Time,Zeit
 Task Description,Aufgabenbeschreibung
 Task,Aufgabe
 Action,Aktion
+WARNING,WARNUNG
 No Employee record found for the current user.,Kein Mitarbeiterdatensatz für den aktuellen Benutzer gefunden.
 No employee ID found for the current user : Please ensure you are logged in.,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind.
 Worklog,Arbeitsbericht
@@ -95,3 +96,7 @@ Unknown action provided,Aktion unbekannt
 Could not Checkout of work : You have no Worklogs today.,Abwesend der Arbeit nicht möglich : Sie haben heute noch keinen Arbeitsbericht.
 You have no Worklogs today : Task description must not be empty.,Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein.
 Describe your task here,Beschreiben Sie hier Ihre Aufgabe
+Ticket Link,Link zum Ticket
+No worklog entered for today.,Für heute wurde kein Arbeitsbericht eingegeben.
+Worklog has already been entered for today.,Der Arbeitsbericht wurde bereits für heute eingegeben.
+The entered time cannot be in the future.,Der eingegebene Zeitpunkt kann nicht in der Zukunft liegen.

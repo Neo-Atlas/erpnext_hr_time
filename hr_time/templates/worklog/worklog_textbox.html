@@ -1,7 +1,15 @@
 <div class="d-flex justify-between" id="worklog_template">
-    <label id="worklog_section_label">{{ _("Add Worklog") }}</label>
-    <button class="btn btn-outline-info btn-xs edit-full-form-btn">
+    <label id="worklog_section_label" class="control-label">{{ _("Add Worklog") }}</label>
+    <button class="btn btn-xs btn-outline-info edit-full-form-btn" type="button">
         {{ _("Enter complete detail") }}
         &nearr;
     </button>
+</div>
+<div class="worklog-status-alert alert-danger border-danger" role="alert">
+    <span class="mr-2 mb-0 h1 text-danger">&cross;</span>
+    {{ _("No worklog entered for today.") }}
+</div>
+<div class="worklog-status-alert alert-success border-success" role="alert">
+    <span class="mr-2 mb-0 h1 text-success">&check;</span>
+    {{ _("Worklog has already been entered for today.") }}
 </div>

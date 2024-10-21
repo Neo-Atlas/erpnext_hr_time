@@ -9,5 +9,8 @@
   "SUCCESS_WORKLOG_ADDITION": "Worklog added successfully",
   "ERR_GET_WORKLOG_STATUS": "Error fetching worklog status",
   "EMPTY_TASK_DESC_WHEN_WORKLOGS": "You have no Worklogs today : Task description must not be empty.",
-  "UNKNOWN_ACTION": "Unknown action provided"
+  "ALERT_NO_WORKLOG":"No worklog entered for today.",
+  "ALERT_YES_WORKLOG":"Worklog has already been entered for today.",
+  "UNKNOWN_ACTION": "Unknown action provided",
+  "ERR_DATE_IN_FUTURE": "The entered date cannot be in the future."
 }
