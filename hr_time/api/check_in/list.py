@@ -4,7 +4,7 @@ from typing import Optional
 from hr_time.api import logger
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.flextime.repository import CheckinDuration
-from hr_time.api.utils.clock import Clock
+from hr_time.api.shared.utils.clock import Clock
 
 
 class CheckinList:

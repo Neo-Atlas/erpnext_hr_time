@@ -25,6 +25,7 @@ Flextime delta,Kontodifferenz
 Current flextime account balance [hours],Aktueller Gleitzeitkontostand [Stunden]
 Current flextime account balance,Aktueller Gleitzeitkontostand
 Checkin/Checkout list,Anwesenheits- und Pausenzeiten
+Failed to preload check-in options, Anwesenheits-Optionen konnten nicht vorgeladen werden
 Time start,Beginn
 Time end,Ende
 Type,Typ
@@ -60,8 +61,8 @@ Checkin,Status Zeiterfassung
 End of work,Arbeitsende/-unterbrechung
 Start of work,Arbeitsbeginn/-fortführung
 Successfully checked in,Arbeitsbeginn/-fortführung erfolgreich erfasst
-Successfully checked out for break,Beginn der Pause erfolgreich erfasst
-Successfully checked out for end of work,Arbeitsende/-unterbrechung erfolgreich erfasst
+Successfully checked out for Break,Beginn der Pause erfolgreich erfasst
+Successfully checked out for End of Work,Arbeitsende/-unterbrechung erfolgreich erfasst
 Employees present,Anwesende Mitarbeiter
 Current status since,Aktueller Status seit
 Work start today,Heutiger Arbeitsbeginn
@@ -76,3 +77,26 @@ Employee,Mitarbeiter*in
 Employee Checkin,Zeiterfassung
 "Documents and Events","Dokumente und Protokolle"
 Standard full-time 40 hours,Standard Vollzeit 40 Stunden
+Timestamp,Zeitstempel
+Time,Zeit
+Task Description,Aufgabenbeschreibung
+Task,Aufgabe
+Action,Aktion
+WARNING,WARNUNG
+No Employee record found for the current user.,Kein Mitarbeiterdatensatz für den aktuellen Benutzer gefunden.
+No employee ID found for the current user : Please ensure you are logged in.,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind.
+Worklog,Arbeitsbericht
+Add Worklog,Arbeitsbericht hinzufügen
+Worklog added successfully,Arbeitsbericht erfolgreich hinzugefügt
+Worklog created successfully,Arbeitsbericht erfolgreich erstellt
+Failed to add Worklog,Konnte keinen Arbeitsbericht hinzufügen
+Task description must not be empty,Die Aufgabenbeschreibung darf nicht leer sein
+Enter complete detail,Vollständige Details eingeben
+Unknown action provided,Aktion unbekannt
+Could not Checkout of work : You have no Worklogs today.,Abwesend der Arbeit nicht möglich : Sie haben heute noch keinen Arbeitsbericht.
+You have no Worklogs today : Task description must not be empty.,Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein.
+Describe your task here,Beschreiben Sie hier Ihre Aufgabe
+Ticket Link,Link zum Ticket
+No worklog entered for today.,Für heute wurde kein Arbeitsbericht eingegeben.
+Worklog has already been entered for today.,Der Arbeitsbericht wurde bereits für heute eingegeben.
+The entered time cannot be in the future.,Der eingegebene Zeitpunkt kann nicht in der Zukunft liegen.
