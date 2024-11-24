@@ -3,7 +3,7 @@ import unittest
 from hr_time.api.flextime.stats import FlextimeBalance
 
 
-class FlextimeBalanceTests(unittest.TestCase):
+class TestFlextimeBalance(unittest.TestCase):
     def test_init_positive_balance_positive_trend(self):
         balance = FlextimeBalance(1.3, 0.56)
 

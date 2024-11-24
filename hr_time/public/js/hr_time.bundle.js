@@ -6,7 +6,7 @@ document.bind_dashboard_easy_checkin = () => {
 }
 
 $(document).ready(function () {
-    EasyCheckinDialog.singleton().preload()
+    EasyCheckinDialog.singleton().preloadCheckinOptions()
 
     frappe.run_serially([
       () => EasyCheckinStatus.render(),

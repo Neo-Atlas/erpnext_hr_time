@@ -6,6 +6,7 @@ import frappe
 
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.employee.repository import Employee
+from hr_time.api.worklog.repository import Worklog
 from hr_time.api.flextime.break_time import BreakTimeDefinitions
 
 
@@ -40,7 +41,6 @@ class CheckinDuration:
         self.duration_type = duration_type
         self.event_first = event_first
         self.event_second = event_second
-
         self.total_time = (self.end - self.start).seconds.numerator
 
     @staticmethod
@@ -81,6 +81,9 @@ class FlextimeDailyStatus:
     # List of single checkin/checkout events
     durations: list[CheckinDuration]
 
+    # List of daily worklogs
+    daily_worklogs: list[Worklog]
+
     def __init__(self, employee_id: str, date: datetime.date, target_working_time: int):
         self.employee_id = employee_id
         self.date = date
@@ -90,9 +93,13 @@ class FlextimeDailyStatus:
         self.target_working_time = target_working_time
         self.flextime_delta = 0
         self.durations = []
+        self.daily_worklogs = []
 
     def insert_duration(self, duration: CheckinDuration):
         self.durations.append(duration)
+
+    def insert_worklogs(self, worklog: Worklog):
+        self.daily_worklogs.append(worklog)
 
     # Calculates the status values based on durations
     def calculate(self, break_definition: BreakTimeDefinitions, deducted_time_on_no_break: int, is_minor: bool,
@@ -154,7 +161,7 @@ class FlextimeStatusRepository:
 
         return docs[0].time_balance
 
-    # Saves a new daily status
+    # Saves a new daily status with checkin duration and worklog reports
     def add(self, status: FlextimeDailyStatus):
         parent = frappe.new_doc("Flextime daily status")
         parent.employee = status.employee_id
@@ -176,6 +183,13 @@ class FlextimeStatusRepository:
             child.checkout = duration.event_second
             child.save()
 
-        # parent = frappe.get_doc("Flextime daily status", parent.name)
+        for worklog in status.daily_worklogs:
+            child = frappe.new_doc("Worklog Report", parent_doc=parent, parentfield="worklog_report")
+            child.employee = worklog.employee_id
+            child.log_time = worklog.log_time
+            child.task = worklog.task
+            child.task_desc = worklog.task_desc
+            child.save()
+
         parent.load_from_db()
         parent.submit()

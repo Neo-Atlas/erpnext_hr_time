@@ -1,0 +1,39 @@
+.modal .modal-body{
+    padding-bottom: 0 !important;
+}
+
+label#worklog_section_label{
+    margin-bottom: 0 !important;
+}
+
+.worklog-status-alert{
+    @include flex-center;
+    @include badge;
+    opacity: 0.9;
+    font-size: var(--text-sm);
+    margin-top: 1rem;
+    margin-bottom: 0;
+    border-width: 1px;
+    border-style: solid;
+    
+    &.danger{
+        color: var(--alert-text-danger);
+        background: var(--alert-bg-danger);
+    }
+
+    &.success{
+        color: var(--alert-text-success);
+        background: var(--alert-bg-success);
+    }
+}
+
+[data-fieldname="worklog_box"]{
+    .clearfix{
+        height: 10px !important;
+    }
+
+    textarea{
+        min-height: 70px;
+        max-height: 200px;
+    }
+}

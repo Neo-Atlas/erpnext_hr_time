@@ -1,2 +1,4 @@
-@import "./dashboard";
-@import "./checkin_status";
+@import 'mixins';
+@import 'dashboard';
+@import 'checkin_status';
+@import 'easy_checkin_dialog'

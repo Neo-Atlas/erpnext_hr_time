@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"1qGzgiC4ku\",\"type\":\"paragraph\",\"data\":{\"text\":\"Status\",\"col\":12}},{\"id\":\"-utdX4KjtV\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Checkin status\",\"col\":4}},{\"id\":\"VME_p7Ry-U\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"CKsdGQymXg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Employees present\",\"col\":4}},{\"id\":\"zVuvhRQLKA\",\"type\":\"paragraph\",\"data\":{\"text\":\"Dokumente und Protokolle\",\"col\":12}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":6}},{\"id\":\"AjqPpwkzn3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Employee Checkin\",\"col\":6}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
+ "content": "[{\"id\":\"1qGzgiC4ku\",\"type\":\"paragraph\",\"data\":{\"text\":\"Status\",\"col\":12}},{\"id\":\"-utdX4KjtV\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Checkin status\",\"col\":4}},{\"id\":\"VME_p7Ry-U\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Current flextime account balance\",\"col\":4}},{\"id\":\"CKsdGQymXg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Employees present\",\"col\":4}},{\"id\":\"EJVUUeThBB\",\"type\":\"paragraph\",\"data\":{\"text\":\"Worklog\",\"col\":12}},{\"id\":\"6WUDboXWkw\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest Summary\",\"col\":12}},{\"id\":\"zVuvhRQLKA\",\"type\":\"paragraph\",\"data\":{\"text\":\"Dokumente und Protokolle\",\"col\":12}},{\"id\":\"Rn_APNNsyA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Latest daily status\",\"col\":6}},{\"id\":\"AjqPpwkzn3\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Employee Checkin\",\"col\":6}},{\"id\":\"yzQekD3FzU\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d17sb8caQD\",\"type\":\"card\",\"data\":{\"card_name\":\"Einstellungen\",\"col\":4}},{\"id\":\"bPUfHZRJPG\",\"type\":\"card\",\"data\":{\"card_name\":\"Tools\",\"col\":4}}]",
  "creation": "2023-10-16 22:03:41.419125",
  "custom_blocks": [],
  "docstatus": 0,
@@ -59,7 +59,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-10-31 17:13:07.587815",
+ "modified": "2024-09-10 09:40:47.112379",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Flextime",
@@ -82,6 +82,11 @@
  "public": 1,
  "quick_lists": [
   {
+   "document_type": "Worklog",
+   "label": "Latest Summary",
+   "quick_list_filter": "[]"
+  },
+  {
    "document_type": "Employee Checkin",
    "label": "Employee Checkin"
   },
@@ -91,7 +96,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 12.0,
+ "sequence_id": 9.0,
  "shortcuts": [],
  "title": "Flextime"
 }

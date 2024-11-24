@@ -6,11 +6,11 @@ from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.list import CheckinList
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.check_in.service import CheckinService, State, Action
-from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeModel
+from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.tests.fixtures import Fixtures
 
 
-class CheckinServiceTest(unittest.TestCase):
+class TestCheckinService(unittest.TestCase):
     employee: EmployeeRepository
     data: CheckinRepository
 
