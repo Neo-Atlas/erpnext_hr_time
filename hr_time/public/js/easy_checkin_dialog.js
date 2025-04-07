@@ -59,6 +59,7 @@ export class EasyCheckinDialog {
   static ACTIONS = {
     EOW: 'End of work',
     BRK: 'Break',
+    RES: 'Resume work',
     SOW: 'Start of work'
   };
 
@@ -301,6 +302,9 @@ export class EasyCheckinDialog {
             break;
           case EasyCheckinDialog.ACTIONS.EOW:
             message = MESSAGES.SUCCESS_CHECKOUT;
+            break;
+          case EasyCheckinDialog.ACTIONS.RES:
+            message = MESSAGES.SUCCESS_RESUME;
             break;
           case EasyCheckinDialog.ACTIONS.SOW:
             message = MESSAGES.SUCCESS_CHECKIN;

@@ -4,6 +4,7 @@
   "SUCCESS_BREAK": "Successfully checked out for Break",
   "SUCCESS_CHECKOUT": "Successfully checked out for End of Work",
   "SUCCESS_CHECKIN": "Successfully checked in",
+  "SUCCESS_RESUME": "Work resumed",
   "FAILED_CHECKOUT": "Could not Checkout of work",
   "ERR_GET_EMPLOYEE_ID": "Error fetching employee ID",
   "SUCCESS_WORKLOG_ADDITION": "Worklog added successfully",
