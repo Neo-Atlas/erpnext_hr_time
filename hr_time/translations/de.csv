@@ -59,12 +59,14 @@ Checked out,Abwesend
 Break,Pause
 Checkin,Status Zeiterfassung
 End of work,Arbeitsende/-unterbrechung
+Resume work,Arbeit wieder aufnehmen
 Start of work,Arbeitsbeginn/-fortführung
 Successfully checked in,Arbeitsbeginn/-fortführung erfolgreich erfasst
 Work resumed,Wiederaufnahme der Arbeit
 Resume work,Arbeit fortsetzen
 Successfully checked out for Break,Beginn der Pause erfolgreich erfasst
 Successfully checked out for End of Work,Arbeitsende/-unterbrechung erfolgreich erfasst
+Successfully resumed work,Erfolgreiche Wiederaufnahme der Arbeit
 Employees present,Anwesende Mitarbeiter
 Current status since,Aktueller Status seit
 Work start today,Heutiger Arbeitsbeginn
@@ -99,8 +101,17 @@ Unknown action provided,Aktion unbekannt
 Could not Checkout of work : You have no Worklogs today.,Abwesend der Arbeit nicht möglich : Sie haben heute noch keinen Arbeitsbericht.
 You have no Worklogs today : Task description must not be empty.,Sie haben heute noch keinen Arbeitsbericht : Die Aufgabenbeschreibung darf nicht leer sein.
 Describe your task here,Beschreiben Sie hier Ihre Aufgabe
+Summarize your task here,Fassen Sie Ihre Aufgabe hier zusammen.
 External reference,Externe reference
+Home Office,Heimbüro
 No worklog entered for today.,Für heute wurde noch kein Arbeitsbericht eingetragen.
 Worklog has already been entered for today.,Der Arbeitsbericht wurde bereits für heute eingegeben.
-The entered time cannot be in the future.,Der eingegebene Zeitpunkt kann nicht in der Zukunft liegen.
-e.g. link to a ticket in an external system,z.B. Link zu einem Ticket in einem externen System
+The entered time cannot be in the future,Der eingegebene Zeitpunkt kann nicht in der Zukunft liegen
+Yes/No,Ja/Nein
+e.g. link to a ticket in an external system,z. B. Link zu einem Ticket in einem externen System
+Associate with a relevant task,Mit einer relevanten Aufgabe verbinden
+Please specify Home Office status,Bitte geben Sie den Status des Heimbüro an.
+Employee ID is required,Die Mitarbeiter-ID ist erforderlich
+Validation Errors,Validierungsfehler
+"Auto-fills to now if blank","Automatisches Ausfüllen bis jetzt, wenn leer"
+"Employee associated with the worklog","Mitarbeiter, der mit dem Arbeitsprotokoll in Verbindung steht"

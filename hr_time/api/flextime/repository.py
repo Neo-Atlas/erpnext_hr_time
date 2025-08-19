@@ -189,6 +189,7 @@ class FlextimeStatusRepository:
             child.log_time = worklog.log_time
             child.task = worklog.task
             child.task_desc = worklog.task_desc
+            child.is_home_office = worklog.is_home_office
             child.save()
 
         parent.load_from_db()

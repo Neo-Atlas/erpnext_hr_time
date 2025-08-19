@@ -13,8 +13,7 @@ export class EasyCheckinDialog {
    */
   static LABELS = {
     TITLE: "Checkin",
-    PRIMARY_ACTION_BTN: "Submit",
-    PLACEHOLDER_WORKLOG_TASK_DESC: 'Describe your task here'
+    PRIMARY_ACTION_BTN: "Submit"
   }
 
   /**
@@ -59,7 +58,7 @@ export class EasyCheckinDialog {
   static ACTIONS = {
     EOW: 'End of work',
     BRK: 'Break',
-    RES: 'Resume work',
+    RSM: 'Resume work',
     SOW: 'Start of work'
   };
 
@@ -119,9 +118,12 @@ export class EasyCheckinDialog {
    * @param {string} employee_id - The ID of the employee to create Checkin actions for.
    */
   createCheckinDialog(employee_id) {
+    const wfhPrefKey = HR_TIME?.LS_KEYS?.PREV_WFH_PREF || 'neo_hr_time_last_wfh_value';
+    const lastHomeOfficeValue = localStorage.getItem(wfhPrefKey);
+    
     this.dialogUI = new frappe.ui.Dialog({
       title: __(EasyCheckinDialog.LABELS.TITLE),
-      fields: this.getDialogFields(employee_id),
+      fields: this.getDialogFields(employee_id, lastHomeOfficeValue),
       size: "small",
       primary_action_label: __(EasyCheckinDialog.LABELS.PRIMARY_ACTION_BTN, undefined, "checkin"),
       primary_action: (values) => {
@@ -139,7 +141,9 @@ export class EasyCheckinDialog {
         }else{
           const task = this.dialogUI.get_value("task").trim();
           const ticket_link = this.dialogUI.get_value("external_reference").trim();
-          this.submitCheckinAfterAddingWorklog(values, employee_id, trimmed_worklog_text, task, ticket_link);
+          const is_home_office = this.dialogUI.get_value("is_home_office");
+          this.submitCheckinAfterAddingWorklog(values, employee_id, trimmed_worklog_text, task, ticket_link,
+            is_home_office);
         }
       }
     });
@@ -151,8 +155,10 @@ export class EasyCheckinDialog {
    * Returns the configuration of fields to be displayed in the check-in dialog.
    * @returns {Array<Object>} - The fields configuration for Frappe's UI dialog.
    * @param {string} employee_id - The ID of the employee
+   * @param {boolean} lastHomeOfficeValue - Previous workday's work place.
    */
-  getDialogFields(employee_id) {
+  getDialogFields(employee_id, lastHomeOfficeValue) {
+
     return [
       {
         label: "Action",
@@ -173,7 +179,7 @@ export class EasyCheckinDialog {
       {
         fieldname: "worklog_box",
         fieldtype: "Text",
-        placeholder: __(EasyCheckinDialog.LABELS.PLACEHOLDER_WORKLOG_TASK_DESC),
+        placeholder: __("Summarize your task here"),
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
       },
       {
@@ -183,6 +189,7 @@ export class EasyCheckinDialog {
         options: "Task",
         reqd: false,
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
+        placeholder: __("Associate with a relevant task")
       },
       {
         label: "External Reference",
@@ -192,6 +199,15 @@ export class EasyCheckinDialog {
         placeholder: __("e.g. link to a ticket in an external system"),
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
         reqd: false,
+      },
+      {
+        label: "Home Office",
+        fieldname: "is_home_office",
+        fieldtype: "Select",
+        default: lastHomeOfficeValue,
+        depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
+        placeholder: __("Yes/No"),
+        options: "\nYes\nNo",
       },
       {
         fieldname: "worklog_section_link_full_form",
@@ -303,7 +319,7 @@ export class EasyCheckinDialog {
           case EasyCheckinDialog.ACTIONS.EOW:
             message = MESSAGES.SUCCESS_CHECKOUT;
             break;
-          case EasyCheckinDialog.ACTIONS.RES:
+          case EasyCheckinDialog.ACTIONS.RSM:
             message = MESSAGES.SUCCESS_RESUME;
             break;
           case EasyCheckinDialog.ACTIONS.SOW:
@@ -330,15 +346,17 @@ export class EasyCheckinDialog {
    * @param {string} worklog_text - The text entered in the worklog description field.
    * @param {string} task - The ID of the task associated with the worklog.
    * @param {string} ticket_link - The external reference URL associated with the worklog.
+   * @param {string} is_home_office - Is the work done from Home - Yes/No.
   **/
-  submitCheckinAfterAddingWorklog(values, employee_id, worklog_text, task, ticket_link) {
+  submitCheckinAfterAddingWorklog(values, employee_id, worklog_text, task, ticket_link, is_home_office) {
     frappe.call({
       method: "hr_time.api.worklog.api.create_worklog_now",
       args: {
         employee_id: employee_id,
         worklog_text: worklog_text,
         task: task,
-        ticket_link: ticket_link
+        ticket_link: ticket_link,
+        is_home_office: is_home_office
       },
       callback: (response) => {
         if (response && typeof response === 'object' && response.message) {
@@ -352,6 +370,13 @@ export class EasyCheckinDialog {
             FrappeUtils.alert_success(MESSAGES.SUCCESS_WORKLOG_ADDITION)
             this.hasWorklogs = true;
             this.submitCheckin(values, employee_id);
+            // Save 'Home Office' choice for future reuse
+            try{
+              const prevWfhPref = HR_TIME?.LS_KEYS?.PREV_WFH_PREF || 'neo_hr_time_last_wfh_value'
+              localStorage.setItem(prevWfhPref, is_home_office);
+            }catch (error){
+              console.error('Failed to save WFH preference:', error)
+            }
           }
         }
       },

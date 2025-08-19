@@ -93,7 +93,7 @@ def get_easy_checkin_options() -> dict:
             options = ["Resume work"]
             default = "Resume work"
         case _:
-            options = ["Start of work", "Break", "End of work"]
+            options = ["Start of work", "Break", "Resume work", "End of work"]
             default = ""
 
     return {

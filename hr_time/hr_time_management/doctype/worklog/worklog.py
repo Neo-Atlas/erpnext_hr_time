@@ -4,7 +4,6 @@
 from datetime import datetime
 import frappe
 from frappe.model.document import Document
-from frappe.model.docstatus import DocStatus
 from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 from hr_time.api.shared.constants.messages import Messages
 

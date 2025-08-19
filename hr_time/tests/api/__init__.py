@@ -34,11 +34,15 @@ class FakeUtils:
 
 
 class FakeDocument:
-    def __init__(self, name, employee=None, task_desc=None, task=None):
+    def __init__(
+        self, name, employee=None, task_desc=None, task=None,
+        is_home_office="No"
+    ):
         self.name = name
         self.employee = employee
         self.task_desc = task_desc
         self.task = task
+        self.is_home_office = is_home_office
 
     def save(self):
         # Simulate saving the document (do nothing or add custom logic if needed)
