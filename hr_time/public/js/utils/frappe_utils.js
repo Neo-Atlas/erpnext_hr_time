@@ -1,9 +1,8 @@
 /**
- * @fileoverview Utility class with (wrapper) methods for Frappe's messaging methods - to display (translatable)
-*                alerts and messages in the application. * 
+ * @fileoverview Utility class for Frappe-specific wrappers and helpers.
+ *
  * @module FrappeUtils
  */
-
 
 export class FrappeUtils{
   /**
@@ -93,5 +92,24 @@ export class FrappeUtils{
    */
   static throw_error_msg = (msg, errorType = Error) => {
     frappe.throw(__(msg), errorType);
-  };
+  }
+
+  /**
+   * Return date time in DB format (YYYY-MM-DD hh:mm:ss.ffffff)
+   * 
+   * @param {Date} date - The Date instance to format.
+   * 
+   * @returns {string}
+   */
+  static get_db_format_time = (date)=>{
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const milliseconds = String(date.getMilliseconds()).padStart(3, '0') + '000'; // Convert to 6 digits
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
 }

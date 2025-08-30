@@ -88,7 +88,8 @@ Task,Aufgabe
 Action,Aktion
 WARNING,WARNUNG
 No Employee record found for the current user.,Kein Mitarbeiterdatensatz für den aktuellen Benutzer gefunden.
-No employee ID found for the current user : Please ensure you are logged in.,Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie eingeloggt sind.
+"No employee document found for the current user : Please ensure you are logged in as an employee.","Für den aktuellen Benutzer wurde kein Mitarbeiterdokument gefunden: Bitte stellen Sie sicher, dass Sie als Mitarbeiter angemeldet sind."
+"No employee ID found for the current user : Please ensure you are logged in as an employee.","Keine Mitarbeiter-ID für den aktuellen Benutzer gefunden : Bitte stellen Sie sicher, dass Sie als Mitarbeiter angemeldet sind."
 Latest Summary, Letzter Zusammenfassung
 Worklog,Arbeitsbericht
 Add Worklog,Arbeitsbericht hinzufügen
@@ -103,14 +104,13 @@ You have no Worklogs today : Task description must not be empty.,Sie haben heute
 Describe your task here,Beschreiben Sie hier Ihre Aufgabe
 Summarize your task here,Fassen Sie Ihre Aufgabe hier zusammen.
 External reference,Externe reference
-Home Office,Heimbüro
-No worklog entered for today.,Für heute wurde noch kein Arbeitsbericht eingetragen.
-Worklog has already been entered for today.,Der Arbeitsbericht wurde bereits für heute eingegeben.
+No worklog entered for today,Für heute wurde noch kein Arbeitsbericht eingetragen
+Worklog has already been entered for today,Der Arbeitsbericht wurde bereits für heute eingegeben
 The entered time cannot be in the future,Der eingegebene Zeitpunkt kann nicht in der Zukunft liegen
 Yes/No,Ja/Nein
 e.g. link to a ticket in an external system,z. B. Link zu einem Ticket in einem externen System
 Associate with a relevant task,Mit einer relevanten Aufgabe verbinden
-Please specify Home Office status,Bitte geben Sie den Status des Heimbüro an.
+"Please specify 'Home Office' status","Bitte geben Sie den Status des 'Home Office' an"
 Employee ID is required,Die Mitarbeiter-ID ist erforderlich
 Validation Errors,Validierungsfehler
 "Auto-fills to now if blank","Automatisches Ausfüllen bis jetzt, wenn leer"
