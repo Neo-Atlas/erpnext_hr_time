@@ -14,6 +14,7 @@ class TestWorklogRepository(unittest.TestCase):
         self.DUMMY_INVALID_WORKLOG_TEXT = ''
         self.DUMMY_TASK = 'TASK001'
         self.DUMMY_TICKET_LINK = 'github.com/PR/1'
+        self.DUMMY_IS_HOME_OFFICE = 'No'
 
     @patch('frappe.get_all')
     def test_get_worklogs(self, mock_get_all):
@@ -38,9 +39,13 @@ class TestWorklogRepository(unittest.TestCase):
         interested_date = datetime(2024, 10, 10).date()
         mock_data = [
             {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 10, 10, 10, 10),
-             'task_desc': 'Worked on task 1', 'task': 'TASK001', 'ticket_link': 'github.com/PR/1'},
+             'task_desc': 'Worked on task 1', 'task': 'TASK001', 'ticket_link': 'github.com/PR/1',
+             'is_home_office': 'Yes'
+             },
             {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 11, 10, 0, 0),
-             'task_desc': 'Worked on task 2', 'task': 'TASK002', 'ticket_link': 'github.com/PR/2'},
+             'task_desc': 'Worked on task 2', 'task': 'TASK002', 'ticket_link': 'github.com/PR/2',
+             'is_home_office': 'No'
+             }
         ]
 
         # Mocking frappe.get_all to simulate filtering by date
@@ -80,8 +85,8 @@ class TestWorklogRepository(unittest.TestCase):
         log_time = datetime.now() - timedelta(seconds=1)
 
         # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time,
-                                          self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
+                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
 
         # Assert
         mock_new_doc.assert_called_once_with(self.repo.get_doctype_name())
@@ -97,8 +102,8 @@ class TestWorklogRepository(unittest.TestCase):
         log_time = datetime.now()
 
         # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time,
-                                          self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
+                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
 
         # Assert
         mock_new_doc.assert_called_once_with(self.repo.get_doctype_name())
@@ -111,8 +116,8 @@ class TestWorklogRepository(unittest.TestCase):
         log_time = datetime.now() + timedelta(seconds=1)  # Set log_time to 1 second in the future
 
         # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time,
-                                          self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
+                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
 
         # Assert
         # Check that the response indicates a validation error for future log time
@@ -139,8 +144,8 @@ class TestWorklogRepository(unittest.TestCase):
         log_time = datetime(2024, 10, 10, 9, 0)
 
         # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time,
-                                          self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
+                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
 
         # Assert
         # Check that result contains the expected error status and message

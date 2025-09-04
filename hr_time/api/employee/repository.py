@@ -26,18 +26,18 @@ class Employee:
     date_of_birth: datetime.date
 
     # Employee joined company at this date
-    join_date: datetime.date
+    date_of_joining: datetime.date
 
     def __init__(self, id: str, full_name: str, time_model: TimeModel, grade: str, date_of_birth: datetime.date,
-                 join_date: datetime.date):
+                 date_of_joining: datetime.date):
         self.id = id
         self.full_name = full_name
         self.time_model = time_model
         self.grade = grade
         self.date_of_birth = date_of_birth
-        self.join_date = join_date
+        self.date_of_joining = date_of_joining
 
-    # Returns false if the Employees age is below 18 years
+    # Returns True if the Employee's age is below 18 years
     def is_minor(self, today: Optional[datetime.date] = None) -> bool:
         if today is None:
             today = datetime.date.today()
@@ -52,6 +52,16 @@ class Employee:
 
     def get_url(self) -> str:
         return "/app/employee/" + self.id
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "full_name": self.full_name,
+            "time_model": self.time_model.name if self.time_model else None,
+            "grade": self.grade,
+            "date_of_birth": self.date_of_birth.isoformat() if self.date_of_birth else None,
+            "date_of_joining": self.date_of_joining.isoformat() if self.date_of_joining else None,
+        }
 
 
 class EmployeeRepository:

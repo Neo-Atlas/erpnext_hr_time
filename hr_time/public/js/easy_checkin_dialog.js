@@ -1,7 +1,4 @@
 import { EasyCheckinStatus } from "./easy_checkin_status";
-import { FrappeUtils } from './utils/frappe_utils'
-import {FlextimeApi} from "./api/flextime.api";
-import MESSAGES from "./constants/messages.json";
 
 /**
  * Class representing the EasyCheckinDialog for managing employee check-ins.
@@ -13,16 +10,17 @@ export class EasyCheckinDialog {
    */
   static LABELS = {
     TITLE: "Checkin",
-    PRIMARY_ACTION_BTN: "Submit",
-    PLACEHOLDER_WORKLOG_TASK_DESC: 'Describe your task here'
+    PRIMARY_ACTION_BTN: "Submit"
   }
+
+  /** The local Storage key to be used to save/get WFH preference. */
+  PREV_WFH_PREF_KEY = HR_TIME?.LS_KEYS?.PREV_WFH_PREF || 'neo_hr_time_last_wfh_value'
 
   /**
    * Array of options available for check-in actions.
    * @type {Array<string>}
    */
   options = [];
-  
 
   /**
    * Default check-in action.
@@ -48,23 +46,18 @@ export class EasyCheckinDialog {
    */
   refresh_buttons;
 
-  /**
-   * Interval duration (in milliseconds) to refresh the dashboard in.
-   */
-  static REFRESH_DASHBOARD_INTERVAL = 15000;
+  /** Interval duration (in milliseconds) to refresh the dashboard in. */
+  static REFRESH_DASHBOARD_INTERVAL_MS = 15_000;
 
-  /**
-   * Predefined Action options for Checkin events
-   */
+  /** Predefined Action options for Checkin events */
   static ACTIONS = {
     EOW: 'End of work',
     BRK: 'Break',
+    RSM: 'Resume work',
     SOW: 'Start of work'
   };
 
-  /**
-   * Preloads the current checkin status
-   */
+  /** Preloads the current checkin status */
   async preloadCheckinOptions() {
     try {
       const response = await frappe.call({
@@ -73,29 +66,25 @@ export class EasyCheckinDialog {
       this.options = response.message.options;
       this.default = response.message.default;
     } catch (error) {
-      console.error(`${MESSAGES.FAILED_PRELOAD_CHECKIN_OPTIONS}" : ${error}`);
+      console.error(MESSAGES.FAILED_PRELOAD_CHECKIN_OPTIONS, error);
     }
   }
 
-  /** 
-   * Utility method to check if a Checkin dialog is already open
-   */
+  /** Utility method to check if a Checkin dialog is already open */
   isCheckinDialogOpen() {
     return $(".modal:visible").filter(function() {
       return $(this).find(".modal-title").text().trim() === EasyCheckinDialog.LABELS.TITLE;
     }).length > 0;
   }
 
-  /**
-   * Initiates Checkin dialog creation after fetching current employee's ID.
-   */
+  /** Initiates Checkin dialog creation after fetching current employee's ID. */
   async show() {
     try{
-      const employee_id = await FlextimeApi.fetchCurrentEmployeeId()
+      const employee_id = await FlextimeApi.fetchCurrentEmployeeId()      
       this.checkWorklogsThenCreateDialog(employee_id); // Call the next step if employee ID is available
-    }catch(error){
+    } catch (error) {
       FrappeUtils.throw_error_msg(MESSAGES.NOT_FOUND_EMPLOYEE_ID); // Show error message if no employee ID
-      console.error(`${MESSAGES.ERR_GET_EMPLOYEE_ID} : ${error}`);
+      console.error(MESSAGES.ERR_GET_EMPLOYEE_ID, error);
     }
   }
 
@@ -108,8 +97,8 @@ export class EasyCheckinDialog {
       const hasWorklogs = await FlextimeApi.fetchWorklogStatus(employee_id)
       this.hasWorklogs = hasWorklogs
       this.createCheckinDialog(employee_id);
-    }catch(error){
-      console.error(`${MESSAGES.ERR_GET_WORKLOG_STATUS}: ${error}`);
+    } catch (error) {
+      console.error(MESSAGES.ERR_GET_WORKLOG_STATUS, error);
     };
   }
 
@@ -117,10 +106,12 @@ export class EasyCheckinDialog {
    * Creates and displays the check-in dialog with options and actions.
    * @param {string} employee_id - The ID of the employee to create Checkin actions for.
    */
-  createCheckinDialog(employee_id) {
+  createCheckinDialog(employee_id) {    
+    const lastHomeOfficeValue = JsUtils.getStringFromLocalStore(this.PREV_WFH_PREF_KEY);
+    
     this.dialogUI = new frappe.ui.Dialog({
       title: __(EasyCheckinDialog.LABELS.TITLE),
-      fields: this.getDialogFields(employee_id),
+      fields: this.getDialogFields(employee_id, lastHomeOfficeValue),
       size: "small",
       primary_action_label: __(EasyCheckinDialog.LABELS.PRIMARY_ACTION_BTN, undefined, "checkin"),
       primary_action: (values) => {
@@ -138,7 +129,9 @@ export class EasyCheckinDialog {
         }else{
           const task = this.dialogUI.get_value("task").trim();
           const ticket_link = this.dialogUI.get_value("external_reference").trim();
-          this.submitCheckinAfterAddingWorklog(values, employee_id, trimmed_worklog_text, task, ticket_link);
+          const is_home_office = this.dialogUI.get_value("is_home_office");
+          this.submitCheckinAfterAddingWorklog(values, employee_id, trimmed_worklog_text, task, ticket_link,
+            is_home_office);
         }
       }
     });
@@ -150,8 +143,10 @@ export class EasyCheckinDialog {
    * Returns the configuration of fields to be displayed in the check-in dialog.
    * @returns {Array<Object>} - The fields configuration for Frappe's UI dialog.
    * @param {string} employee_id - The ID of the employee
+   * @param {boolean} lastHomeOfficeValue - Previous workday's work place.
    */
-  getDialogFields(employee_id) {
+  getDialogFields(employee_id, lastHomeOfficeValue) {
+
     return [
       {
         label: "Action",
@@ -172,7 +167,7 @@ export class EasyCheckinDialog {
       {
         fieldname: "worklog_box",
         fieldtype: "Text",
-        placeholder: __(EasyCheckinDialog.LABELS.PLACEHOLDER_WORKLOG_TASK_DESC),
+        placeholder: __("Summarize your task here"),
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
       },
       {
@@ -182,6 +177,7 @@ export class EasyCheckinDialog {
         options: "Task",
         reqd: false,
         depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
+        placeholder: __("Associate with a relevant task")
       },
       {
         label: "External Reference",
@@ -193,12 +189,20 @@ export class EasyCheckinDialog {
         reqd: false,
       },
       {
+        label: "Home Office",
+        fieldname: "is_home_office",
+        fieldtype: "Select",
+        default: lastHomeOfficeValue,
+        depends_on: `eval: doc.action === '${EasyCheckinDialog.ACTIONS.EOW}'`,
+        placeholder: __("Yes/No"),
+        options: "\nYes\nNo",
+      },
+      {
         fieldname: "worklog_section_link_full_form",
         fieldtype: "HTML",
       },
     ];
   }
-
 
   /**
    * Updates the dialog UI based on the selected action & Worklog status.
@@ -221,7 +225,7 @@ export class EasyCheckinDialog {
           .toggle(this.hasWorklogs)
       })
       .catch((error) => {
-        console.error(`${MESSAGES.ERR_GET_WORKLOG_STATUS}: ${error}`);
+        console.error(MESSAGES.ERR_GET_WORKLOG_STATUS, error);
       });
     }
   }
@@ -259,7 +263,25 @@ export class EasyCheckinDialog {
                 worklog_section_link.$wrapper.html(response.message);
                 this.dialogUI.$wrapper
                   .find(".edit-full-form-btn")
-                  .click(() => frappe.new_doc("Worklog"));
+                  .click(() => {
+                    const taskDesc = this.dialogUI.get_value('worklog_box') || '';
+                    const task = this.dialogUI.get_value("task").trim() || '';
+                    const ticket_link = this.dialogUI.get_value("external_reference").trim() || '';
+                    const is_home_office = this.dialogUI.get_value("is_home_office") || '';
+                    if(is_home_office){
+                      JsUtils.saveStringToLocalStore(this.PREV_WFH_PREF_KEY, is_home_office)
+                    }
+                    // Preserve entered fields when opening the new Worklog.    
+                    // (employee's `id` and `full name` will be fetched and set upon opening new Worklog document)  
+                    frappe.new_doc("Worklog",
+                      {
+                        task_desc: taskDesc,
+                        task: task,
+                        ticket_link: ticket_link,
+                        is_home_office: is_home_office
+                      }
+                    )
+                  });
                 this.updateDialogBasedOnAction(employee_id);
               }
             }
@@ -292,7 +314,7 @@ export class EasyCheckinDialog {
         EasyCheckinStatus.render();
         this.preloadCheckinOptions();   // Preload Checkin Options in the background
 
-        let message;
+        let message;        
 
         // Check the action and set the appropriate message
         switch (values.action) {
@@ -301,6 +323,9 @@ export class EasyCheckinDialog {
             break;
           case EasyCheckinDialog.ACTIONS.EOW:
             message = MESSAGES.SUCCESS_CHECKOUT;
+            break;
+          case EasyCheckinDialog.ACTIONS.RSM:
+            message = MESSAGES.SUCCESS_RESUME;
             break;
           case EasyCheckinDialog.ACTIONS.SOW:
             message = MESSAGES.SUCCESS_CHECKIN;
@@ -326,15 +351,17 @@ export class EasyCheckinDialog {
    * @param {string} worklog_text - The text entered in the worklog description field.
    * @param {string} task - The ID of the task associated with the worklog.
    * @param {string} ticket_link - The external reference URL associated with the worklog.
+   * @param {string} is_home_office - Is the work done from Home - Yes/No.
   **/
-  submitCheckinAfterAddingWorklog(values, employee_id, worklog_text, task, ticket_link) {
+  submitCheckinAfterAddingWorklog(values, employee_id, worklog_text, task, ticket_link, is_home_office) {
     frappe.call({
       method: "hr_time.api.worklog.api.create_worklog_now",
       args: {
         employee_id: employee_id,
         worklog_text: worklog_text,
         task: task,
-        ticket_link: ticket_link
+        ticket_link: ticket_link,
+        is_home_office: is_home_office
       },
       callback: (response) => {
         if (response && typeof response === 'object' && response.message) {
@@ -348,6 +375,8 @@ export class EasyCheckinDialog {
             FrappeUtils.alert_success(MESSAGES.SUCCESS_WORKLOG_ADDITION)
             this.hasWorklogs = true;
             this.submitCheckin(values, employee_id);
+            // Save 'Home Office' choice for future reuses
+            JsUtils.saveStringToLocalStore(this.PREV_WFH_PREF_KEY, is_home_office)
           }
         }
       },
@@ -358,9 +387,7 @@ export class EasyCheckinDialog {
     });
   }
 
-  /**
-   * Refreshes the dashboard UI by triggering the refresh action on the associated buttons.
-   */
+  /** Refreshes the dashboard UI by triggering the refresh action on the associated buttons. */
   refresh_dashboard() {
     if (this.refresh_buttons === undefined) {
       return;
@@ -371,9 +398,7 @@ export class EasyCheckinDialog {
     }
   }
 
-  /**
-   * Binds events for number card of dashboard
-   */
+  /** Binds events for number card of dashboard */
   static prepare_dashboard() {
     let dialog = EasyCheckinDialog.singleton();
 
@@ -397,12 +422,10 @@ export class EasyCheckinDialog {
 
     setTimeout(() => {
       dialog.refresh_dashboard();
-    }, EasyCheckinDialog.REFRESH_DASHBOARD_INTERVAL);
+    }, EasyCheckinDialog.REFRESH_DASHBOARD_INTERVAL_MS);
   }
 
-  /**
-   * Returns/Creates the singleton instance
-   */
+  /** Returns/Creates the singleton instance */
   static singleton() {
     if (window.easy_checkin_dialog === undefined) {
       window.easy_checkin_dialog = new EasyCheckinDialog();

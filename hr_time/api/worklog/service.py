@@ -51,22 +51,34 @@ class WorklogService:
         worklogs = self.worklog.get_worklogs_of_employee_on_date(employee_id, today)
         return len(worklogs) > 0
 
-    def create_worklog_now(self, employee_id=None, worklog_text='', task=None, ticket_link=None):
+    def create_worklog_now(
+        self,
+        employee_id=None,
+        worklog_text='',
+        task=None,
+        ticket_link=None,
+        is_home_office="No"
+    ):
         """
-        Creates a new worklog for an employee with the given description and optional task reference.
+        Creates a new worklog for an employee with the given description and
+        optional task reference.
 
         Args:
-            employee_id (Optional[str]): The ID of the employee creating the worklog.
-                If None, the current employee ID is used. Defaults to None.
-            worklog_text (str): The description of the task performed in the worklog.
-                Defaults to empty string.
-            task (Optional[str]): Optional reference to a specific task associated with the worklog.
-                Defaults to None.
-            ticket_link (Optional[str]): The external reference URL associated with the worklog (if any).
-                Defaults to None.
+            employee_id (Optional[str]): The ID of the employee creating the
+                worklog. If None, the current employee ID is used.
+                (Defaults to None)
+            worklog_text (str): The description of the task performed in the
+                worklog. (Defaults to empty string)
+            task (Optional[str]): Optional reference to a specific task
+                associated with the worklog. Defaults to None.
+            ticket_link (Optional[str]): The external reference URL associated
+                with the worklog (if any). Defaults to None.
+            is_home_office (str): Is the work done from Home - Yes/No. Default
+                is "No".
 
         Returns:
-            dict: A dictionary indicating the success or failure of the worklog creation process.
+            dict: A dictionary indicating the success or failure of the
+            worklog creation process.
 
         Raises:
             ValueError: If the worklog text (task description) is empty.
@@ -81,7 +93,10 @@ class WorklogService:
             # Get current time as log_time
             log_time = datetime.now()
             # Call repository to create the worklog
-            result = self.worklog.create_worklog(employee_id, log_time, worklog_text, task, ticket_link)
+            result = self.worklog.create_worklog(
+                employee_id, log_time, worklog_text, task,
+                ticket_link, is_home_office
+            )
 
             return result
 

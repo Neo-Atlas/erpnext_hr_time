@@ -48,8 +48,6 @@ frappe.listview_settings['Flextime daily status'] = {
     },
 
     hide_sidebar() {
-        console.log("Called!");
-
         if ($(".list-sidebar.overlay-sidebar").is(":visible")) {
             $("span.sidebar-toggle-btn").click();
         }

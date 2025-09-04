@@ -3,9 +3,6 @@
  * @module HR_TIME_MANAGEMENT
  */
 
-
-import MESSAGES from "../constants/messages.json";
-
 /**
  * A utility class for interacting with the backend to retrieve employee-related data.
  */
@@ -36,10 +33,37 @@ export class FlextimeApi{
 
 
     /**
+     * Fetches the current employee document object by calling the backend API.
+     * 
+     * @returns {Promise<object>} A promise that resolves with the employee document or rejects with an error message.
+     */
+    static fetchCurrentEmployee = () => {
+        return new Promise((resolve, reject) => {
+            frappe.call({
+                method: "hr_time.api.employee.api.get_current_employee",
+                callback: (response) => {
+                    console.log('response: ',response);
+                    
+                    const employee = response.message;
+                    if (employee) {
+                        resolve(employee); // Resolve with the employee
+                    } else {
+                        reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE));
+                    }
+                },
+                error: (error) => {
+                    reject(error); // Handle API errors
+                },
+            });
+        });
+    }
+
+
+    /**
      * Fetches the worklog status (i.e. if employee has created worklog "today").
      * 
      * @param {string} employee_id - The ID of the employee whose worklog status is to be fetched.
-     * @returns {Promise<boolean>} A promise that resolves with the worklog status (true / false) or rejects with an error.
+     * @returns {Promise<boolean>} A promise that resolves with the worklog status or rejects with an error.
      */
     static fetchWorklogStatus = (employee_id) => {
         return new Promise((resolve, reject) => {

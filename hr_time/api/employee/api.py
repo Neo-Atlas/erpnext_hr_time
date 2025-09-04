@@ -22,3 +22,21 @@ def get_current_employee_id() -> Optional[str]:
         FrappeUtils.throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
     else:
         return employee.id
+
+
+@frappe.whitelist()
+def get_current_employee() -> Optional[dict]:
+    """
+    Retrieves the current employee's full document as a dict based on the logged-in user.
+
+    Returns:
+        Optional[dict]: The employee document (as JSON-serializable dict), or None if not found.
+
+    Raises:
+        frappe.DoesNotExistError: If no employee is found for the current user.
+    """
+    employee = EmployeeRepository().get_current()
+    if employee is None:
+        FrappeUtils.throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
+    else:
+        return employee.to_dict()
