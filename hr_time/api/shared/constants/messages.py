@@ -1,6 +1,9 @@
 class Messages:
     class Employee:
-        NOT_FOUND_EMPLOYEE_ID = "No employee ID found for the current user: Please ensure you are logged in."
+        NOT_FOUND_EMPLOYEE_ID = (
+            "No employee ID found for the current user : "
+            "Please ensure you are logged in as an employee"
+        )
         NOT_FOUND_EMPLOYEE = "No Employee record found for the current user."
 
     class Worklog:

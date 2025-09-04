@@ -16,6 +16,7 @@ class Worklog:
         task_desc (str): A description of the task done.
         task (Optional[str]): Optional reference to a specific task (TASK doctype) related to the worklog.
         ticket_link (Optional[str]): Optional field to store (related) external ticket link.
+        is_home_office (str): if the employee has worked from home (WFH).
     """
 
     employee_id: str
@@ -23,16 +24,19 @@ class Worklog:
     task_desc: str
     task: Optional[str]
     ticket_link: Optional[str]
+    is_home_office: str
 
     def __init__(
         self, employee_id: str, log_time: datetime, task_desc: str,
-        task: Optional[str] = None, ticket_link: Optional[str] = None
+        task: Optional[str] = None, ticket_link: Optional[str] = None,
+        is_home_office: str = "No"
     ):
         self.employee_id = employee_id
         self.log_time = log_time
         self.task_desc = task_desc
         self.task = task
         self.ticket_link = ticket_link
+        self.is_home_office = is_home_office
 
 
 class WorklogRepository:
@@ -42,7 +46,9 @@ class WorklogRepository:
     """
 
     _DOCTYPE_NAME = "Worklog"
-    _DOC_FIELDS = ["employee", "log_time", "task_desc", "task", "ticket_link"]
+    _DOC_FIELDS = [
+        "employee", "log_time", "task_desc", "task", "ticket_link", "is_home_office"
+    ]
 
     @staticmethod
     def get_doctype_name() -> str:
@@ -70,10 +76,13 @@ class WorklogRepository:
             List[dict]: A list of worklog entries matching the given filters.
         """
         return frappe.get_all(
-            WorklogRepository.get_doctype_name(), fields=WorklogRepository.get_doc_fields(), filters=filters
+            WorklogRepository.get_doctype_name(),
+            fields=WorklogRepository.get_doc_fields(),
+            filters=filters
         )
 
-    def get_worklogs_of_employee_on_date(self, employee_id: str, date: datetime.date) -> List[Worklog]:
+    def get_worklogs_of_employee_on_date(
+            self, employee_id: str, date: datetime.date) -> List[Worklog]:
         """
         Retrieves all worklogs for a specific employee on a given date.
 
@@ -89,8 +98,10 @@ class WorklogRepository:
         date_start = datetime.combine(date, time(0, 0, 0))
         date_end = datetime.combine(date, time(23, 59, 59, 999999))
 
-        # Fetch worklogs for the employee on the specific date (# Filter logtime by full day)
-        docs = self.get_worklogs({"employee": employee_id, "log_time": ["between", [date_start, date_end]]})
+        # Fetch worklogs for the employee on the specific date
+        # (Filter logtime by full day)
+        docs = self.get_worklogs(
+            {"employee": employee_id, "log_time": ["between", [date_start, date_end]]})
 
         if not docs:
             return []
@@ -103,22 +114,30 @@ class WorklogRepository:
     @staticmethod
     def create_worklog(
         employee_id: str, log_time: datetime, worklog_text: str,
-        task: Optional[str] = None, ticket_link: Optional[str] = None
+        task: Optional[str] = None, ticket_link: Optional[str] = None,
+        is_home_office: str = "No"
     ) -> Response:
         """
         Creates a new worklog entry for an employee.
 
         Args:
             employee_id (str): The ID of the employee creating the worklog.
-            log_time (datetime.datetime): The date and time the worklog refers to.
+            log_time (datetime.datetime): The date and time the worklog
+                refers to.
             worklog_text (str): The content or description of the worklog.
-            task (Optional[str]): Optional reference to a specific task associated with the worklog.
-            ticket_link (Optional[str]): Optional field to store (related) external ticket link.
+            task (Optional[str]): Optional reference to a specific task
+                associated with the worklog.
+            ticket_link (Optional[str]): Optional field to store (related)
+                external ticket link.
+            is_home_office (str): Is the work done from Home - Yes/No. Default
+                is "No".
 
         Returns:
-            Response: A Response object indicating the status of the operation.
-                - If successful, the status will be 'success' with a success message.
-                - If an error occurs, the status will be 'error' with a corresponding error message.
+            Response: A Response object indicating the status of the operation
+                - If successful, the status will be 'success' with a success
+                    message.
+                - If an error occurs, the status will be 'error' with a
+                    corresponding error message.
 
 
         Raises:
@@ -139,6 +158,7 @@ class WorklogRepository:
             new_worklog.task_desc = worklog_text
             new_worklog.task = task
             new_worklog.ticket_link = ticket_link
+            new_worklog.is_home_office = is_home_office
             new_worklog.save()
 
             return Response.success(Messages.Worklog.SUCCESS_WORKLOG_CREATION)
@@ -167,5 +187,6 @@ class WorklogRepository:
             log_time=doc['log_time'],
             task_desc=doc['task_desc'],
             task=doc['task'],
-            ticket_link=doc['ticket_link']
+            ticket_link=doc['ticket_link'],
+            is_home_office=doc['is_home_office']
         )

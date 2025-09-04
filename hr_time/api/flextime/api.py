@@ -86,11 +86,14 @@ def get_easy_checkin_options() -> dict:
         case State.In:
             options = ["Break", "End of work"]
             default = "End of work" if status.had_break else "Break"
-        case State.Out | State.Break:
+        case State.Out:
             options = ["Start of work"]
             default = "Start of work"
+        case State.Break:
+            options = ["Resume work"]
+            default = "Resume work"
         case _:
-            options = ["Start of work", "Break", "End of work"]
+            options = ["Start of work", "Break", "Resume work", "End of work"]
             default = ""
 
     return {
@@ -119,7 +122,7 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
     """
     employee = EmployeeRepository().get_current()
     match action:
-        case "Start of work":
+        case "Start of work" | "Resume work":
             CheckinService.prod().checkin(Action.startOfWork)
         case "Break":
             CheckinService.prod().checkin(Action.breakTime)

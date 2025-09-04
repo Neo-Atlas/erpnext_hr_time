@@ -16,6 +16,7 @@ class TestWorklogAPI(unittest.TestCase):
         self.DUMMY_TASK = 'TASK001'
         self.DUMMY_TICKET_LINK = 'https://github.com/Atlas-Neo/app/issues'
         self.DUMMY_INVALID_WORKLOG_TEXT = ''
+        self.DUMMY_IS_HOME_OFFICE = 'No'
         self.worklog = frappe.get_doc({
             "doctype": "Worklog"
         })
@@ -47,19 +48,21 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Act
         result = create_worklog_now(self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT,
-                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
         result = json.loads(result)  # Parse JSON string to dictionary
 
         # Assert
         self.assertEqual(result['status'], Response.STATUS_SUCCESS)
         self.assertEqual(result['message'], Messages.Worklog.SUCCESS_WORKLOG_CREATION)
         mock_create_worklog_now.assert_called_once_with(
-            self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+            self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK, self.DUMMY_TICKET_LINK,
+            self.DUMMY_IS_HOME_OFFICE
+        )
 
     def test_create_worklog_empty_description(self):
         # Act
         result = create_worklog_now(self.DUMMY_EMP_ID, self.DUMMY_INVALID_WORKLOG_TEXT,
-                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
         result = json.loads(result)  # Parse JSON string to dictionary
 
         # Assert
@@ -73,7 +76,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Act
         result = create_worklog_now(self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT,
-                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
         result = json.loads(result)  # Parse JSON string to dictionary
 
         # Assert
@@ -87,7 +90,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Act
         result = create_worklog_now(self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT,
-                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
         result_json = json.loads(result)  # Parse JSON string to dictionary
 
         # Assert
@@ -105,7 +108,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Act
         result = create_worklog_now(self.DUMMY_EMP_ID, self.DUMMY_VALID_WORKLOG_TEXT,
-                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK)
+                                    self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
         result_json = json.loads(result)  # Parse JSON string to dictionary
 
         # Assert

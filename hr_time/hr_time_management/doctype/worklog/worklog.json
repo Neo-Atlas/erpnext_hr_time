@@ -12,10 +12,12 @@
   "task_desc",
   "amended_from",
   "task",
-  "ticket_link"
+  "ticket_link",
+  "is_home_office"
  ],
  "fields": [
   {
+   "columns": 1,
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -26,29 +28,37 @@
    "search_index": 1
   },
   {
+   "columns": 2,
    "fieldname": "employee",
    "fieldtype": "Link",
+   "in_filter": 1,
    "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "placeholder": "Employee associated with the worklog"
   },
   {
+   "columns": 2,
    "fieldname": "log_time",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Time"
+   "label": "Time",
+   "placeholder": "Auto-fills to now if blank"
   },
   {
+   "columns": 4,
    "fieldname": "task_desc",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "in_preview": 1,
    "label": "Task Description",
    "max_height": "140px",
+   "placeholder": "Describe your task here",
    "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
+   "columns": 2,
    "fieldname": "task",
    "fieldtype": "Link",
    "in_filter": 1,
@@ -56,14 +66,16 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Task",
-   "options": "Task"
+   "options": "Task",
+   "placeholder": "Associate with a relevant task",
+   "width": "50px"
   },
   {
-   "description": "e.g. link to a ticket in an external system",
    "fieldname": "ticket_link",
    "fieldtype": "Data",
    "label": "External reference",
-   "options": "URL"
+   "options": "URL",
+   "placeholder": "e.g. link to a ticket in an external system"
   },
   {
    "fetch_from": "employee.employee_name",
@@ -72,11 +84,23 @@
    "hidden": 1,
    "label": "Employee Name",
    "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "is_home_office",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "label": "Home Office",
+   "mandatory_depends_on": "true",
+   "options": "\nYes\nNo",
+   "placeholder": "Yes/No",
+   "reqd": 1
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-16 02:47:36.551278",
+ "modified": "2025-08-19 11:05:56.635995",
  "modified_by": "Administrator",
  "module": "HR time management",
  "name": "Worklog",
@@ -120,6 +144,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],

@@ -112,7 +112,7 @@ class FlexTimeProcessingService:
         """
         current_day = self.daily_status.get_latest_status_date(employee)
         if current_day is None:
-            current_day = employee.join_date
+            current_day = employee.date_of_joining
         else:
             current_day += datetime.timedelta(days=1)
 
