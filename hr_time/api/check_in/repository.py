@@ -7,8 +7,8 @@ from hr_time.api.check_in.list import CheckinList
 
 
 class CheckinRepository:
-    # Returns all checkin events of the given date for the given employee
     def get(self, date: datetime.date, employee_id: str) -> CheckinList:
+        """Returns all checkin events of the given date for the given employee"""
         time_min = date.isoformat() + " 00:00:00"
         time_max = date.isoformat() + " 23:59:59"
 
@@ -24,6 +24,7 @@ class CheckinRepository:
         return CheckinList(events)
 
     def checkin(self, employee_id: str, log_type: str, is_break: bool):
+        """Create new checkin record"""
         doc = frappe.new_doc("Employee Checkin")
         doc.time = datetime.datetime.now()
         doc.employee = employee_id

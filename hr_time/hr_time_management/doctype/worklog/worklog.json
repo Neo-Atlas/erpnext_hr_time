@@ -13,7 +13,10 @@
   "amended_from",
   "task",
   "ticket_link",
-  "is_home_office"
+  "is_home_office",
+  "tasks_entry",
+  "time_saved",
+  "timesheet"
  ],
  "fields": [
   {
@@ -51,8 +54,8 @@
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "in_preview": 1,
-   "label": "Task Description",
-   "max_height": "140px",
+   "label": "Task Summary",
+   "max_height": "200px",
    "placeholder": "Describe your task here",
    "reqd": 1
   },
@@ -61,6 +64,7 @@
    "columns": 2,
    "fieldname": "task",
    "fieldtype": "Link",
+   "hidden": 1,
    "in_filter": 1,
    "in_global_search": 1,
    "in_list_view": 1,
@@ -95,13 +99,38 @@
    "options": "\nYes\nNo",
    "placeholder": "Yes/No",
    "reqd": 1
+  },
+  {
+   "fieldname": "tasks_entry",
+   "fieldtype": "Table",
+   "label": "Allocate hours",
+   "options": "Worklog Tasks"
+  },
+  {
+   "description": "The Timesheet linked to this Worklog",
+   "fieldname": "timesheet",
+   "fieldtype": "Link",
+   "label": "Timesheet",
+   "options": "Timesheet",
+   "read_only": 1
+  },
+  {
+   "columns": 3,
+   "default": "0",
+   "description": "Hours already saved in previous worklog (includiing unallocated excess)",
+   "fieldname": "time_saved",
+   "fieldtype": "Float",
+   "label": "Time Recorded (hrs)",
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-19 11:05:56.635995",
- "modified_by": "Administrator",
+ "modified": "2026-03-19 23:24:46.628954",
+ "modified_by": "j@d.com",
  "module": "HR time management",
  "name": "Worklog",
  "naming_rule": "Expression (old style)",
@@ -145,6 +174,7 @@
   }
  ],
  "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],

@@ -2,7 +2,7 @@
     padding-bottom: 0 !important;
 }
 
-label#worklog_section_label{
+label#worklog_status_container{
     margin-bottom: 0 !important;
 }
 
@@ -29,11 +29,16 @@ label#worklog_section_label{
 
 [data-fieldname="worklog_box"]{
     .clearfix{
-        height: 10px !important;
+        // height: 10px !important;
     }
 
     textarea{
         min-height: 70px;
+        // height: 120px;
         max-height: 200px;
     }
+}
+
+body div.modal.fade.show form  div.frappe-control.form-group div.form-grid-container div.grid-body div.rows div.grid-row.grid-row-open div.form-in-grid div.grid-form-heading span.row-actions button.btn.grid-delete-row{
+    display: none !important;
 }

@@ -76,6 +76,7 @@ class CheckinService:
         return CheckinService(EmployeeRepository(), CheckinRepository())
 
     def get_current_status(self) -> CheckinStatus:
+        """Get current IN/OUT/BREAK state"""
         employee = self.employee.get_current()
 
         if employee is None:
@@ -87,8 +88,8 @@ class CheckinService:
 
         return CheckinStatus(state, had_break)
 
-    # Checks in the current employee based on the given action
     def checkin(self, action: Action):
+        """Checks in the current employee based on the given action i.e. executes checkin/out/break"""
         employee = self.employee.get_current()
 
         if employee is None:
@@ -104,6 +105,7 @@ class CheckinService:
 
     @staticmethod
     def _event_to_state(event: CheckinEvent) -> State:
+        """Convert checkin event to IN/OUT/BREAK state"""
         if event is None:
             return State.Out
 
@@ -114,3 +116,14 @@ class CheckinService:
             return State.Out
 
         return State.In
+
+    def has_open_session(self, employee_id: str) -> bool:
+        """Check if employee has open check-in session"""        
+        events = self.data.get(datetime.date.today(), employee_id)
+        latest = events.get_latest()
+
+        # True only if:
+        # 1. There is a latest event AND
+        # 2. It's an IN event (checked in) AND
+        # 3. It's NOT a break
+        return bool(latest and latest.is_in and not latest.is_break)

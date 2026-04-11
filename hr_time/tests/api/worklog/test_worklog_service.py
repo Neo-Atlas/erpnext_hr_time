@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from hr_time.api.worklog.service import WorklogService
 from hr_time.api.worklog.repository import WorklogRepository
+from hr_time.api.hr_settings.repository import HRSettingsRepository
 from hr_time.api.shared.constants.messages import Messages
 from hr_time.api.shared.utils.response import Response
 
@@ -19,6 +20,7 @@ class TestWorklogService(unittest.TestCase):
         self.DUMMY_TICKET_LINK = 'https://github.com/Atlas-Neo/app/issues'
         self.DUMMY_IS_HOME_OFFICE = 'No'
         self.worklog_repository = MagicMock(spec=WorklogRepository)
+        self.hr_settings_repository = MagicMock(spec=HRSettingsRepository)
         self.worklog_service = WorklogService(self.worklog_repository)
 
     def test_check_if_employee_has_worklogs_today_true(self):
