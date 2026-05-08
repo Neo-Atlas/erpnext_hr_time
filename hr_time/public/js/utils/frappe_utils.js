@@ -4,11 +4,12 @@
  * @module FrappeUtils
  */
 
+
 export class FrappeUtils{
   /**
    * Time duration (in seconds) until which the message is visible to User.
    */
-  static DEFAULT_DIALOG_DURATION = 5
+  static DEFAULT_DIALOG_DURATION = 4
 
   /**
    * Fixed set of available indicator colors (in Frappe's UI dialogs).
@@ -18,6 +19,7 @@ export class FrappeUtils{
     GREEN: "green",
     ORANGE: "orange",
     RED: "red",
+    YELLOW: "yellow"
   }
 
   /**
@@ -26,11 +28,11 @@ export class FrappeUtils{
    * @param {string} msg - The message to be warned with.
    * @param {string} title - Optional custom title (defaults to "WARNING").
    */
-  static warn_user = (msg, title = "WARNING") => {
+  static warn_user = (msg, title = "WARNING") => {    
     frappe.msgprint(
       {
-        title: __(title),
-        message: __(msg),
+        title: frappe._(title),
+        message: frappe._(msg),
         indicator: FrappeUtils.INDICATOR_COLORS.ORANGE,
       }
     );
@@ -44,8 +46,8 @@ export class FrappeUtils{
    */
   static error_modal = (msg, title = "ERROR") => {
     frappe.msgprint({
-      title: __(title),
-      message: __(msg),
+      title: frappe._(title),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.RED,
     });
   }
@@ -58,8 +60,8 @@ export class FrappeUtils{
    */
   static info_modal = (msg, title = "INFO") => {
     frappe.msgprint({
-      title: __(title),
-      message: __(msg),
+      title: frappe._(title),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.BLUE,
     });
   }
@@ -72,8 +74,8 @@ export class FrappeUtils{
    */
   static success_modal = (msg, title = "SUCCESS") => {
     frappe.msgprint({
-      title: __(title),
-      message: __(msg),
+      title: frappe._(title),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.GREEN,
     });
   }
@@ -84,9 +86,9 @@ export class FrappeUtils{
    * @param {string} msg - The message to display.
    * @param {number} duration - Duration in seconds (defaults to DEFAULT_DIALOG_DURATION).
    */
-  static alert_warning = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION) => {
+  static toast_warning = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION) => {
     frappe.show_alert({
-      message: __(msg),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.ORANGE,
     }, duration);
   }
@@ -97,10 +99,10 @@ export class FrappeUtils{
    * @param {string} msg - The information message to be displayed.
    * @param {number} duration - Duration in seconds (defaults to DEFAULT_DIALOG_DURATION).
    */
-  static alert_info = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{
+  static toast_info = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{
     frappe.show_alert(
       {
-        message: __(msg),
+        message: frappe._(msg),
         color: FrappeUtils.INDICATOR_COLORS.BLUE
       }, duration);
   }
@@ -111,9 +113,9 @@ export class FrappeUtils{
    * @param {string} msg - The success message to be displayed.
    * @param {number} duration - Duration in seconds (defaults to DEFAULT_DIALOG_DURATION).
    */
-  static alert_success = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{
+  static toast_success = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{    
     frappe.show_alert({
-      message: __(msg),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.GREEN,
     }, duration);
   }
@@ -124,9 +126,9 @@ export class FrappeUtils{
    * @param {string} msg - The failure message to be displayed.
    * @param {number} duration - Duration in seconds (defaults to DEFAULT_DIALOG_DURATION).
    */
-  static alert_failure = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{
+  static toast_failure = (msg, duration = FrappeUtils.DEFAULT_DIALOG_DURATION)=>{    
     frappe.show_alert({
-      message: __(msg),
+      message: frappe._(msg),
       indicator: FrappeUtils.INDICATOR_COLORS.RED,
     }, duration);
   }
@@ -139,7 +141,7 @@ export class FrappeUtils{
    *                                                Defaults to the generic Error.
    */
   static throw_error_msg = (msg, errorType = Error) => {
-    frappe.throw(__(msg), errorType);
+    frappe.throw(frappe._(msg), errorType);
   }
 
   /**

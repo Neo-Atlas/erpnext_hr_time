@@ -1,10 +1,16 @@
 import unittest
 from unittest.mock import MagicMock, patch
+
 from hr_time.api.worklog.service import WorklogService
 from hr_time.api.worklog.repository import WorklogRepository
 from hr_time.api.hr_settings.repository import HRSettingsRepository
 from hr_time.api.shared.constants.messages import Messages
 from hr_time.api.shared.utils.response import Response
+from hr_time.api.check_in.service import CheckinService
+from hr_time.api.worklog.domain.task.repository import TaskRepository
+from hr_time.api.worklog.domain.task.task_progress_service import TaskProgressService
+from hr_time.api.worklog.infrastructure.timesheet.service import TimesheetService
+from hr_time.api.worklog.domain.services.session_service import SessionService
 
 
 class TestWorklogService(unittest.TestCase):
@@ -21,7 +27,24 @@ class TestWorklogService(unittest.TestCase):
         self.DUMMY_IS_HOME_OFFICE = 'No'
         self.worklog_repository = MagicMock(spec=WorklogRepository)
         self.hr_settings_repository = MagicMock(spec=HRSettingsRepository)
-        self.worklog_service = WorklogService(self.worklog_repository)
+
+        worklog = WorklogRepository()
+        hr_settings = HRSettingsRepository()
+        task_repo = TaskRepository()
+        task_progress_service = TaskProgressService(task_repo=task_repo)
+        timesheet_service = TimesheetService(task_progress_service=task_progress_service)
+        session_service = SessionService()
+        checkin_service = CheckinService.prod()
+
+        self.worklog_service = WorklogService(
+            worklog,
+            hr_settings,
+            task_repo,
+            task_progress_service,
+            timesheet_service,
+            session_service,
+            checkin_service,
+        )
 
     def test_check_if_employee_has_worklogs_today_true(self):
         # Arrange
@@ -68,7 +91,7 @@ class TestWorklogService(unittest.TestCase):
 
         # Assert
         self.assertEqual(result.status, Response.STATUS_ERROR)
-        self.assertEqual(result.message, Messages.Worklog.EMPTY_TASK_DESC)
+        self.assertEqual(result.message, Messages.Worklog.NO_WORK_DESC)
 
     @patch('hr_time.api.worklog.service.get_current_employee_id')
     def test_create_worklog_with_none_employee_id(self, mock_get_current_emp_id):
@@ -80,7 +103,7 @@ class TestWorklogService(unittest.TestCase):
 
         # Act
         result = self.worklog_service.create_worklog_now(
-            employee_id=None, worklog_text=self.DUMMY_VALID_WORKLOG_TEXT,
+            employee_id=None, work_desc=self.DUMMY_VALID_WORKLOG_TEXT,
             task=self.DUMMY_TASK, ticket_link=self.DUMMY_TICKET_LINK)
 
         # Assert
@@ -88,7 +111,7 @@ class TestWorklogService(unittest.TestCase):
         mock_get_current_emp_id.assert_called_once()
 
         # Check that create_worklog on repository was called with the correct parameters
-        # i.e. (Current employee ID, ANY date, worklog_text, task)
+        # i.e. (Current employee ID, ANY date, work_desc, task)
         self.worklog_repository.create_worklog.assert_called_once_with(
             'emp123', unittest.mock.ANY, self.DUMMY_VALID_WORKLOG_TEXT, self.DUMMY_TASK,
             self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE

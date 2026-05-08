@@ -6,6 +6,7 @@ import frappe
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
+from hr_time.api.check_in.enums import LogType
 
 
 class State(enum.Enum):
@@ -97,11 +98,11 @@ class CheckinService:
 
         match action:
             case Action.startOfWork:
-                self.data.checkin(employee.id, "IN", False)
+                self.data.checkin(employee.id, LogType.IN, False)
             case Action.breakTime:
-                self.data.checkin(employee.id, "OUT", True)
+                self.data.checkin(employee.id, LogType.OUT, True)
             case Action.endOfWork:
-                self.data.checkin(employee.id, "OUT", False)
+                self.data.checkin(employee.id, LogType.OUT, False)
 
     @staticmethod
     def _event_to_state(event: CheckinEvent) -> State:
@@ -118,7 +119,7 @@ class CheckinService:
         return State.In
 
     def has_open_session(self, employee_id: str) -> bool:
-        """Check if employee has open check-in session"""        
+        """Check if employee has open check-in session"""
         events = self.data.get(datetime.date.today(), employee_id)
         latest = events.get_latest()
 

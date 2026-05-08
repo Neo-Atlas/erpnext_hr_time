@@ -25,7 +25,29 @@ HR_TIME.LS_KEYS = {
     PREV_WFH_PREF: 'neo_hr_time_last_wfh_value'
 };
 
-window.CHECKIN_STATUS_REFRESH_INTERVAL_MS = 15_000;
+window.CHECKIN_STATUS_REFRESH_INTERVAL_MS = 20_000;
+window.WORK_DURATION_RECALC_INTERVAL_MS = 20_000;
+
+// API Endpoints (add more API definitions here for global access)
+window.API = {
+    FLEXTIME: {
+        GET_OPTIONS: "hr_time.api.flextime.api.get_easy_checkin_options",
+        SUBMIT_CHECKIN: "hr_time.api.flextime.api.submit_easy_checkin",
+    },
+    WORKLOG: {
+        GET_CONTEXT: "hr_time.api.worklog.api.get_worklog_context",
+        PREPARE_CHECKOUT: "hr_time.api.worklog.api.prepare_worklog_for_checkout",
+        SAVE_AND_CHECKOUT: "hr_time.api.worklog.api.save_and_checkout",
+    },
+    EMPLOYEE: {
+        GET_CURRENT_EMPLOYEE_ID: "hr_time.api.employee.api.get_current_employee_id",
+        GET_CURRENT_EMPLOYEE: "hr_time.api.employee.api.get_current_employee"
+    },
+    CLIENT: {
+        GET_DOC: "frappe.client.get",
+    },
+};
+
 
 document.bind_dashboard_easy_checkin = () => {
     EasyCheckinDialog.prepare_dashboard()

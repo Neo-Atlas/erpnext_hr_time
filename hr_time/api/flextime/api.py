@@ -1,13 +1,14 @@
 import datetime
+from typing import Union
+
 import frappe
 from frappe import _
-from typing import Union
+
 from hr_time.api.check_in.service import CheckinService, State, Action
 from hr_time.api.employee.repository import EmployeeRepository, TimeModel
 from hr_time.api.flextime.processing import FlexTimeProcessingService
 from hr_time.api.flextime.stats import FlextimeStatisticsService
 from hr_time.api.worklog.service import WorklogService
-from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 from hr_time.api.shared.constants.messages import Messages
 from hr_time.api.shared.utils.response import Response
 
@@ -113,26 +114,38 @@ def submit_easy_checkin(action: str) -> Union[None, dict]:
         action (str): The selected check-in action ("Start of work", "Break", "End of work").
 
     Returns:
-        Union[None, dict]: Returns None when the action is successfully processed.
-                           Returns a dict with an error message if "End of work"
-                           is selected and no worklogs exist for the day.
-
-    Raises:
-        frappe.DoesNotExistError: If an unknown action is provided.
+        Response object with success/error status and appropriate message
     """
-    employee = EmployeeRepository().get_current()
-    match action:
-        case "Start of work" | "Resume work":
-            CheckinService.prod().checkin(Action.startOfWork)
-        case "Break":
-            CheckinService.prod().checkin(Action.breakTime)
-        case "End of work":
-            # Check if the employee has any worklogs
-            if not WorklogService.prod().check_if_employee_has_worklogs_today(employee.id):
-                return Response.error(Messages.Checkin.FAILED_CHECKOUT_DUE_TO_NO_WORKLOGS)
-            CheckinService.prod().checkin(Action.endOfWork)
-        case _:
-            FrappeUtils.throw_error_msg(Messages.Common.UNKNOWN_ACTION, frappe.DoesNotExistError)
+    try:
+        employee = EmployeeRepository().get_current()
+        if employee is None:
+            return Response.error(Messages.Employee.NOT_FOUND_EMPLOYEE).to_dict()
+
+        match action:
+            case "Start of work":
+                CheckinService.prod().checkin(Action.startOfWork)
+                return Response.success(Messages.Checkin.SUCCESS_CHECKIN).to_dict()
+
+            case "Resume work":
+                CheckinService.prod().checkin(Action.startOfWork)
+                return Response.success(Messages.Checkin.SUCCESS_RESUME).to_dict()
+
+            case "Break":
+                CheckinService.prod().checkin(Action.breakTime)
+                return Response.success(Messages.Checkin.SUCCESS_BREAK).to_dict()
+
+            case "End of work":
+                # Check if the employee has any worklogs
+                if not WorklogService.prod().check_if_employee_has_worklogs_today(employee.id):
+                    return Response.error(Messages.Checkin.FAILED_CHECKOUT_DUE_TO_NO_WORKLOGS).to_dict()
+                CheckinService.prod().checkin(Action.endOfWork)
+                return Response.success(Messages.Checkin.SUCCESS_CHECKOUT).to_dict()
+
+            case _:
+                return Response.error(Messages.Common.UNKNOWN_ACTION).to_dict()
+    except Exception as e:
+        frappe.log_error(f"Error in submit_easy_checkin: {str(e)}")
+        return Response.error(Messages.Common.ERR_UNKNOWN).to_dict()
 
 
 def get_checkin_status_template_data() -> dict:

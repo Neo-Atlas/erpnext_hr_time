@@ -67,7 +67,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Assert
         self.assertEqual(result['status'], Response.STATUS_ERROR)
-        self.assertEqual(result['message'], Messages.Worklog.EMPTY_TASK_DESC)   # Expect the error message
+        self.assertEqual(result['message'], Messages.Worklog.NO_WORK_DESC)   # Expect the error message
 
     @patch('hr_time.api.worklog.repository.WorklogRepository.create_worklog')
     def test_create_worklog_general_exception(self, mock_create_worklog):

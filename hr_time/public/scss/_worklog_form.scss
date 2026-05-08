@@ -1,40 +1,48 @@
+:root{
+    --worklog-green-rgb: 40, 167, 69;
+    --worklog-orange-rgb: 255, 193, 7;
+    --worklog-red-rgb: 220, 53, 69;
+}
+
 .historical-worklog {
-    background-color: #f9f9f9;
-    // opacity: 0.95;
+    background-color: var(--gray-100);
 
     .form-section {
         opacity: 0.97;
     }
 
     .control-label {
-        color: #6c757d;
+        color: var(--gray-800);
     }
 }
 
 .allocation-mismatch-below-table {
-    margin: 8px 0;
+    margin: 8px 0 12px 0;
 }
 
 .allocation-mismatch-indicator {
     text-align: center;
-    padding: 10px 12px;
-    background: #f8f9fa;
+    padding: 8px 0;
+    background: var(--gray-100);
     border-radius: 4px;
-    margin: 8px 0;
-    border-left: 3px solid;
+    margin: 0 0 6px 0;
+    border-left: 4px solid;
     font-size: 0.8rem;
     opacity: 0.8;
     
     &.allocation-mismatch-perfect {
-        border-left-color: #28a745;
+        border-left-color: var(--green);
+        background: rgba(var(--worklog-green-rgb), 0.07);
     }
     
     &.allocation-mismatch-warning {
-        border-left-color: #fd7e14;
+        border-left-color: var(--orange);
+        background: rgba(var(--worklog-orange-rgb), 0.07);
     }
     
     &.allocation-mismatch-danger {
-        border-left-color: #dc3545;
+        border-left-color: var(--red);
+        background: rgba(var(--worklog-red-rgb), 0.07);
     }
 }
 
@@ -43,7 +51,7 @@
     display: inline-block;
     width: 11px;
     height: 11px;
-    background-color: #28a745;
+    background-color: var(--green);
     border-radius: 50%;
     margin-right: 6px;
     animation: blink 1.4s ease-in-out infinite;
@@ -61,24 +69,16 @@
     }
 }
 
-// .historical-worklog input,
-// .historical-worklog select,
-// .historical-worklog textarea,
-// .historical-worklog .ql-container{
-//     // background-color: #f5f5f5 !important;
-//     // border-color: #e9ecef !important;
-//     // color: #495057 !important;
-//     cursor: not-allowed !important;
-//     pointer-events: none;
-// }
+#page-Worklog > div.container.page-body{
+    padding-bottom: 1rem;
 
-// .historical-worklog .btn-open-row,
-// .historical-worklog .grid-remove-row,
-// .historical-worklog .grid-duplicate-row,
-// .historical-worklog .btn-clear {
-//     display: none !important;
-// }
+    div.page-wrapper > div > div.row.layout-main > div.col.layout-main-section-wrapper > div.layout-main-section > div:nth-child(2) > div > div > div.form-page{
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+}
 
-// .historical-worklog .grid-add-row {
-//     display: none !important;
-// }
+@media (min-width: 468px) and (max-width: 768px) {
+    #page-Worklog > div.container.page-body > div.page-wrapper > div > div.row.layout-main > div.col.layout-main-section-wrapper > div.layout-main-section > div:nth-child(2) > div > div > div.form-page > div:nth-child(6) > div > div > form > div.frappe-control.form-group > div > div.form-grid-container{
+        overflow-x: scroll !important;
+    }
+}

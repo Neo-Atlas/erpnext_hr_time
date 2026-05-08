@@ -28,17 +28,30 @@ label#worklog_status_container{
 }
 
 [data-fieldname="worklog_box"]{
-    .clearfix{
-        // height: 10px !important;
-    }
-
     textarea{
         min-height: 70px;
-        // height: 120px;
         max-height: 200px;
     }
 }
 
 body div.modal.fade.show form  div.frappe-control.form-group div.form-grid-container div.grid-body div.rows div.grid-row.grid-row-open div.form-in-grid div.grid-form-heading span.row-actions button.btn.grid-delete-row{
     display: none !important;
+}
+
+body div.modal.fade.easy-checkin-dialog.show div.modal-header h4{
+  
+  position: relative;
+
+  &::after {
+    content: "";
+    background: url("/assets/hr_time/res/icons/tick-double.svg") center/contain no-repeat;//"☑";
+    margin-left: 6px;
+    display: inline-block;
+    width: 19px;
+    height: 19px;
+  }
+}
+
+body .modal.easy-checkin-dialog.show div.modal-body.ui-front div.frappe-control.form-group div.form-grid-container{
+    overflow-x: scroll;
 }
