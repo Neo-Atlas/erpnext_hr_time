@@ -4,6 +4,7 @@ import frappe
 
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.list import CheckinList
+from hr_time.api.check_in.enums import LogType
 
 
 class CheckinRepository:
@@ -19,16 +20,15 @@ class CheckinRepository:
         events = []
 
         for doc in docs:
-            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == "IN", doc.custom_is_break))
+            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == LogType.IN.to_string(), doc.custom_is_break))
 
         return CheckinList(events)
 
-    def checkin(self, employee_id: str, log_type: str, is_break: bool):
+    def checkin(self, employee_id: str, log_type: LogType, is_break: bool):
         """Create new checkin record"""
         doc = frappe.new_doc("Employee Checkin")
         doc.time = datetime.datetime.now()
         doc.employee = employee_id
-        doc.log_type = log_type
+        doc.log_type = log_type.to_string()
         doc.custom_is_break = is_break
-
         doc.save()

@@ -6,21 +6,29 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "work_summary_section",
+  "column_break_thko",
   "employee",
   "employee_name",
-  "log_time",
-  "task_desc",
-  "amended_from",
-  "task",
-  "ticket_link",
+  "column_break_smrf",
   "is_home_office",
+  "task",
+  "section_break_qwqk",
+  "column_break_itkq",
+  "work_desc",
+  "task_allocations_section",
   "tasks_entry",
+  "sec_tracking_info",
+  "log_time",
+  "timesheet",
+  "column_break_mgbh",
   "time_saved",
-  "timesheet"
+  "amended_from",
+  "section_break_uofc",
+  "ticket_link"
  ],
  "fields": [
   {
-   "columns": 1,
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -31,7 +39,6 @@
    "search_index": 1
   },
   {
-   "columns": 2,
    "fieldname": "employee",
    "fieldtype": "Link",
    "in_filter": 1,
@@ -41,27 +48,26 @@
    "placeholder": "Employee associated with the worklog"
   },
   {
-   "columns": 2,
    "fieldname": "log_time",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Time",
+   "label": "Time of log",
    "placeholder": "Auto-fills to now if blank"
   },
   {
-   "columns": 4,
-   "fieldname": "task_desc",
+   "columns": 10,
+   "fieldname": "work_desc",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "in_preview": 1,
-   "label": "Task Summary",
-   "max_height": "200px",
-   "placeholder": "Describe your task here",
+   "label": "Work Summary",
+   "max_height": "220px",
+   "placeholder": "Summarize your work for the day",
    "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
-   "columns": 2,
+   "description": "(legacy field: deprecated)",
    "fieldname": "task",
    "fieldtype": "Link",
    "hidden": 1,
@@ -71,13 +77,13 @@
    "in_standard_filter": 1,
    "label": "Task",
    "options": "Task",
-   "placeholder": "Associate with a relevant task",
-   "width": "50px"
+   "placeholder": "Associate with a relevant task"
   },
   {
+   "columns": 10,
    "fieldname": "ticket_link",
    "fieldtype": "Data",
-   "label": "External reference",
+   "label": "External reference \u2197",
    "options": "URL",
    "placeholder": "e.g. link to a ticket in an external system"
   },
@@ -103,33 +109,70 @@
   {
    "fieldname": "tasks_entry",
    "fieldtype": "Table",
-   "label": "Allocate hours",
+   "label": "Allocate hours to tasks",
    "options": "Worklog Tasks"
   },
   {
    "description": "The Timesheet linked to this Worklog",
    "fieldname": "timesheet",
    "fieldtype": "Link",
-   "label": "Timesheet",
+   "label": "Timesheet \u2197",
    "options": "Timesheet",
    "read_only": 1
   },
   {
-   "columns": 3,
    "default": "0",
    "description": "Hours already saved in previous worklog (includiing unallocated excess)",
    "fieldname": "time_saved",
    "fieldtype": "Float",
-   "label": "Time Recorded (hrs)",
+   "label": "Time Recorded (hrs) \u2713",
    "non_negative": 1,
    "precision": "2",
    "read_only": 1
+  },
+  {
+   "fieldname": "sec_tracking_info",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_mgbh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "work_summary_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "task_allocations_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "columns": 5,
+   "fieldname": "column_break_smrf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qwqk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_itkq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 5,
+   "fieldname": "column_break_thko",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_uofc",
+   "fieldtype": "Section Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-19 23:24:46.628954",
+ "modified": "2026-05-06 16:01:06.176195",
  "modified_by": "j@d.com",
  "module": "HR time management",
  "name": "Worklog",
@@ -178,6 +221,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "task_desc",
+ "title_field": "work_desc",
  "track_changes": 1
 }

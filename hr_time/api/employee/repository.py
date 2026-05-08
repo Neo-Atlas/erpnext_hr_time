@@ -65,10 +65,20 @@ class Employee:
 
 
 class EmployeeRepository:
+    DOCTYPE_NAME = "Employee"
     doc_fields = ["name", "employee_name", "custom_time_model", "grade", "date_of_birth", "date_of_joining"]
 
+    @staticmethod
+    def get_name_by_user_id(user_id: str) -> str:
+        """Get employee name (ID) by user ID"""
+        return frappe.get_value(
+            EmployeeRepository.DOCTYPE_NAME,
+            {"user_id": user_id},
+            "name"
+        )
+
     def get_all(self) -> list[Employee]:
-        docs_employees = frappe.get_all("Employee", fields=self.doc_fields)
+        docs_employees = frappe.get_all(self.DOCTYPE_NAME, fields=self.doc_fields)
         employees = []
 
         for doc in docs_employees:
@@ -79,7 +89,7 @@ class EmployeeRepository:
     # Returns the Employee object of the current user
     def get_current(self) -> Optional[Employee]:
         user_id = frappe.get_user().doc.email
-        docs = frappe.get_all("Employee", fields=self.doc_fields, filters={"user_id": user_id})
+        docs = frappe.get_all(self.DOCTYPE_NAME, fields=self.doc_fields, filters={"user_id": user_id})
 
         if not docs:
             return None

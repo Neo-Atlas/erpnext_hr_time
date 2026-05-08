@@ -15,22 +15,20 @@ export class FlextimeApi{
     static fetchCurrentEmployeeId = () => {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "hr_time.api.employee.api.get_current_employee_id",
+                method: API.EMPLOYEE.GET_CURRENT_EMPLOYEE_ID,
                 callback: (response) => {
-                    const employee_id = response.message;
-                    if (employee_id) {
-                        resolve(employee_id); // Resolve with the employee ID
+                    if (response.message) {
+                        resolve(response.message);  // Direct string, no wrapper
                     } else {
-                        reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE_ID));
+                        reject(new Error("No employee ID returned"));
                     }
                 },
                 error: (error) => {
-                    reject(error); // Handle API errors
+                    reject(new Error(error.message || MESSAGES.ERR_BACKEND_UNREACHABLE));
                 },
             });
         });
     }
-
 
     /**
      * Fetches the current employee document object by calling the backend API.
@@ -40,19 +38,20 @@ export class FlextimeApi{
     static fetchCurrentEmployee = () => {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "hr_time.api.employee.api.get_current_employee",
+                method: API.EMPLOYEE.GET_CURRENT_EMPLOYEE,
                 callback: (response) => {
-                    // console.log('response: ',response);
+                    const result = response.message;
                     
-                    const employee = response.message;
-                    if (employee) {
-                        resolve(employee); // Resolve with the employee
+                    if (response && response.message && typeof response.message === 'object') {
+                        resolve(response.message); // Employee document
+                    } else if (response.message === null || response.message === undefined) {
+                        reject(new Error(result.message)); // Backend message
                     } else {
-                        reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE));
+                        reject(new Error(MESSAGES.ERR_UNEXPECTED_RESPONSE));
                     }
                 },
                 error: (error) => {
-                    reject(error); // Handle API errors
+                    reject(new Error(MESSAGES.ERR_BACKEND_UNREACHABLE));
                 },
             });
         });

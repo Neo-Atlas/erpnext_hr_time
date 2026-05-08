@@ -20,7 +20,7 @@ class TestWorklogRepository(unittest.TestCase):
     def test_get_worklogs(self, mock_get_all):
         # Arrange
         mock_data = [{'employee': self.DUMMY_EMP_ID, 'log_time': '2023-01-01 10:00:00',
-                      'task_desc': 'Test Task', 'task': 'Task1', 'ticket_link': 'github.com/PR/1'}]
+                      'work_desc': 'Test Task', 'task': 'Task1', 'ticket_link': 'github.com/PR/1'}]
         # Define the mock method (lambda) to handle all fields defined in frappe framework
         mock_get_all.side_effect = lambda doctype, fields=None, filters=None, **kwargs: mock_data
         filters = {'employee': self.DUMMY_EMP_ID}
@@ -39,11 +39,11 @@ class TestWorklogRepository(unittest.TestCase):
         interested_date = datetime(2024, 10, 10).date()
         mock_data = [
             {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 10, 10, 10, 10),
-             'task_desc': 'Worked on task 1', 'task': 'TASK001', 'ticket_link': 'github.com/PR/1',
+             'work_desc': 'Worked on task 1', 'task': 'TASK001', 'ticket_link': 'github.com/PR/1',
              'is_home_office': 'Yes'
              },
             {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 11, 10, 0, 0),
-             'task_desc': 'Worked on task 2', 'task': 'TASK002', 'ticket_link': 'github.com/PR/2',
+             'work_desc': 'Worked on task 2', 'task': 'TASK002', 'ticket_link': 'github.com/PR/2',
              'is_home_office': 'No'
              }
         ]
@@ -62,7 +62,7 @@ class TestWorklogRepository(unittest.TestCase):
         self.assertEqual(len(worklogs), 1)  # Expecting only one log entry for 2024-10-10
         self.assertIsInstance(worklogs[0], Worklog)
         self.assertEqual(worklogs[0].employee_id, self.DUMMY_EMP_ID)
-        self.assertEqual(worklogs[0].task_desc, 'Worked on task 1')
+        self.assertEqual(worklogs[0].work_desc, 'Worked on task 1')
         self.assertEqual(worklogs[0].task, 'TASK001')
         self.assertEqual(worklogs[0].ticket_link, 'github.com/PR/1')
         # Verifying if correct filters are applied
@@ -127,14 +127,14 @@ class TestWorklogRepository(unittest.TestCase):
     def test_create_worklog_empty_task_description(self):
         # Arrange
         log_time = datetime.now() - timedelta(seconds=1)  # Valid log time (in past)
-        worklog_text = ''  # Empty worklog description
+        work_desc = ''  # Empty worklog description
 
         # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, worklog_text)
+        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, work_desc)
 
         # Assert
         self.assertEqual(result.status, Response.STATUS_ERROR)
-        self.assertEqual(result.message, Messages.Worklog.EMPTY_TASK_DESC)
+        self.assertEqual(result.message, Messages.Worklog.NO_WORK_DESC)
 
     @patch('frappe.new_doc')
     @patch('frappe.db.rollback')

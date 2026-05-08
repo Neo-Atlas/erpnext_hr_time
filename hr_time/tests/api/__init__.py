@@ -35,12 +35,12 @@ class FakeUtils:
 
 class FakeDocument:
     def __init__(
-        self, name, employee=None, task_desc=None, task=None,
+        self, name, employee=None, work_desc=None, task=None,
         is_home_office="No"
     ):
         self.name = name
         self.employee = employee
-        self.task_desc = task_desc
+        self.work_desc = work_desc
         self.task = task
         self.is_home_office = is_home_office
 
@@ -54,9 +54,9 @@ class FakeDocumentModel:
     def get_doc(doctype, docname):
         # Return a mock document based on doctype and docname
         if doctype == "ToDo":
-            return FakeDocument(name=docname, task_desc="Sample Todo Task")
+            return FakeDocument(name=docname, work_desc="Sample Todo Task")
         elif doctype == "Worklog":
-            return FakeDocument(name=docname, employee="EMP001", task_desc="Sample Worklog Task")
+            return FakeDocument(name=docname, employee="EMP001", work_desc="Sample Worklog Task")
         raise ValueError(f"Unknown document: {doctype}, {docname}")
 
 
@@ -112,9 +112,9 @@ class FakeFrappe(object):
                 if filters.get('employee_id') == "001":
                     return [
                         FakeDocument(name="Test Employee", employee="001",
-                                     task_desc="test description", task="Task A"),
+                                     work_desc="test description", task="Task A"),
                         FakeDocument(name="Test Employee", employee="001",
-                                     task_desc="test description", task="Task B"),
+                                     work_desc="test description", task="Task B"),
                     ]
                 elif filters.get('employee_id') == "002":
                     return []
@@ -125,13 +125,13 @@ class FakeFrappe(object):
     @staticmethod
     def new_doc(doctype):
         if doctype == "Worklog":
-            return FakeDocument(name="NEW_WORKLOG", employee=None, task_desc=None, task=None)
+            return FakeDocument(name="NEW_WORKLOG", employee=None, work_desc=None, task=None)
         raise AttributeError(f"Unknown doctype: {doctype}")
 
     @staticmethod
     def get_doc(doctype: dict[str: str]):
         if doctype['doctype'] == "Worklog":
-            return FakeDocument(name="NEW_WORKLOG", employee=None, task_desc=None, task=None)
+            return FakeDocument(name="NEW_WORKLOG", employee=None, work_desc=None, task=None)
         raise AttributeError(f"Unknown doctype: {doctype}")
 
     @staticmethod

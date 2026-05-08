@@ -5,6 +5,8 @@ from typing import Optional
 
 import frappe
 
+from hr_time.api.shared.domain.document_status import DocumentStatus
+
 
 class Status(enum.Enum):
     Present = 0,
@@ -73,7 +75,7 @@ class AttendanceRepository:
     def get(self, employee_id: str, day: datetime.date) -> Optional[Attendance]:
         docs = frappe.get_all("Attendance", fields=["employee", "status", "leave_type", "attendance_date"],
                               filters=[["employee", "=", employee_id], ["attendance_date", "=", day],
-                                       ["docstatus", "=", 1]])
+                                       ["docstatus", "=", DocumentStatus.SUBMITTED.value]])
 
         if not docs:
             return None
