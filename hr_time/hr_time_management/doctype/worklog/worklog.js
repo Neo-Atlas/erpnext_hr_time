@@ -227,9 +227,6 @@ frappe.ui.form.on(DOCTYPE.NAME, {
                 if (!r.message) return;
 
                 const context = r.message;
-                console.log('context: ',context);
-                
-                console.log('frm.doc.name: ',frm.doc.name);
                 
                 if (frm.is_new() && context.today_worklog_name && context.today_worklog_name !== frm.doc.name) {                    
                     FrappeUtils.toast_info(MESSAGES.INFO_OPENING_EXISTING, 3);
@@ -313,20 +310,22 @@ frappe.ui.form.on(DOCTYPE.NAME, {
         // Set query for task field in tasks_entry child table
         frm.set_query(FIELD.TASK, FIELD.TASKS_ENTRY, function(doc, cdt, cdn) {
             const row = locals[cdt][cdn];
-            
+
             // Get all currently selected tasks from the table
             const existing_tasks = (doc[FIELD.TASKS_ENTRY] || [])
                 .map(r => r[FIELD.TASK])
                 .filter(t => t && t !== row[FIELD.TASK]); // Exclude current row
-            
+
             // Get buffer task ID
             const buffer_task_id = window.BUFFER_TASK_ID || '';
+            const user_id = frappe.session.user;
             
             return {
                 filters: {
                     name: ["not in", [...existing_tasks, buffer_task_id]],
-                    status: ["!=", "Cancelled"]
-                }
+                    status: ["not in", ["Cancelled","Completed"]],
+                },
+                query: "hr_time.api.task.api.task_query_with_assignment",  // Custom method
             };
         });
     },

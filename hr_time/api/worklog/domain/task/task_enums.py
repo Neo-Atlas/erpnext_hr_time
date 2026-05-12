@@ -11,16 +11,9 @@ class TaskPriority(Enum):
     NONE = ""
 
     @classmethod
-    def get_order_list(cls) -> List[str]:
+    def get_priority_order_list(cls) -> List[str]:
         """Return priority values in order from highest to lowest"""
         return [cls.URGENT.value, cls.HIGH.value, cls.MEDIUM.value, cls.LOW.value, cls.NONE.value]
-
-    @classmethod
-    def get_field_order(cls) -> str:
-        """Generate FIELD() clause for SQL ORDER BY"""
-        ordered_values = cls.get_order_list()
-        quoted_values = [f"'{v}'" for v in ordered_values]
-        return f"FIELD(priority, {', '.join(quoted_values)})"
 
 
 class TaskStatus(Enum):

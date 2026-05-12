@@ -9,12 +9,25 @@ from hr_time.api.shared.domain.document_status import DocumentStatus
 
 
 class TaskRepository:
-    """Repository for Task operations"""
+    """Repository for Task operations.
 
+    Note: Constants defined for custom fields and doctype names only.
+    Standard Frappe fields (modified, creation, owner, etc.) are hardcoded
+    as they are unlikely to change.
+    """
     DOCTYPE_NAME = "Task"
     DOCTYPE_TIMESHEET_DETAIL = "Timesheet Detail"
-    FIELD_IS_INTERNAL = "custom_is_internal"
+
+    # Field constants - single source of truth
+    FIELD_NAME = "name"
     FIELD_IS_GENERIC = "is_generic"
+    FIELD_IS_INTERNAL = "custom_is_internal"
+    FIELD_STATUS = "status"
+    FIELD_SUBJECT = "subject"
+    FIELD_PRIORITY = "priority"
+    FIELD_EXPECTED_TIME = "expected_time"
+    FIELD_EXP_START_DATE = "exp_start_date"
+    FIELD_ASSIGN = "_assign"
 
     @staticmethod
     def _get_task_type_condition(task_type: 'TaskType') -> str:
@@ -29,11 +42,39 @@ class TaskRepository:
         return f"({TaskRepository.FIELD_IS_INTERNAL} != 1 OR {TaskRepository.FIELD_IS_INTERNAL} IS NULL)"
 
     @staticmethod
+    def _get_order_by_clause(include_priority: bool = False) -> str:
+        """
+        Generate ORDER BY clause for task listing.
+
+        Args:
+            include_priority: If True, orders by priority first (Urgent → Low)
+                            If False, starts directly with date ordering.
+
+        Returns:
+            Complete ORDER BY clause string
+        """
+        order_parts = []
+
+        if include_priority:
+            priorities = TaskPriority.get_priority_order_list()
+            quoted_priorities = [f"'{p}'" for p in priorities]
+            order_parts.append(f"FIELD(priority, {', '.join(quoted_priorities)})")
+
+        order_parts.extend([
+            "exp_start_date IS NULL ASC",  # NULLs last
+            "exp_start_date ASC",          # Soonest first
+            "modified DESC"                # Recent activity  (tiebreaker for same start date)
+        ])
+
+        return f"ORDER BY {', '.join(order_parts)}"
+
+    @staticmethod
     def get_assigned_tasks(user_id: str, limit: int = 5) -> List[Dict]:
         """Fetch tasks assigned to user (business-critical work)"""
         # Exclude completed/cancelled statuses
         excluded_statuses = TaskStatus.completed_statuses()
         status_placeholders = ', '.join(['%s'] * len(excluded_statuses))
+        params = [json.dumps(user_id)] + excluded_statuses
 
         query = f"""
             SELECT
@@ -50,16 +91,10 @@ class TaskRepository:
                 AND {TaskRepository._get_task_type_condition(TaskType.ASSIGNED)}
                 AND {TaskRepository._get_exclude_internal_condition()}
         """
-        params = [json.dumps(user_id)] + excluded_statuses
 
-        query += f"""
-            ORDER BY
-                {TaskPriority.get_field_order()},
-                modified DESC
-            LIMIT %s
-        """
+        query += TaskRepository._get_order_by_clause(True)
+        query += " LIMIT %s"
         params.append(limit)
-
         return frappe.db.sql(query, params, as_dict=True)
 
     @staticmethod
@@ -71,30 +106,25 @@ class TaskRepository:
         # Exclude completed/cancelled statuses
         excluded_statuses = TaskStatus.completed_statuses()
         status_placeholders = ', '.join(['%s'] * len(excluded_statuses))
+        params = excluded_statuses.copy()
 
         query = f"""
             SELECT
                 name as task,
                 subject,
-                expected_time,
+                {TaskRepository.FIELD_EXPECTED_TIME},
                 status,
-                priority
+                {TaskRepository.FIELD_PRIORITY}
             FROM `tab{TaskRepository.DOCTYPE_NAME}`
             WHERE
                 {TaskRepository._get_task_type_condition(TaskType.GENERIC)}
                 AND status NOT IN ({status_placeholders})
                 AND {TaskRepository._get_exclude_internal_condition()}
         """
-        params = excluded_statuses.copy()
 
-        query += f"""
-            ORDER BY
-                {TaskPriority.get_field_order()},
-                modified DESC
-            LIMIT %s
-        """
+        query += TaskRepository._get_order_by_clause(True)
+        query += " LIMIT %s"
         params.append(limit)
-
         return frappe.db.sql(query, params, as_dict=True)
 
     @staticmethod
@@ -178,6 +208,6 @@ class TaskRepository:
             "doctype": TaskRepository.DOCTYPE_NAME,
             "subject": subject,
             "status": TaskStatus.OPEN.value,
-            "is_generic": 1,
+            TaskRepository.FIELD_IS_GENERIC: 1,
             TaskRepository.FIELD_IS_INTERNAL: 1,
         })

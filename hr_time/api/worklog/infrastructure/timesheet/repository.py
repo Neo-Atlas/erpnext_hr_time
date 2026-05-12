@@ -46,13 +46,19 @@ class TimesheetRepository:
 
     @staticmethod
     def create(employee_id: str, time_logs: list[TimesheetLog]) -> str:
-        """Create a new timesheet with TimesheetLog value objects"""
-        timesheet = frappe.new_doc(TimesheetRepository.DOCTYPE_NAME)
-        timesheet.employee = employee_id
+        """Create a new timesheet with TimesheetLog value objects (with admin privileges)"""
+        original_user = frappe.session.user
+        try:
+            frappe.set_user("Administrator")
 
-        for log in time_logs:
-            timesheet.append("time_logs", log.to_dict())
+            timesheet = frappe.new_doc(TimesheetRepository.DOCTYPE_NAME)
+            timesheet.employee = employee_id
 
-        timesheet.save()
-        timesheet.submit()
-        return timesheet
+            for log in time_logs:
+                timesheet.append("time_logs", log.to_dict())
+
+            timesheet.save()
+            timesheet.submit()
+            return timesheet
+        finally:
+            frappe.set_user(original_user)

@@ -221,14 +221,16 @@ export class EasyCheckinDialog {
                   .map(row => row[FIELD.TASK])
                   .filter(Boolean);
 
-              // Use global cached value
               const buffer_task_id = window.BUFFER_TASK_ID || '';
+              const user_id = frappe.session.user;
               
               return {
                 filters: {
                     name: ["not in", [...existing_tasks, buffer_task_id]],
-                }
-              }
+                    status: ["not in", ["Cancelled","Completed"]],
+                },
+                query: "hr_time.api.task.api.task_query_with_assignment",  // Custom method
+              };
             },
             onchange: function(e) {
               const grid_context = this;
