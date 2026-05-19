@@ -1,10 +1,10 @@
 import datetime
 import math
 
+from hr_time.api.shared.utils.clock import Clock
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.api.flextime.repository import FlextimeStatusRepository
-from hr_time.api.shared.utils.clock import Clock
 
 
 class FlextimeBalance:
@@ -114,3 +114,52 @@ class FlextimeStatisticsService:
             total_seconds += duration.total_time
 
         return total_seconds
+    
+    # flextime/stats.py
+    def get_todays_worked_seconds(self, employee_id: str = None) -> int:
+        """Get total worked seconds for today, including current open session"""
+        if not employee_id:
+            employee = self.employee.get_current()
+            if not employee:
+                return 0
+            employee_id = employee.id
+        
+        events = self.checkin.get(self.clock.date_today(), employee_id)
+        
+        total_worked_seconds = 0
+        for duration in events.get_durations():
+            if duration.duration_type.name == "WORK":
+                total_worked_seconds += duration.total_time
+
+        # Add current open session if checked in
+        latest = events.get_latest()
+        if latest and latest.is_in and not latest.is_break:
+            now = self.clock.now()
+            current_session = int((now - latest.timestamp).total_seconds())
+            total_worked_seconds += current_session
+
+        return total_worked_seconds
+
+    def get_todays_break_seconds(self, employee_id: str = None) -> int:
+        """Get total break seconds for today, including current break if active"""
+        if not employee_id:
+            employee = self.employee.get_current()
+            if not employee:
+                return 0
+            employee_id = employee.id
+        
+        events = self.checkin.get(self.clock.date_today(), employee_id)
+        
+        total_break_seconds = 0
+        for duration in events.get_durations():
+            if duration.duration_type.name != "WORK":  # BREAK
+                total_break_seconds += duration.total_time
+        
+        # Add current break if on break
+        latest = events.get_latest()
+        if latest and not latest.is_in and latest.is_break:
+            now = self.clock.now()
+            current_break = int((now - latest.timestamp).total_seconds())
+            total_break_seconds += current_break
+        
+        return total_break_seconds

@@ -99,6 +99,8 @@ export class EasyCheckinDialog {
       });
       this.options = response.message.options;
       this.default = response.message.default;
+      console.log('this.options: ',this.options);
+      
     } catch (error) {
       console.error(MESSAGES.FAILED_PRELOAD_CHECKIN_OPTIONS, error);
     }
@@ -107,7 +109,17 @@ export class EasyCheckinDialog {
   /** Initiates Checkin dialog creation after fetching current employee's ID. */
   async show() {
     try{
-      const employee_id = await FlextimeApi.fetchCurrentEmployeeId()
+      // Use already-fetched global instead of new API call
+      let employee_id = EasyCheckinStatus.getCurrentEmployeeId()
+
+      if (!employee_id) {
+        FrappeUtils.toast_failure("Check-in features are only available for employees");
+        return;
+        // throw new Error("Employee ID not available");
+      }
+    
+      this.current_employee_id = employee_id;
+      // EasyCheckinStatus.setCurrentEmployeeId(employee_id);
       this.createCheckinDialog(employee_id);
     } catch (error) {
       FrappeUtils.error_modal(error.message || MESSAGES.ERR_UNKNOWN);
@@ -706,9 +718,6 @@ refresh_allocation_status_from_backend() {
         // Checkin success message from backend
         FrappeUtils.toast_success(res.message || 'success');
 
-        this.refresh_dashboard();
-        EasyCheckinStatus.render();
-
         // Refresh check-in options after any check-in action
         if (window.refreshCheckinOptions) {
           window.refreshCheckinOptions();
@@ -791,45 +800,6 @@ refresh_allocation_status_from_backend() {
         FrappeUtils.toast_failure(error.message);
       }
     });
-  }
-
-  /** Refreshes the dashboard UI by triggering the refresh action on the associated buttons. */
-  refresh_dashboard() {
-    if (this.refresh_buttons === undefined) {
-      return;
-    }
-
-    for (let button of this.refresh_buttons) {
-      button.click();
-    }
-  }
-
-  /** Binds events for number card of dashboard */
-  static prepare_dashboard() {
-    
-    let dialog = EasyCheckinDialog.singleton();
-
-    document
-      .getElementById("hr_time_number_card_checkin_status")
-      .querySelector(".checkin_status").onclick = function () {
-        dialog.show();
-      };
-
-    dialog.refresh_buttons = [
-      document
-        .querySelector('[number_card_name="Checkin status"]')
-        .querySelector('[data-action="action-refresh"]'),
-      document
-        .querySelector('[number_card_name="Employees present"]')
-        .querySelector('[data-action="action-refresh"]'),
-      document
-        .querySelector('[quick_list_name="Employee Checkin"]')
-        .querySelector(".refresh-list.btn"),
-    ];
-
-    setTimeout(() => {
-      dialog.refresh_dashboard();
-    }, window.CHECKIN_STATUS_REFRESH_INTERVAL_MS);
   }
 
   /** Returns/Creates the singleton instance */

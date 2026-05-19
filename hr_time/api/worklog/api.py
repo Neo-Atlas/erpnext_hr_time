@@ -35,7 +35,6 @@ def prepare_worklog_for_checkout(employee_id: str = None) -> Dict[str, Any]:
     """
     if not employee_id:
         employee_id = get_current_employee_id()
-
     return WorklogService.prod().prepare_for_checkout(employee_id)
 
 

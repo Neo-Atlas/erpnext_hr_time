@@ -34,7 +34,7 @@ class TestCheckinService(unittest.TestCase):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
         self.data.get = MagicMock(return_value=CheckinList([]))
 
-        self.assertEqual(State.Out, self.service.get_current_status().state)
+        self.assertEqual(State.OUT, self.service.get_current_status().state)
 
         self.employee.get_current.assert_called_once()
         self.data.get.assert_called_once()
@@ -48,7 +48,7 @@ class TestCheckinService(unittest.TestCase):
             CheckinEvent("E002", datetime.datetime.now(), False, True),
         ]))
 
-        self.assertEqual(State.Break, self.service.get_current_status().state)
+        self.assertEqual(State.BREAK, self.service.get_current_status().state)
 
     def test_get_current_work(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
@@ -56,7 +56,7 @@ class TestCheckinService(unittest.TestCase):
             CheckinEvent("E001", datetime.datetime.now(), True, False),
         ]))
 
-        self.assertEqual(State.In, self.service.get_current_status().state)
+        self.assertEqual(State.IN, self.service.get_current_status().state)
 
     def test_get_current_out(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
@@ -65,7 +65,7 @@ class TestCheckinService(unittest.TestCase):
             CheckinEvent("E002", datetime.datetime.now(), False, False),
         ]))
 
-        self.assertEqual(State.Out, self.service.get_current_status().state)
+        self.assertEqual(State.OUT, self.service.get_current_status().state)
 
     def test_get_current_had_break_false(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)

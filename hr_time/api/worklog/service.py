@@ -242,7 +242,7 @@ class WorklogService:
             "timestamp": e.timestamp.isoformat(),
             "is_in": e.is_in,
             "is_break": e.is_break,
-            "log_type": LogType.IN.to_string() if e.is_in else LogType.OUT.to_string()
+            "log_type": LogType.IN.value if e.is_in else LogType.OUT.value
         } for e in events]
 
         return json.dumps(events_data, indent=2)

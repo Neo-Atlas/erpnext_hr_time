@@ -17,12 +17,11 @@ def get_current_employee_id() -> str:
     try:
         employee = EmployeeRepository().get_current()
         if employee is None:
-            FrappeUtils.throw_error_msg(_(Messages.Employee.NOT_FOUND_EMPLOYEE_ID))
-            # frappe.throw(_("No employee found for current user"))
-        return employee.id  # Return raw string, not wrapped
+            return None
+        return employee.id
     except Exception as e:
         frappe.log_error(f"Error in get_current_employee_id: {str(e)}")
-        FrappeUtils.throw_error_msg(_(Messages.Common.ERR_UNKNOWN))
+        return None
 
 
 @frappe.whitelist()

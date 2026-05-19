@@ -2,18 +2,30 @@ from enum import Enum
 
 
 class LogType(Enum):
-    """Check-in/out log type"""
+    """Check-in/out log type for database"""
     IN = "IN"
     OUT = "OUT"
 
-    @classmethod
-    def from_string(cls, value: str) -> 'LogType':
-        """Convert string to LogType"""
-        if value == "IN":
-            return cls.IN
-        elif value == "OUT":
-            return cls.OUT
-        raise ValueError(f"Invalid log type: {value}")
 
-    def to_string(self) -> str:
-        return self.value
+class Action(Enum):
+    """Check-in actions (UI and service)"""
+    START_WORK = "Start of work"
+    BREAK = "Break"
+    RESUME_WORK = "Resume work"
+    END_WORK = "End of work"
+
+    @classmethod
+    def from_string(cls, value: str):
+        """Convert string to Action enum"""
+        for action in cls:
+            if action.value == value:
+                return action
+        return None
+
+
+class State(Enum):
+    """Internal check-in state"""
+    UNKNOWN = "UNKNOWN"
+    IN = "IN"
+    BREAK = "BREAK"
+    OUT = "OUT"

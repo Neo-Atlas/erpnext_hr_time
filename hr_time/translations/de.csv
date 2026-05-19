@@ -193,3 +193,4 @@ Could not identify current employee,Der aktuelle Mitarbeiter konnte nicht identi
 "Cannot connect to server. Please check your network connection.","Es kann keine Verbindung zum Server hergestellt werden. Bitte überprüfen Sie Ihre Netzwerkverbindung.“
 "Please add work description before checking out.","Bitte fügen Sie eine Arbeitsbeschreibung hinzu, bevor Sie auschecken."
 Work on this ticket,Arbeit an diesem Ticket
+"Check-in features are only available for employees","Die Check-in-Funktionen stehen nur Mitarbeitern zur Verfügung"

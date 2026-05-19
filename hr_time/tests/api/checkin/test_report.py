@@ -59,7 +59,7 @@ class TestCheckinReport(unittest.TestCase):
         rows = self.service.get_present()
         self.assertEqual(1, len(rows))
         self.assertEqual("EMP-009", rows[0].employee.id)
-        self.assertEqual(State.Break, rows[0].status)
+        self.assertEqual(State.BREAK, rows[0].status)
         self.assertEqual(12, rows[0].current_status_since.hour)
         self.assertEqual(47, rows[0].current_status_since.minute)
         self.assertEqual(10, rows[0].work_start_today.hour)
@@ -79,7 +79,7 @@ class TestCheckinReport(unittest.TestCase):
         rows = self.service.get_present()
         self.assertEqual(1, len(rows))
         self.assertEqual("EMP-009", rows[0].employee.id)
-        self.assertEqual(State.In, rows[0].status)
+        self.assertEqual(State.IN, rows[0].status)
         self.assertEqual(10, rows[0].current_status_since.hour)
         self.assertEqual(30, rows[0].current_status_since.minute)
         self.assertEqual(10, rows[0].work_start_today.hour)
@@ -101,7 +101,7 @@ class TestCheckinReport(unittest.TestCase):
         rows = self.service.get_present()
         self.assertEqual(1, len(rows))
         self.assertEqual("EMP-009", rows[0].employee.id)
-        self.assertEqual(State.In, rows[0].status)
+        self.assertEqual(State.IN, rows[0].status)
         self.assertEqual(12, rows[0].current_status_since.hour)
         self.assertEqual(30, rows[0].current_status_since.minute)
         self.assertEqual(10, rows[0].work_start_today.hour)
@@ -114,13 +114,13 @@ class TestCheckinReport(unittest.TestCase):
     def test_get_present_filter_true(self):
         self.setup_break_status()
 
-        rows = self.service.get_present(filter_status=State.Break)
+        rows = self.service.get_present(filter_status=State.BREAK)
         self.assertEqual(1, len(rows))
 
     def test_get_present_filter_false(self):
         self.setup_break_status()
 
-        rows = self.service.get_present(filter_status=State.In)
+        rows = self.service.get_present(filter_status=State.IN)
         self.assertEqual(0, len(rows))
 
     def setup_break_status(self):

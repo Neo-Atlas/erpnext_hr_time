@@ -15,9 +15,9 @@ def execute(filters=None):
 
     if filters is not None and "status" in filters:
         if filters["status"] == "Break":
-            filter_status = State.Break
+            filter_status = State.BREAK
         elif filters["status"] == "Work":
-            filter_status = State.In
+            filter_status = State.IN
 
     max_name_length = 0
 

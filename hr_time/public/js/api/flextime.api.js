@@ -17,9 +17,12 @@ export class FlextimeApi{
             frappe.call({
                 method: API.EMPLOYEE.GET_CURRENT_EMPLOYEE_ID,
                 callback: (response) => {
-                    if (response.message) {
-                        resolve(response.message);  // Direct string, no wrapper
-                    } else {
+                    if (response.message && typeof response.message === 'string') {
+                        resolve(response.message);  // Valid employee ID
+                    } else if (response.message === null || response.message === undefined) {
+                        console.log('user is Admin');
+                        resolve(null);  // No employee (admin user) - resolve with null, don't reject
+                    }else {
                         reject(new Error("No employee ID returned"));
                     }
                 },

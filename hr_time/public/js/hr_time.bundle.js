@@ -25,7 +25,6 @@ HR_TIME.LS_KEYS = {
     PREV_WFH_PREF: 'neo_hr_time_last_wfh_value'
 };
 
-window.CHECKIN_STATUS_REFRESH_INTERVAL_MS = 20_000;
 window.WORK_DURATION_RECALC_INTERVAL_MS = 20_000;
 
 // API Endpoints (add more API definitions here for global access)
@@ -48,15 +47,25 @@ window.API = {
     },
 };
 
-
-document.bind_dashboard_easy_checkin = () => {
-    EasyCheckinDialog.prepare_dashboard()
-}
-
 $(document).ready(function () {
+    // Set employee ID on EasyCheckinStatus as soon as possible
+    FlextimeApi.fetchCurrentEmployeeId()
+        .then(empId => {
+            EasyCheckinStatus.setCurrentEmployeeId(empId);
+            if (!empId) {
+                console.log("No employee record found (admin user) - check-in features disabled");
+                // Hide or disable checkin-related UI for admins
+                $('.navbar .checkin_status').hide();
+            }
+        }).catch(error => {
+            console.error("Failed to set employee ID:", error);
+            EasyCheckinStatus.setCurrentEmployeeId(null);
+        });
+
+    // console.log('checkin status');
     EasyCheckinDialog.singleton().preloadCheckinOptions()
 
-    // Fetch buffer task ID once and cache it
+    // // Fetch buffer task ID once and cache it
     frappe.call({
         method: "hr_time.api.worklog.api.get_buffer_task",
         callback: function(r) {
@@ -64,11 +73,20 @@ $(document).ready(function () {
         }
     });
 
+    // // Initialize realtime subscription for checkin status updates and related UI refreshes and bindings
+    EasyCheckinStatus.init();
+    
+    // Initial navbar render using API endpoint and setup click handler to open checkin dialog
     frappe.run_serially([
-      () => EasyCheckinStatus.render(),
+        () => frappe.call({
+            method: "hr_time.api.flextime.api.render_navbar_checkin_status",
+            callback: (response) => {
+                $('.navbar .checkin_status').remove();
+                $('.navbar .vertical-bar').after(response.message);
+                $('.navbar .checkin_status').click(() => {
+                    EasyCheckinDialog.singleton().show();
+                });
+            }
+        })
     ]);
-
-    setInterval(function () {
-        EasyCheckinStatus.render()
-    }, window.CHECKIN_STATUS_REFRESH_INTERVAL_MS)
 });

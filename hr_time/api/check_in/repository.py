@@ -20,7 +20,7 @@ class CheckinRepository:
         events = []
 
         for doc in docs:
-            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == LogType.IN.to_string(), doc.custom_is_break))
+            events.append(CheckinEvent(doc.name, doc.time, doc.log_type == LogType.IN.value, doc.custom_is_break))
 
         return CheckinList(events)
 
@@ -29,6 +29,6 @@ class CheckinRepository:
         doc = frappe.new_doc("Employee Checkin")
         doc.time = datetime.datetime.now()
         doc.employee = employee_id
-        doc.log_type = log_type.to_string()
+        doc.log_type = log_type.value
         doc.custom_is_break = is_break
         doc.save()
