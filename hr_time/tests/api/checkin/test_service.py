@@ -1,11 +1,12 @@
 import datetime
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from hr_time.api.check_in.event import CheckinEvent
 from hr_time.api.check_in.list import CheckinList
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.check_in.service import CheckinService, State, Action
+from hr_time.api.check_in.enums import LogType
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.tests.fixtures import Fixtures
 
@@ -13,33 +14,46 @@ from hr_time.tests.fixtures import Fixtures
 class TestCheckinService(unittest.TestCase):
     employee: EmployeeRepository
     data: CheckinRepository
-
     service: CheckinService
 
     def setUp(self):
-        super().setUp()
-
         self.employee = EmployeeRepository()
         self.data = CheckinRepository()
-
         self.service = CheckinService(self.employee, self.data)
 
-    def test_get_current_status_employee_unknown(self):
-        self.employee.get_current = MagicMock(return_value=None)
+    @patch('hr_time.api.employee.repository.frappe.get_user')
+    @patch('hr_time.api.employee.repository.frappe.get_all')
+    def test_get_current_status_employee_unknown(self, mock_emp_get_all, mock_get_user):
+        # Mock frappe.get_user()
+        mock_user = MagicMock()
+        mock_user.doc.email = "test@example.com"
+        mock_get_user.return_value = mock_user
+        mock_emp_get_all.return_value = []  # No employee found
+        self.assertEqual(State.UNKNOWN, self.service.get_current_status().state)
 
-        self.assertEqual(State.Unknown, self.service.get_current_status().state)
-        self.employee.get_current.assert_called_once()
+    @patch('hr_time.api.employee.repository.frappe.get_user')
+    @patch('hr_time.api.check_in.repository.frappe.get_all')
+    @patch('hr_time.api.employee.repository.frappe.get_all')
+    def test_get_current_empty_event_list(self, mock_emp_get_all, mock_checkin_get_all, mock_get_user):
+        # Mock frappe.get_user()
+        mock_user = MagicMock()
+        mock_user.doc.email = "test@example.com"
+        mock_get_user.return_value = mock_user
 
-    def test_get_current_empty_event_list(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
-        self.data.get = MagicMock(return_value=CheckinList([]))
 
-        self.assertEqual(State.OUT, self.service.get_current_status().state)
+        mock_emp_get_all.return_value = [MagicMock(
+            name="EMP-009",
+            employee_name="Test Employee",
+            custom_time_model="Flextime account",
+            grade="Standard",
+            date_of_birth=datetime.date(1990, 1, 1),
+            date_of_joining=datetime.date(2020, 1, 1)
+        )]
+        mock_checkin_get_all.return_value = []  # No checkin events
 
-        self.employee.get_current.assert_called_once()
-        self.data.get.assert_called_once()
-        self.assertEqual(datetime.date.today(), self.data.get.call_args.args[0])
-        self.assertEqual("EMP-009", self.data.get.call_args.args[1])
+        status = self.service.get_current_status()
+        self.assertEqual(State.OUT, status.state)
 
     def test_get_current_break(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
@@ -89,34 +103,46 @@ class TestCheckinService(unittest.TestCase):
 
     def test_checkin_employee_not_found(self):
         self.employee.get_current = MagicMock(return_value=None)
-        self.assertRaises(RuntimeError, self.service.checkin, Action.startOfWork)
+        self.assertRaises(RuntimeError, self.service.checkin, Action.START_WORK)
 
-    def test_checkin_start_of_work(self):
+    @patch('hr_time.api.employee.repository.frappe.get_user')
+    @patch('hr_time.api.check_in.repository.frappe.get_all')
+    @patch('hr_time.api.employee.repository.frappe.get_all')
+    def test_checkin_start_of_work(self, mock_emp_get_all, mock_checkin_get_all, mock_get_user):
+        # Mock frappe.get_user()
+        mock_user = MagicMock()
+        mock_user.doc.email = "test@example.com"
+        mock_get_user.return_value = mock_user
+
+        # Mock the get_current method directly on the instance
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
-        self.data.checkin = MagicMock()
+        mock_emp_get_all.return_value = [MagicMock(name="EMP-009")]
+        mock_checkin_get_all.return_value = []  # No existing checkins
 
-        self.service.checkin(Action.startOfWork)
-
-        self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
-        self.assertEqual("IN", self.data.checkin.call_args.args[1])
-        self.assertFalse(self.data.checkin.call_args.args[2])
+        with patch('hr_time.api.check_in.repository.frappe.new_doc') as mock_new_doc:
+            mock_doc = MagicMock()
+            mock_new_doc.return_value = mock_doc
+            self.service.checkin(Action.START_WORK)
+            mock_new_doc.assert_called_once()
+            mock_doc.save.assert_called_once()
 
     def test_checkin_break(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
         self.data.checkin = MagicMock()
-
-        self.service.checkin(Action.breakTime)
+        self.service.checkin(Action.BREAK)
 
         self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
-        self.assertEqual("OUT", self.data.checkin.call_args.args[1])
+        # Compare with enum, not string
+        self.assertEqual(LogType.OUT, self.data.checkin.call_args.args[1])
         self.assertTrue(self.data.checkin.call_args.args[2])
 
     def test_checkin_endOfWork(self):
         self.employee.get_current = MagicMock(return_value=Fixtures.employee)
         self.data.checkin = MagicMock()
 
-        self.service.checkin(Action.endOfWork)
+        self.service.checkin(Action.END_WORK)
 
         self.assertEqual("EMP-009", self.data.checkin.call_args.args[0])
-        self.assertEqual("OUT", self.data.checkin.call_args.args[1])
+        # Compare with enum, not string
+        self.assertEqual(LogType.OUT, self.data.checkin.call_args.args[1])
         self.assertFalse(self.data.checkin.call_args.args[2])

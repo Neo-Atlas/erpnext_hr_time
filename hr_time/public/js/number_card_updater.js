@@ -29,11 +29,11 @@ export class NumberCardUpdater {
      */
     static updateEmployeesPresent(count) {
         const container = document.getElementById('hr_time_nc_employees_present');
-        if (container) {
-            const countDiv = container.querySelector('.count');
-            if (countDiv) {
-                countDiv.textContent = count;
-            }
+        if (!container) return;
+        
+        const countDiv = container.querySelector('.count');
+        if (countDiv) {
+            countDiv.textContent = count;
         }
     }
 
@@ -87,7 +87,6 @@ export class NumberCardUpdater {
         });
     }
 
-
     static refreshFlextimeBalance() {
         frappe.call({
             method: "hr_time.api.flextime.api.get_flextime_balance_data",
@@ -99,7 +98,6 @@ export class NumberCardUpdater {
         });
     }
 
-    // Granular methods for realtime updates
     static refreshEmployeesPresentCount() {
         frappe.call({
             method: "hr_time.api.flextime.api.get_employees_present_count",

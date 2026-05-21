@@ -176,14 +176,16 @@ class TaskRepository:
     @staticmethod
     def update_progress(task_id: str, progress: float) -> None:
         """Update task progress (without modifying modified timestamp)"""
-        task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
-        task.db_set("progress", round(progress, 2), update_modified=False)
+        if frappe.db.exists(TaskRepository.DOCTYPE_NAME, task_id):
+            task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
+            task.db_set("progress", round(progress, 2), update_modified=False)
 
     @staticmethod
     def add_comment(task_id: str, comment: str) -> None:
         """Add a comment to a task"""
-        task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
-        task.add_comment("Info", comment)
+        if frappe.db.exists(TaskRepository.DOCTYPE_NAME, task_id):
+            task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
+            task.add_comment("Info", comment)
 
     @staticmethod
     def get_total_hours_from_timesheets(task_id: str) -> float:
@@ -198,8 +200,9 @@ class TaskRepository:
     @staticmethod
     def get_expected_time(task_id: str) -> float:
         """Get expected time from task"""
-        task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
-        return float(task.expected_time or 0)
+        if frappe.db.exists(TaskRepository.DOCTYPE_NAME, task_id):
+            task = frappe.get_doc(TaskRepository.DOCTYPE_NAME, task_id)
+            return float(task.expected_time or 0)
 
     @staticmethod
     def create_buffer_task(subject: str) -> str:

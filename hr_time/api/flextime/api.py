@@ -15,6 +15,7 @@ from hr_time.api.shared.constants.messages import Messages
 from hr_time.api.shared.utils.response import Response
 from hr_time.api.employee.api import get_current_employee_id
 
+
 @frappe.whitelist()
 def generate_daily_flextime_status() -> None:
     """
@@ -170,6 +171,7 @@ def get_checkin_status_data(employee_id: str = None):
         "label_with_duration": f"{render_data['label']} ({duration_str})"
     }
 
+
 @frappe.whitelist()
 def get_flextime_balance_data():
     """Get flextime balance data for realtime updates (without HTML)"""
@@ -184,7 +186,7 @@ def get_flextime_balance_data():
         "trend_minutes": abs(balance.trend_minutes),
         "trend_percent": round(balance.trend_percent * 100),
         "trend_display": "{}H, {}m ({} %)".format(
-            abs(balance.trend_hours), 
+            abs(balance.trend_hours),
             abs(balance.trend_minutes),
             round(balance.trend_percent * 100)
         ),
@@ -193,21 +195,24 @@ def get_flextime_balance_data():
         "is_zero": balance.is_zero()
     }
 
+
 @frappe.whitelist()
 def get_current_session_state():
-    
+    """
+    Get current session's stats: status, total work and break times in seconds, and timestamp
+    """
     employee_id = get_current_employee_id()
     checkin_service = CheckinService.prod()
     stats_service = FlextimeStatisticsService.prod()
-    
+
     status_obj = checkin_service.get_current_status()
     state_map = {State.IN: "IN", State.BREAK: "BREAK", State.OUT: "OUT"}
     status_str = state_map.get(status_obj.state, "OUT")
-    
-    # Use the new methods that include open sessions
+
+    # collect total work and break seconds
     total_worked_seconds = stats_service.get_todays_worked_seconds(employee_id)
     total_break_seconds = stats_service.get_todays_break_seconds(employee_id)
-    
+
     return {
         "status": status_str,
         "total_worked_seconds": total_worked_seconds,

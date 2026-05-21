@@ -1,8 +1,11 @@
-// checkin_timer.js
 import { TimeFormatter } from "./utils/time_formatter.js";
 import { CHECKIN_STATUS, isActiveStatus } from "./constants/checkin_constants.js";
 
+
 export class CheckinTimer {
+
+    static UI_REFRESH_INTERVAL_MS = 1000;
+    
     constructor() {
         this.baseWorkedSeconds = 0;
         this.baseBreakSeconds = 0;
@@ -15,7 +18,6 @@ export class CheckinTimer {
 
     updateFromEvent(data) {
         const previousStatus = this.status;
-        
         this.baseWorkedSeconds = data.total_worked_seconds || 0;
         this.baseBreakSeconds = data.total_break_seconds || 0;
         this.baseTimestamp = data.timestamp ? new Date(data.timestamp) : new Date();
@@ -67,7 +69,7 @@ export class CheckinTimer {
             if (this.onUpdate) {
                 this.onUpdate(this.getCurrentSessionFormattedTime());
             }
-        }, 1000);
+        }, CheckinTimer.UI_REFRESH_INTERVAL_MS);
     }
 
     stopTimer() {
@@ -77,9 +79,7 @@ export class CheckinTimer {
         }
     }
 
-    sync(callback = null) {
-        console.log('syncing');
-        
+    sync(callback = null) {        
         frappe.call({
             method: "hr_time.api.flextime.api.get_current_session_state",
             callback: (response) => {

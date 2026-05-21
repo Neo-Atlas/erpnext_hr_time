@@ -20,8 +20,8 @@ export class FlextimeApi{
                     if (response.message && typeof response.message === 'string') {
                         resolve(response.message);  // Valid employee ID
                     } else if (response.message === null || response.message === undefined) {
-                        console.log('user is Admin');
-                        resolve(null);  // No employee (admin user) - resolve with null, don't reject
+                        console.warn('user is Admin');
+                        resolve(null);  // No employee (admin user) - resolve with null
                     }else {
                         reject(new Error("No employee ID returned"));
                     }

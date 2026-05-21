@@ -56,7 +56,6 @@ class FlextimeBalance:
 
 class FlextimeStatisticsService:
     clock: Clock
-
     employee: EmployeeRepository
     status: FlextimeStatusRepository
     checkin: CheckinRepository
@@ -90,8 +89,8 @@ class FlextimeStatisticsService:
 
         return FlextimeBalance(current, trend)
 
-    # Returns the total duration of the current status this day in seconds
     def get_current_duration(self) -> int:
+        """Return the total duration of the current status this day in seconds"""
         employee = self.employee.get_current()
 
         if employee is None:
@@ -114,8 +113,7 @@ class FlextimeStatisticsService:
             total_seconds += duration.total_time
 
         return total_seconds
-    
-    # flextime/stats.py
+
     def get_todays_worked_seconds(self, employee_id: str = None) -> int:
         """Get total worked seconds for today, including current open session"""
         if not employee_id:
@@ -123,9 +121,9 @@ class FlextimeStatisticsService:
             if not employee:
                 return 0
             employee_id = employee.id
-        
+
         events = self.checkin.get(self.clock.date_today(), employee_id)
-        
+
         total_worked_seconds = 0
         for duration in events.get_durations():
             if duration.duration_type.name == "WORK":
@@ -147,19 +145,19 @@ class FlextimeStatisticsService:
             if not employee:
                 return 0
             employee_id = employee.id
-        
+
         events = self.checkin.get(self.clock.date_today(), employee_id)
-        
+
         total_break_seconds = 0
         for duration in events.get_durations():
             if duration.duration_type.name != "WORK":  # BREAK
                 total_break_seconds += duration.total_time
-        
+
         # Add current break if on break
         latest = events.get_latest()
         if latest and not latest.is_in and latest.is_break:
             now = self.clock.now()
             current_break = int((now - latest.timestamp).total_seconds())
             total_break_seconds += current_break
-        
+
         return total_break_seconds

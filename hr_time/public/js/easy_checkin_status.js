@@ -4,6 +4,14 @@ import { NumberCardUpdater } from "./number_card_updater.js";
 import { CheckinTimer } from "./checkin_timer.js";
 import { CHECKIN_STATUS, getStatusConfig, isActiveStatus } from "./constants/checkin_constants.js";
 
+/**
+ * @typedef {Object} CheckinEventData
+ * @property {string} employee_id
+ * @property {string} status
+ * @property {number} total_worked_seconds
+ * @property {number} total_break_seconds
+ * @property {string} timestamp
+ */
 
 export class EasyCheckinStatus {
     static subscribed = false;
@@ -15,10 +23,16 @@ export class EasyCheckinStatus {
         this.current_employee_id = employee_id;
     }
 
+    /**
+     * @returns {string|null}
+     */
     static getCurrentEmployeeId() {
         return this.current_employee_id;
     }
 
+    /**
+     * @returns {string} Formatted label like "Checked in (02:30)"
+     */
     static getFormattedLabel() {
         const statusConfig = getStatusConfig(this.timer.status);
         
@@ -27,13 +41,16 @@ export class EasyCheckinStatus {
             seconds = this.timer.getCurrentWorkedSeconds();
         } else if (this.timer.status === CHECKIN_STATUS.BREAK.key) {
             seconds = this.timer.getCurrentBreakSeconds();
+        }else if (this.timer.status === CHECKIN_STATUS.OUT.key) {
+            // show baseWorkedSeconds at checkout, which contains final worked total
+            seconds = this.timer.getCurrentWorkedSeconds();
         }
         
         return TimeFormatter.formatWithDuration(statusConfig.labelPrefix, seconds);
     }
 
-    static updateNavbar() {        
-        // Return early if no employee_id (admin)
+    static updateNavbar() {
+        // Return early if no employee_id (eg. is Admin)
         if (!this.current_employee_id) {
             $('.navbar .checkin_status').remove();
             return;
@@ -80,12 +97,16 @@ export class EasyCheckinStatus {
     
     static refreshQuickLists() {
         for (const target of this.REFRESH_TARGETS) {
-            const container = document.querySelector(target.selector);
-            if (container) {
+            try {
+                const container = document.querySelector(target.selector);
+                if (!container) return;
+
                 const refreshBtn = container.querySelector(target.buttonSelector);
                 if (refreshBtn && !refreshBtn.disabled) {
                     refreshBtn.click();
                 }
+            } catch (e) {
+                console.warn(`Failed to refresh ${target.selector}:`, e);
             }
         }
     }
@@ -146,12 +167,13 @@ export class EasyCheckinStatus {
         this.initRealtime();
     }
 
+    /**
+     * Initializes realtime setup Fires checkin event data upon change.
+     */
     static initRealtime() {
         if (this.subscribed) return;
 
-        frappe.realtime.on("checkin_status_updated", (data) => {
-            console.log('data: ',data);
-
+        frappe.realtime.on("checkin_status_updated", (/** @type {CheckinEventData} */ data) => {
             // Only process if we have an employee_id (non Admin user):
             // then check if this is for the current user, update personal timer
             if (this.current_employee_id && data.employee_id === this.current_employee_id) {
@@ -175,8 +197,6 @@ export class EasyCheckinStatus {
             // Refresh dialog if open
             const dialog = EasyCheckinDialog.singleton();
             if (dialog?.isDialogCurrentlyOpen) {
-                console.log('checkin status');
-                
                 dialog.preloadCheckinOptions();
             }
         });

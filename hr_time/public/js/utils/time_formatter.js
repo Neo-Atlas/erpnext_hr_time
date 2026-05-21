@@ -1,4 +1,3 @@
-// utils/time_formatter.js
 export class TimeFormatter {
     /**
      * Format seconds into hours, minutes, seconds
@@ -33,7 +32,7 @@ export class TimeFormatter {
      * @param {number} seconds - Duration in seconds
      * @returns {string} e.g., "Checked in (02:30)"
      */
-    static formatWithDuration(labelPrefix, seconds) {
+    static formatWithDuration(labelPrefix, seconds) {        
         if (seconds <= 0) return labelPrefix;
         return `${labelPrefix} (${this.toShortFormat(seconds)})`;
     }

@@ -9,9 +9,9 @@ from frappe.model.document import Document
 
 from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 from hr_time.api.shared.constants.messages import Messages
-from hr_time.api.shared.domain.document_status import DocumentStatus
 from hr_time.api.worklog.service import WorklogService
 from hr_time.api.employee.repository import EmployeeRepository
+from hr_time.api.worklog.application.worklog_app_service import WorklogAppService
 
 
 class Worklog(Document):
@@ -23,12 +23,11 @@ class Worklog(Document):
         if not self.employee:
             self.set_employee_from_user()
 
-        # Let service handle validation and calculations
-        service = WorklogService.prod()
-        service.before_save(self)
+        app = WorklogAppService()
+        app.before_save_worklog(doc=self)
 
     def on_update(self):
-        if self.time_saved > 0 and self.docstatus == DocumentStatus.DRAFT.value:
+        if self.time_saved > 0:
             # delegate to service to handle timesheet lookup + processing
             service = WorklogService.prod()
             service.process_worklog_save(self)

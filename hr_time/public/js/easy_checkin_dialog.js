@@ -98,9 +98,7 @@ export class EasyCheckinDialog {
         method: API.FLEXTIME.GET_OPTIONS,
       });
       this.options = response.message.options;
-      this.default = response.message.default;
-      console.log('this.options: ',this.options);
-      
+      this.default = response.message.default;      
     } catch (error) {
       console.error(MESSAGES.FAILED_PRELOAD_CHECKIN_OPTIONS, error);
     }
@@ -403,7 +401,7 @@ export class EasyCheckinDialog {
                 // Open existing worklog
                 frappe.set_route(
                   'Form',
-                  DOCTYPE.NAME,//'Worklog',
+                  DOCTYPE.NAME, // 'Worklog'
                   existingWorklogName
                 );
             }else{
@@ -573,14 +571,14 @@ refresh_allocation_status_from_backend() {
         method: API.WORKLOG.GET_CONTEXT,
         args: {
           employee_id: employee_id,
-          is_dialog_call: true, // Flag to indicate this call is from dialog initialization
+          is_dialog_call: true, // Flag to indicate this call is from easy checkun dialog initialization
         },
         callback: (response) => {
             if (response.message) {
                 const context = response.message;
-                this.dialogUI.worklog_context = context;  // Storing context
+                this.dialogUI.worklog_context = context;  // Store the context
                 
-                // Just assign the pre-rendered HTML - no JS strings!
+                // assign the pre-rendered HTML
                 const $statusContainer = this.dialogUI.fields_dict[FIELD.WORKLOG_STATUS_CONTAINER]?.$wrapper;
                 if ($statusContainer) {
                     $statusContainer.html(context.worklog_status_today_html);

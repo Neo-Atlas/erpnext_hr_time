@@ -1,156 +1,224 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from datetime import datetime, timedelta
-from hr_time.api.worklog.repository import WorklogRepository, Worklog
-from hr_time.api.shared.constants.messages import Messages
-from hr_time.api.shared.utils.response import Response
+from datetime import datetime, date
+
+from hr_time.api.worklog.repository import WorklogRepository
+from hr_time.api.worklog.domain.entities import WorklogEntity
 
 
 class TestWorklogRepository(unittest.TestCase):
+    """Tests for WorklogRepository"""
+
     def setUp(self):
         self.repo = WorklogRepository()
-        self.DUMMY_EMP_ID = 'EMP001'
-        self.DUMMY_VALID_WORKLOG_TEXT = 'Completed task A'
-        self.DUMMY_INVALID_WORKLOG_TEXT = ''
-        self.DUMMY_TASK = 'TASK001'
-        self.DUMMY_TICKET_LINK = 'github.com/PR/1'
-        self.DUMMY_IS_HOME_OFFICE = 'No'
+        self.employee_id = "EMP001"
+        self.worklog_name = "WL-001"
+        self.current_total = 3.5
 
-    @patch('frappe.get_all')
-    def test_get_worklogs(self, mock_get_all):
-        # Arrange
-        mock_data = [{'employee': self.DUMMY_EMP_ID, 'log_time': '2023-01-01 10:00:00',
-                      'work_desc': 'Test Task', 'task': 'Task1', 'ticket_link': 'github.com/PR/1'}]
-        # Define the mock method (lambda) to handle all fields defined in frappe framework
-        mock_get_all.side_effect = lambda doctype, fields=None, filters=None, **kwargs: mock_data
-        filters = {'employee': self.DUMMY_EMP_ID}
+    # ============ get_worklogs ============
 
-        # Act
-        worklogs = self.repo.get_worklogs(filters)
-
-        # Assert
-        self.assertEqual(worklogs, mock_data)
-        mock_get_all.assert_called_once_with(self.repo.get_doctype_name(),
-                                             fields=self.repo.get_doc_fields(), filters=filters)
-
-    @patch('frappe.get_all')
-    def test_get_worklogs_of_employee_on_date(self, mock_get_all):
-        # Arrange
-        interested_date = datetime(2024, 10, 10).date()
+    @patch('hr_time.api.worklog.repository.frappe.get_all')
+    def test_get_worklogs_returns_list(self, mock_get_all):
+        """Should return list of worklogs matching filters"""
         mock_data = [
-            {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 10, 10, 10, 10),
-             'work_desc': 'Worked on task 1', 'task': 'TASK001', 'ticket_link': 'github.com/PR/1',
-             'is_home_office': 'Yes'
-             },
-            {'employee': self.DUMMY_EMP_ID, 'log_time': datetime(2024, 10, 11, 10, 0, 0),
-             'work_desc': 'Worked on task 2', 'task': 'TASK002', 'ticket_link': 'github.com/PR/2',
-             'is_home_office': 'No'
-             }
+            {"name": "WL-001", "employee": self.employee_id, "time_saved": 2.5},
+            {"name": "WL-002", "employee": self.employee_id, "time_saved": 1.5}
         ]
+        mock_get_all.return_value = mock_data
 
-        # Mocking frappe.get_all to simulate filtering by date
-        mock_get_all.side_effect = lambda doctype, fields=None, filters=None: [
-            entry for entry in mock_data
-            if filters['employee'] == self.DUMMY_EMP_ID
-            and filters['log_time'][1][0] <= entry['log_time'] <= filters['log_time'][1][1]
-        ]
+        result = self.repo.get_worklogs({"employee": self.employee_id})
 
-        # Act
-        worklogs = self.repo.get_worklogs_of_employee_on_date(self.DUMMY_EMP_ID, interested_date)
+        self.assertEqual(mock_data, result)
+        mock_get_all.assert_called_once()
 
-        # Assert
-        self.assertEqual(len(worklogs), 1)  # Expecting only one log entry for 2024-10-10
-        self.assertIsInstance(worklogs[0], Worklog)
-        self.assertEqual(worklogs[0].employee_id, self.DUMMY_EMP_ID)
-        self.assertEqual(worklogs[0].work_desc, 'Worked on task 1')
-        self.assertEqual(worklogs[0].task, 'TASK001')
-        self.assertEqual(worklogs[0].ticket_link, 'github.com/PR/1')
-        # Verifying if correct filters are applied
-        mock_get_all.assert_called_once_with(
-            self.repo.get_doctype_name(), fields=self.repo.get_doc_fields(),
-            filters={
-                'employee': self.DUMMY_EMP_ID,
-                'log_time': ['between', [
-                    datetime.combine(interested_date, datetime.min.time()), datetime.combine(
-                        interested_date, datetime.max.time())
-                ]]
-            }
+    # ============ get_worklogs_of_employee_on_date ============
+
+    @patch('hr_time.api.worklog.repository.WorklogRepository.get_worklogs')
+    @patch('hr_time.api.worklog.repository.frappe.get_doc')
+    def test_get_worklogs_of_employee_on_date_returns_entities(self, mock_get_doc, mock_get_worklogs):
+        """Should return WorklogEntity list for employee on date"""
+        # Mock the document list
+        mock_docs = [{"name": "WL-001"}, {"name": "WL-002"}]
+        mock_get_worklogs.return_value = mock_docs
+
+        # Mock the doc objects
+        mock_doc = MagicMock()
+        mock_doc.name = "WL-001"
+        mock_doc.employee = self.employee_id
+        mock_doc.log_time = datetime.now()
+        mock_doc.work_desc = "Test work"
+        mock_doc.time_saved = 2.5
+        mock_doc.is_home_office = "Yes"
+        mock_doc.ticket_link = ""
+        mock_doc.docstatus = 0
+        mock_doc.timesheet = None
+        mock_doc.tasks_entry = []
+        mock_get_doc.return_value = mock_doc
+
+        interested_date = date(2024, 10, 10)
+
+        result = self.repo.get_worklogs_of_employee_on_date(self.employee_id, interested_date)
+
+        self.assertEqual(2, len(result))
+        self.assertIsInstance(result[0], WorklogEntity)
+        mock_get_worklogs.assert_called_once()
+
+    # ============ get_todays_worklog_entity ============
+
+    @patch('hr_time.api.worklog.repository.WorklogRepository.get_todays_worklog_dict')
+    @patch('hr_time.api.worklog.repository.frappe.get_doc')
+    def test_get_todays_worklog_entity_when_exists(self, mock_get_doc, mock_get_dict):
+        """Should return WorklogEntity when today's worklog exists"""
+        mock_get_dict.return_value = {"name": "WL-001"}
+
+        mock_doc = MagicMock()
+        mock_doc.name = "WL-001"
+        mock_doc.employee = self.employee_id
+        mock_doc.log_time = datetime.now()
+        mock_doc.work_desc = "Test work"
+        mock_doc.time_saved = 2.5
+        mock_doc.is_home_office = "No"
+        mock_doc.ticket_link = ""
+        mock_doc.docstatus = 0
+        mock_doc.timesheet = None
+        mock_doc.tasks_entry = []
+        mock_get_doc.return_value = mock_doc
+
+        result = self.repo.get_todays_worklog_entity(self.employee_id)
+
+        self.assertIsInstance(result, WorklogEntity)
+        self.assertEqual("WL-001", result.id)
+
+    @patch('hr_time.api.worklog.repository.WorklogRepository.get_todays_worklog_dict')
+    def test_get_todays_worklog_entity_when_not_exists(self, mock_get_dict):
+        """Should return None when no worklog exists for today"""
+        mock_get_dict.return_value = None
+
+        result = self.repo.get_todays_worklog_entity(self.employee_id)
+
+        self.assertIsNone(result)
+
+    # ============ get_by_id ============
+
+    @patch('hr_time.api.worklog.repository.frappe.db.exists')
+    @patch('hr_time.api.worklog.repository.frappe.get_doc')
+    def test_get_by_id_when_exists(self, mock_get_doc, mock_exists):
+        """Should return WorklogEntity when worklog exists"""
+        mock_exists.return_value = True
+
+        mock_doc = MagicMock()
+        mock_doc.name = "WL-001"
+        mock_doc.employee = self.employee_id
+        mock_doc.log_time = datetime.now()
+        mock_doc.work_desc = "Test work"
+        mock_doc.time_saved = 2.5
+        mock_doc.is_home_office = "No"
+        mock_doc.ticket_link = ""
+        mock_doc.docstatus = 0
+        mock_doc.timesheet = None
+        mock_doc.tasks_entry = []
+        mock_get_doc.return_value = mock_doc
+
+        result = self.repo.get_by_id("WL-001")
+
+        self.assertIsInstance(result, WorklogEntity)
+        self.assertEqual("WL-001", result.id)
+
+    @patch('hr_time.api.worklog.repository.frappe.db.exists')
+    def test_get_by_id_when_not_exists(self, mock_exists):
+        """Should return None when worklog does not exist"""
+        mock_exists.return_value = False
+
+        result = self.repo.get_by_id("WL-999")
+
+        self.assertIsNone(result)
+
+    # ============ save_from_dict ============
+
+    @patch('hr_time.api.worklog.repository.frappe.get_doc')
+    def test_save_from_dict_updates_existing_worklog(self, mock_get_doc):
+        """Should update existing worklog"""
+        mock_doc = MagicMock()
+        mock_doc.name = "WL-001"
+        mock_get_doc.return_value = mock_doc
+
+        worklog_data = {
+            "time_saved": 3.0,
+            "work_desc": "Updated description",
+            "is_home_office": "Yes",
+            "ticket_link": "https://example.com",
+            "tasks_entry": []
+        }
+
+        result = self.repo.save_from_dict(
+            worklog_name="WL-001",
+            worklog_data=worklog_data,
+            current_total=self.current_total,
+            employee_id=self.employee_id
         )
 
-    @patch('frappe.new_doc')
-    def test_create_worklog_in_past(self, mock_new_doc):
-        # Arrange
-        mock_worklog_doc = MagicMock()
-        mock_new_doc.return_value = mock_worklog_doc
-        log_time = datetime.now() - timedelta(seconds=1)
+        self.assertEqual("WL-001", result)
+        mock_doc.save.assert_called_once()
 
-        # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
-                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
+    @patch('hr_time.api.worklog.repository.frappe.new_doc')
+    def test_save_from_dict_creates_new_worklog(self, mock_new_doc):
+        """Should create new worklog when name not provided"""
+        mock_doc = MagicMock()
+        mock_doc.name = "new-WL-001"
+        mock_new_doc.return_value = mock_doc
 
-        # Assert
-        mock_new_doc.assert_called_once_with(self.repo.get_doctype_name())
-        mock_worklog_doc.save.assert_called_once()
-        self.assertEqual(result.status, Response.STATUS_SUCCESS)
-        self.assertEqual(result.message, Messages.Worklog.SUCCESS_WORKLOG_CREATION)
+        worklog_data = {
+            "time_saved": 2.5,
+            "work_desc": "New worklog",
+            "is_home_office": "No",
+            "ticket_link": "",
+            "tasks_entry": []
+        }
 
-    @patch('frappe.new_doc')
-    def test_create_worklog_now(self, mock_new_doc):
-        # Arrange
-        mock_worklog_doc = MagicMock()
-        mock_new_doc.return_value = mock_worklog_doc
-        log_time = datetime.now()
+        result = self.repo.save_from_dict(
+            worklog_name=None,
+            worklog_data=worklog_data,
+            current_total=self.current_total,
+            employee_id=self.employee_id
+        )
 
-        # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
-                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
+        self.assertEqual("new-WL-001", result)
+        mock_doc.insert.assert_called_once()
 
-        # Assert
-        mock_new_doc.assert_called_once_with(self.repo.get_doctype_name())
-        mock_worklog_doc.save.assert_called_once()
-        self.assertEqual(result.status, Response.STATUS_SUCCESS)
-        self.assertEqual(result.message, Messages.Worklog.SUCCESS_WORKLOG_CREATION)
+    @patch('hr_time.api.worklog.repository.frappe.get_doc')
+    def test_save_from_dict_handles_tasks_entry(self, mock_get_doc):
+        """Should correctly process tasks_entry child table"""
+        mock_doc = MagicMock()
+        mock_doc.name = "WL-001"
+        mock_doc.set = MagicMock()
+        mock_doc.append = MagicMock()
+        mock_get_doc.return_value = mock_doc
 
-    def test_create_worklog_in_future(self):
-        # Arrange
-        log_time = datetime.now() + timedelta(seconds=1)  # Set log_time to 1 second in the future
+        worklog_data = {
+            "time_saved": 2.5,
+            "work_desc": "Test",
+            "is_home_office": "No",
+            "tasks_entry": [
+                {
+                    "task": "TASK-001",
+                    "subject": "Task 1",
+                    "status": "Open",
+                    "expected_time": 8.0,
+                    "priority": "High",
+                    "time_spent": 2.0,
+                    "task_desc": "Description",
+                    "progress_increment": 25.0
+                }
+            ]
+        }
 
-        # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
-                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
+        result = self.repo.save_from_dict(
+            worklog_name="WL-001",
+            worklog_data=worklog_data,
+            current_total=self.current_total,
+            employee_id=self.employee_id
+        )
 
-        # Assert
-        # Check that the response indicates a validation error for future log time
-        self.assertEqual(result.status, Response.STATUS_ERROR)
-        self.assertEqual(result.message, Messages.Worklog.ERR_CREATE_WORKLOG_FUTURE_TIME)
-
-    def test_create_worklog_empty_task_description(self):
-        # Arrange
-        log_time = datetime.now() - timedelta(seconds=1)  # Valid log time (in past)
-        work_desc = ''  # Empty worklog description
-
-        # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, work_desc)
-
-        # Assert
-        self.assertEqual(result.status, Response.STATUS_ERROR)
-        self.assertEqual(result.message, Messages.Worklog.NO_WORK_DESC)
-
-    @patch('frappe.new_doc')
-    @patch('frappe.db.rollback')
-    def test_create_worklog_failure_db(self, mock_rollback, mock_new_doc):
-        # Arrange
-        mock_new_doc.side_effect = Exception(Messages.Common.ERR_DB)  # Simulate a DB error
-        log_time = datetime(2024, 10, 10, 9, 0)
-
-        # Act
-        result = self.repo.create_worklog(self.DUMMY_EMP_ID, log_time, self.DUMMY_VALID_WORKLOG_TEXT,
-                                          self.DUMMY_TASK, self.DUMMY_TICKET_LINK, self.DUMMY_IS_HOME_OFFICE)
-
-        # Assert
-        # Check that result contains the expected error status and message
-        self.assertEqual(result.status, Response.STATUS_ERROR)
-        self.assertEqual(result.message, Messages.Common.ERR_DB)
-
-        # Ensure rollback is called on failure
-        mock_rollback.assert_called_once()
+        self.assertEqual("WL-001", result)
+        mock_doc.set.assert_called_once_with('tasks_entry', [])
+        mock_doc.append.assert_called_once()

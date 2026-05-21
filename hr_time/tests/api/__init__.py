@@ -151,4 +151,4 @@ class FakeFrappe(object):
 
 
 # noinspection PyTypeChecker
-sys.modules["frappe"] = FakeFrappe
+# sys.modules["frappe"] = FakeFrappe

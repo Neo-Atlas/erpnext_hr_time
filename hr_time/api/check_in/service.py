@@ -74,25 +74,11 @@ class CheckinService:
             status_str = "OUT"
         else:
             raise ValueError(f"Invalid action: {action}")
-        
-        # match action:
-        #     case Action.startOfWork:
-        #         self.data.checkin(employee.id, LogType.IN, False)
-        #         status = CheckinStatus.IN
-        #     case Action.breakTime:
-        #         self.data.checkin(employee.id, LogType.OUT, True)
-        #         status = CheckinStatus.BREAK
-        #     case Action.endOfWork:
-        #         self.data.checkin(employee.id, LogType.OUT, False)
-        #         status = CheckinStatus.OUT
-        #     case _:
-        #         raise ValueError("Invalid action")
 
         # Get totals for the emitting event
         stats = FlextimeStatisticsService.prod()
         total_worked_seconds = stats.get_todays_worked_seconds(employee.id)
         total_break_seconds = stats.get_todays_break_seconds(employee.id)
-        # status_text = 'Checked in)9' if action == Action.startOfWork else 'Checked out' if action == Action.endOfWork else 'Break'
 
         # Emit realtime event for this specific user
         frappe.publish_realtime(
@@ -136,7 +122,7 @@ class CheckinService:
         status = self.get_current_status()
         state = status.state
         had_break = status.had_break
-        
+
         if state == State.IN:
             options = [Action.BREAK.value, Action.END_WORK.value]
             default = Action.END_WORK.value if had_break else Action.BREAK.value
@@ -149,7 +135,7 @@ class CheckinService:
         else:
             options = [Action.START_WORK.value, Action.BREAK.value, Action.RESUME_WORK.value, Action.END_WORK.value]
             default = ""
-        
+
         return {
             "options": options,
             "default": default

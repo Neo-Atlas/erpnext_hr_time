@@ -27,7 +27,7 @@ HR_TIME.LS_KEYS = {
 
 window.WORK_DURATION_RECALC_INTERVAL_MS = 20_000;
 
-// API Endpoints (add more API definitions here for global access)
+// API Endpoints (add more API definitions here for global access/use in multiple files)
 window.API = {
     FLEXTIME: {
         GET_OPTIONS: "hr_time.api.flextime.api.get_easy_checkin_options",
@@ -53,8 +53,8 @@ $(document).ready(function () {
         .then(empId => {
             EasyCheckinStatus.setCurrentEmployeeId(empId);
             if (!empId) {
-                console.log("No employee record found (admin user) - check-in features disabled");
-                // Hide or disable checkin-related UI for admins
+                console.warn("No employee record found (admin user) - check-in features disabled");
+                // Hide checkin-status elevemt from UI for admins
                 $('.navbar .checkin_status').hide();
             }
         }).catch(error => {
@@ -62,10 +62,9 @@ $(document).ready(function () {
             EasyCheckinStatus.setCurrentEmployeeId(null);
         });
 
-    // console.log('checkin status');
     EasyCheckinDialog.singleton().preloadCheckinOptions()
 
-    // // Fetch buffer task ID once and cache it
+    // Fetch buffer task ID once and cache it
     frappe.call({
         method: "hr_time.api.worklog.api.get_buffer_task",
         callback: function(r) {
@@ -73,7 +72,7 @@ $(document).ready(function () {
         }
     });
 
-    // // Initialize realtime subscription for checkin status updates and related UI refreshes and bindings
+    // Initialize realtime subscription for checkin status updates and related UI refreshes and bindings
     EasyCheckinStatus.init();
     
     // Initial navbar render using API endpoint and setup click handler to open checkin dialog

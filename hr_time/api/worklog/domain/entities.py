@@ -74,7 +74,9 @@ class WorklogEntity:
         return diff <= tolerance_hours + EPSILON
 
     def adjusted_time_saved(self, actual_work_hours: float) -> float:
-        """Return the time_saved value after adjustment for overallocation"""
+        """Return the time_saved value after adjustment for overallocation within tolerance"""
+        # If allocated MORE than actually worked, stretch time_saved to match allocation
         if self.total_allocated > actual_work_hours:
             return self.total_allocated
+        # If allocated less or equal, keep actual worked hours
         return actual_work_hours
