@@ -10,7 +10,7 @@ from frappe import _
 
 from hr_time.api.worklog.infrastructure.task_progress_updater import TaskProgressUpdater
 from hr_time.api.worklog.repository import WorklogRepository
-from hr_time.api.worklog.domain.entities import WorklogEntity, WorklogState
+from hr_time.api.worklog.domain.entities import WorklogState
 from hr_time.api.worklog.domain.aggregates import WorklogAggregate
 from hr_time.api.worklog.domain.services.worklog_state_service import WorklogStateService
 from hr_time.api.worklog.infrastructure.timesheet.service import TimesheetService
@@ -21,7 +21,6 @@ from hr_time.api.check_in.service import CheckinService, Action
 from hr_time.api.flextime.repository import DurationType
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api.shared.constants.messages import Messages
-from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 
 
 class WorklogAppService:

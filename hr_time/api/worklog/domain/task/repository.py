@@ -20,7 +20,7 @@ class TaskRepository:
 
     # Field constants - single source of truth
     FIELD_NAME = "name"
-    FIELD_IS_GENERIC = "is_generic"
+    FIELD_IS_GENERIC = "custom_is_generic"
     FIELD_IS_INTERNAL = "custom_is_internal"
     FIELD_STATUS = "status"
     FIELD_SUBJECT = "subject"

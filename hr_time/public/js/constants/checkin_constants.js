@@ -1,5 +1,3 @@
-// constants/checkin_constants.js
-
 /**
  * Checkin Status Constants
  * Centralized mapping for UI display across all components
