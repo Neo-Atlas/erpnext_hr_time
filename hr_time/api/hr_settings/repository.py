@@ -120,6 +120,11 @@ class HRSettingsRepository:
             task_id = TaskRepository.create_buffer_task(
                 HRSettingsRepository._DEFAULT_BUFFER_TASK_SUBJECT
             )
+            frappe.db.set_single_value(
+                HRSettingsRepository.DOCTYPE_NAME,
+                HRSettingsRepository._FIELD_NAME_BUFFER_TASK,
+                task_id
+            )
 
         HRSettingsRepository._cache_hset(
             HRSettingsRepository.CACHE_KEY,
