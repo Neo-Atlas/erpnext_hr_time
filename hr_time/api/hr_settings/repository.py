@@ -135,7 +135,7 @@ class HRSettingsRepository:
         return task_id
 
     @staticmethod
-    def clear_cache() -> None:
+    def clear_cache(doc=None, method=None) -> None:
         frappe.cache().delete_value(
             HRSettingsRepository.CACHE_KEY
         )

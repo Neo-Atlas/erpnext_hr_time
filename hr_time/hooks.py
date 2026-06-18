@@ -29,6 +29,12 @@ app_include_js = ["hr_time.bundle.js"]
 
 after_install = "hr_time.setup.install.after_install"
 
+doc_events = {
+    "HR Settings": {
+        "on_update": "hr_time.api.hr_settings.repository.HRSettingsRepository.clear_cache"
+    }
+}
+
 scheduler_events = {
     "hourly": [
         "hr_time.api.flextime.api.generate_daily_flextime_status"
