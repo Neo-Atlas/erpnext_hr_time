@@ -31,7 +31,7 @@ after_install = "hr_time.setup.install.after_install"
 
 doc_events = {
     "HR Settings": {
-        "on_update": "hr_time.api.hr_settings.repository.HRSettingsRepository.clear_cache"
+        "on_update": "hr_time.api.hr_settings.repository.clear_hr_settings_cache"
     }
 }
 

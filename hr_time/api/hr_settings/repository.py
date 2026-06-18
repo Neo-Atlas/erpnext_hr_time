@@ -139,3 +139,12 @@ class HRSettingsRepository:
         frappe.cache().delete_value(
             HRSettingsRepository.CACHE_KEY
         )
+
+
+def clear_hr_settings_cache(doc=None, method=None) -> None:
+    """Module-level entry point for the HR Settings on_update doc_event hook.
+
+    frappe.get_attr (used to resolve doc_events) only supports
+    module.function paths, not module.Class.staticmethod paths.
+    """
+    HRSettingsRepository.clear_cache()
