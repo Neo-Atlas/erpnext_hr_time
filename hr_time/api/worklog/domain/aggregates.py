@@ -2,10 +2,12 @@ from dataclasses import dataclass
 
 from hr_time.api.worklog.domain.entities import WorklogEntity
 
+_EPSILON = 0.0001  # 0.36 seconds — absorbs floating-point drift in hour calculations
+
 
 @dataclass
 class WorklogAggregate:
-    """Aggregate (abstraction) object for our worklog entity"""
+    """Aggregate root for Worklog — owns tolerance and time-adjustment invariants."""
     worklog: WorklogEntity
 
     @property
@@ -17,8 +19,12 @@ class WorklogAggregate:
         return len(self.worklog.allocations) > 0
 
     def is_within_tolerance(self, actual_work_hours: float, tolerance_hours: float) -> bool:
-        return self.worklog.is_within_tolerance(actual_work_hours, tolerance_hours)
+        diff = abs(actual_work_hours - self.total_allocated)
+        return diff <= tolerance_hours + _EPSILON
 
     def adjust_for_tolerance(self, actual_work_hours: float) -> None:
-        """Adjust time_saved based on tolerance."""
-        self.worklog.time_saved = self.worklog.adjusted_time_saved(actual_work_hours)
+        """Set time_saved: stretch to allocation if over-allocated, else keep actual hours."""
+        if self.total_allocated > actual_work_hours:
+            self.worklog.time_saved = self.total_allocated
+        else:
+            self.worklog.time_saved = actual_work_hours

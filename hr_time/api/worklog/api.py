@@ -9,7 +9,7 @@ from frappe import _
 from hr_time.api.hr_settings.repository import HRSettingsRepository
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api.shared.utils.response import Response
-from hr_time.api.worklog.application.worklog_app_service import WorklogAppService
+from hr_time.api.worklog.application.worklog_app_service import WorklogAppService, WORKLOG_STATE_COLORS
 
 
 @frappe.whitelist()
@@ -71,7 +71,7 @@ def get_worklog_context(
 
     return {
         "worklog_state": context["state"].value,
-        "headline_color": context["state"].display_color(),
+        "headline_color": WORKLOG_STATE_COLORS.get(context["state"], "red"),
         "is_todays_worklog": context["is_todays"],
         "is_new_doc": context["is_new_doc"],
         "is_read_only": not context["is_editable"],

@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime
-from unittest.mock import MagicMock
 
 from hr_time.api.worklog.domain.aggregates import WorklogAggregate
 from hr_time.api.worklog.domain.entities import WorklogEntity, TaskAllocation
@@ -68,22 +67,24 @@ class TestWorklogAggregate(unittest.TestCase):
         aggregate = WorklogAggregate(empty_entity)
         self.assertFalse(aggregate.has_allocations)
 
-    def test_is_within_tolerance_delegates(self):
-        """Should delegate to entity.is_within_tolerance"""
-        # Mock the entity to verify delegation
-        mock_entity = MagicMock(spec=WorklogEntity)
-        aggregate = WorklogAggregate(mock_entity)
+    def test_is_within_tolerance_true(self):
+        """Should return True when difference is within tolerance"""
+        # total_allocated = 3.5, actual = 3.5, tolerance = 0.5
+        self.assertTrue(self.aggregate.is_within_tolerance(3.5, 0.5))
 
-        aggregate.is_within_tolerance(4.0, 0.5)
+    def test_is_within_tolerance_false(self):
+        """Should return False when difference exceeds tolerance"""
+        # total_allocated = 3.5, actual = 5.5, diff = 2.0 > 0.5
+        self.assertFalse(self.aggregate.is_within_tolerance(5.5, 0.5))
 
-        mock_entity.is_within_tolerance.assert_called_once_with(4.0, 0.5)
+    def test_adjust_for_tolerance_overallocated(self):
+        """When over-allocated, time_saved should be stretched to match allocation"""
+        # total_allocated = 3.5, actual = 2.0
+        self.aggregate.adjust_for_tolerance(2.0)
+        self.assertEqual(3.5, self.aggregate.worklog.time_saved)
 
-    def test_adjust_for_tolerance_delegates(self):
-        """Should delegate to entity.adjusted_time_saved"""
-        mock_entity = MagicMock(spec=WorklogEntity)
-        aggregate = WorklogAggregate(mock_entity)
-
-        aggregate.adjust_for_tolerance(4.0)
-
-        # Verify time_saved was set
-        mock_entity.adjusted_time_saved.assert_called_once_with(4.0)
+    def test_adjust_for_tolerance_underallocated(self):
+        """When under-allocated, time_saved should match actual worked hours"""
+        # total_allocated = 3.5, actual = 5.0
+        self.aggregate.adjust_for_tolerance(5.0)
+        self.assertEqual(5.0, self.aggregate.worklog.time_saved)

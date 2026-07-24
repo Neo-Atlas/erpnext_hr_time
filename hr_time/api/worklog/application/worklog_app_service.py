@@ -22,6 +22,14 @@ from hr_time.api.flextime.repository import DurationType
 from hr_time.api.employee.api import get_current_employee_id
 from hr_time.api.shared.constants.messages import Messages
 
+WORKLOG_STATE_COLORS = {
+    WorklogState.NEW: "blue",
+    WorklogState.WORKING: "green",
+    WorklogState.ON_BREAK: "yellow",
+    WorklogState.COMPLETED: "orange",
+    WorklogState.HISTORICAL: "red",
+}
+
 
 class WorklogAppService:
     """
@@ -201,7 +209,7 @@ class WorklogAppService:
             "has_open_session": has_open_session,
             "prefilled_tasks": self.task_repo.get_prefill_tasks(employee_id, 5),
             "tolerance_minutes": self.hr_settings.get_tolerance_minutes(),
-            "headline_color": state.display_color(),
+            "headline_color": WORKLOG_STATE_COLORS.get(state, "red"),
             "worklog_overview_headline": worklog_overview_headline,
         }
 
@@ -296,8 +304,7 @@ class WorklogAppService:
         updater.calculate_progress_increments_for_worklog(doc)
 
         # 2. Validate the document
-        app = WorklogAppService()
-        validation = app.validate_worklog_document(doc)
+        validation = self.validate_worklog_document(doc)
         if not validation.get("valid"):
             frappe.throw(validation.get("message"))
 

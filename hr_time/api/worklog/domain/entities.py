@@ -13,16 +13,6 @@ class WorklogState(Enum):
     COMPLETED = "completed"
     HISTORICAL = "historical"
 
-    def display_color(self) -> str:
-        colors = {
-            WorklogState.NEW: "blue",
-            WorklogState.WORKING: "green",
-            WorklogState.ON_BREAK: "yellow",
-            WorklogState.COMPLETED: "orange",
-            WorklogState.HISTORICAL: "red",
-        }
-        return colors.get(self, "red")
-
 
 @dataclass
 class TaskAllocation:
@@ -67,16 +57,3 @@ class WorklogEntity:
     @property
     def total_allocated(self) -> float:
         return sum(a.time_spent for a in self.allocations)
-
-    def is_within_tolerance(self, actual_work_hours: float, tolerance_hours: float) -> bool:
-        EPSILON = 0.0001  # Allow 0.0001hr = 0.36 seconds of floating point error
-        diff = abs(actual_work_hours - self.total_allocated)
-        return diff <= tolerance_hours + EPSILON
-
-    def adjusted_time_saved(self, actual_work_hours: float) -> float:
-        """Return the time_saved value after adjustment for overallocation within tolerance"""
-        # If allocated MORE than actually worked, stretch time_saved to match allocation
-        if self.total_allocated > actual_work_hours:
-            return self.total_allocated
-        # If allocated less or equal, keep actual worked hours
-        return actual_work_hours

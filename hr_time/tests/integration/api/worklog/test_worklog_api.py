@@ -9,6 +9,7 @@ from hr_time.api.worklog.api import (
     get_worklog_context,
     save_and_checkout
 )
+from hr_time.api.worklog.domain.entities import WorklogState
 
 
 class TestWorklogAPI(unittest.TestCase):
@@ -83,7 +84,7 @@ class TestWorklogAPI(unittest.TestCase):
 
         # Mock the app service response
         mock_context = {
-            "state": MagicMock(),
+            "state": WorklogState.WORKING,
             "is_todays": True,
             "is_new_doc": False,
             "is_editable": True,
@@ -93,8 +94,6 @@ class TestWorklogAPI(unittest.TestCase):
             "worklog_total_hours": 3.5,
             "tolerance_minutes": 30,
         }
-        mock_context["state"].value = "working"
-        mock_context["state"].display_color.return_value = "green"
         mock_app = MagicMock()
         mock_app.get_worklog_context.return_value = mock_context
         MockAppService.return_value = mock_app
