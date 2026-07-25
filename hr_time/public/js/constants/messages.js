@@ -3,25 +3,31 @@
  * @module HR_TIME_MANAGEMENT
  */
 
-const MESSAGES = {   
+const MESSAGES = {
+  // Generic warnings
+  NO_EDIT: "Cannot Edit",
+  REDIRECT_HOME: "Redirecting to home",
+  ERR_BACKEND_UNREACHABLE: "Cannot connect to server. Please check your network connection.",
+  ERR_NO_DATA_RECEIVED: "No data received from server.",
+  
+  // Checkin dialog messages
   FAILED_PRELOAD_CHECKIN_OPTIONS: "Failed to preload check-in options",
-  NOT_FOUND_EMPLOYEE: "No employee document found for the current user : Please ensure you are logged in as an employee.",
-  NOT_FOUND_EMPLOYEE_ID: "No employee ID found for the current user : Please ensure you are logged in as an employee.",
-  SUCCESS_BREAK: "Successfully checked out for Break",
-  SUCCESS_RESUME: "Successfully resumed work",
-  SUCCESS_CHECKOUT: "Successfully checked out for End of Work",
-  SUCCESS_CHECKIN: "Successfully checked in",
-  FAILED_CHECKOUT: "Could not Checkout of work",
-  ERR_GET_EMPLOYEE_ID: "Error fetching employee ID",
-  SUCCESS_WORKLOG_ADDITION: "Worklog added successfully",
-  ERR_GET_WORKLOG_STATUS: "Error fetching worklog status",
-  EMPTY_TASK_DESC_WHEN_WORKLOGS: "You have no Worklogs today : Task description must not be empty.",
-  ALERT_NO_WORKLOG:"No worklog entered for today",
-  ALERT_YES_WORKLOG:"Worklog has already been entered for today",
-  UNKNOWN_ACTION: "Unknown action provided",
-  ERR_LOG_IN_FUTURE: "The entered time cannot be in the future",
-  WARN_NO_HOME_OFFICE: "Please specify 'Home Office' status",
-  WARN_NO_EMP_ID: "Employee ID is required"
+
+  // Worklog form validation messages
+  WARN_NO_MODIFY_WORKLOG: 'This worklog is historical and cannot be modified.', 
+  ERR_NO_WORK_TIME: "You have no work time recorded today. Please try again after some checkin time.",
+  ERR_NO_EMPLOYEE: "Employee not found.",
+  EMPTY_WORK_DESC_WHEN_WORKLOG_EXISTS: "Please add work description before checking out.",
+  EMPTY_WORK_DESC_WHEN_NO_WORKLOGS: "You have no Worklogs today : Work summary must not be empty.",
+
+  // Info messages
+  INFO_OPENING_EXISTING: "Opening existing worklog for today",
+
+  // Titles for modals
+  TITLE_NO_WORK_TIME: "No Work Time Recorded",
+
+  // Confirm messages
+  CONFIRM_SAVE_AND_CHECKOUT: "Save current worklog and checkout? This will capture your ongoing session and end your work day."
 }
 
 export default MESSAGES;

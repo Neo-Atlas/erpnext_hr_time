@@ -1,42 +1,44 @@
-from typing import Optional
+from typing import Any
+
 import frappe
 from frappe import _
+
 from hr_time.api.employee.repository import EmployeeRepository
 from hr_time.api.shared.constants.messages import Messages
 from hr_time.api.shared.utils.frappe_utils import FrappeUtils
 
 
 @frappe.whitelist()
-def get_current_employee_id() -> Optional[str]:
+def get_current_employee_id() -> dict[str, Any]:
     """
     Retrieves the current employee's ID based on the logged-in user.
 
     Returns:
-        Optional[str]: The ID of the current employee, or `None` if no employee is found.
-
-    Raises:
-        frappe.DoesNotExistError: If no employee is found for the current user.
+        str: Employee ID (e.g., "HR-EMP-00003") or None
     """
-    employee = EmployeeRepository().get_current()
-    if employee is None:
-        FrappeUtils.throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
-    else:
-        return employee.id
+    try:
+        repo = EmployeeRepository()
+        employee = repo.get_current()
+        return employee.id if employee else None
+    except Exception as e:
+        frappe.log_error(f"Error in get_current_employee_id: {str(e)}")
+        return None
 
 
 @frappe.whitelist()
-def get_current_employee() -> Optional[dict]:
+def get_current_employee() -> dict[str, Any]:
     """
-    Retrieves the current employee's full document as a dict based on the logged-in user.
+    Retrieves the current employee's full document as a dict.
 
     Returns:
-        Optional[dict]: The employee document (as JSON-serializable dict), or None if not found.
-
-    Raises:
-        frappe.DoesNotExistError: If no employee is found for the current user.
+        dict: Employee document as dictionary
     """
-    employee = EmployeeRepository().get_current()
+    repo = EmployeeRepository()
+    employee = repo.get_current()
+
     if employee is None:
-        FrappeUtils.throw_error_msg(Messages.Employee.NOT_FOUND_EMPLOYEE_ID, frappe.DoesNotExistError)
-    else:
-        return employee.to_dict()
+        FrappeUtils.throw_error_msg(
+            _(Messages.Employee.NOT_FOUND_EMPLOYEE),
+            frappe.DoesNotExistError
+        )
+    return employee.to_dict()

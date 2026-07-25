@@ -15,22 +15,23 @@ export class FlextimeApi{
     static fetchCurrentEmployeeId = () => {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "hr_time.api.employee.api.get_current_employee_id",
+                method: API.EMPLOYEE.GET_CURRENT_EMPLOYEE_ID,
                 callback: (response) => {
-                    const employee_id = response.message;
-                    if (employee_id) {
-                        resolve(employee_id); // Resolve with the employee ID
-                    } else {
-                        reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE_ID));
+                    if (response.message && typeof response.message === 'string') {
+                        resolve(response.message);  // Valid employee ID
+                    } else if (response.message === null || response.message === undefined) {
+                        console.warn('user is Admin');
+                        resolve(null);  // No employee (admin user) - resolve with null
+                    }else {
+                        reject(new Error("No employee ID returned"));
                     }
                 },
                 error: (error) => {
-                    reject(error); // Handle API errors
+                    reject(new Error(error.message || MESSAGES.ERR_BACKEND_UNREACHABLE));
                 },
             });
         });
     }
-
 
     /**
      * Fetches the current employee document object by calling the backend API.
@@ -40,45 +41,20 @@ export class FlextimeApi{
     static fetchCurrentEmployee = () => {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "hr_time.api.employee.api.get_current_employee",
+                method: API.EMPLOYEE.GET_CURRENT_EMPLOYEE,
                 callback: (response) => {
-                    console.log('response: ',response);
+                    const result = response.message;
                     
-                    const employee = response.message;
-                    if (employee) {
-                        resolve(employee); // Resolve with the employee
+                    if (response && response.message && typeof response.message === 'object') {
+                        resolve(response.message); // Employee document
+                    } else if (response.message === null || response.message === undefined) {
+                        reject(new Error(result.message)); // Backend message
                     } else {
-                        reject(new Error(MESSAGES.NOT_FOUND_EMPLOYEE));
+                        reject(new Error(MESSAGES.ERR_UNEXPECTED_RESPONSE));
                     }
                 },
                 error: (error) => {
-                    reject(error); // Handle API errors
-                },
-            });
-        });
-    }
-
-
-    /**
-     * Fetches the worklog status (i.e. if employee has created worklog "today").
-     * 
-     * @param {string} employee_id - The ID of the employee whose worklog status is to be fetched.
-     * @returns {Promise<boolean>} A promise that resolves with the worklog status or rejects with an error.
-     */
-    static fetchWorklogStatus = (employee_id) => {
-        return new Promise((resolve, reject) => {
-            frappe.call({
-                method: "hr_time.api.worklog.api.has_employee_made_worklogs_today",
-                args: { employee_id: employee_id },
-                callback: (response) => {
-                    if (response && response.message !== undefined) {
-                        resolve(response.message); // Resolve with the worklog status
-                    } else {
-                        reject(new Error(MESSAGES.ERR_GET_WORKLOG_STATUS));
-                    }
-                },
-                error: (error) => {
-                    reject(error); // Handle API errors
+                    reject(new Error(MESSAGES.ERR_BACKEND_UNREACHABLE));
                 },
             });
         });

@@ -40,6 +40,6 @@ class Response:
         """Factory method for error responses."""
         return Response(status=Response.STATUS_ERROR, message=message, data=data)
 
-    def to_json(self) -> str:
-        """Converts the response to a JSON string."""
-        return json.dumps(asdict(self))
+    def to_dict(self) -> dict:
+        """Convert to dictionary (for Frappe RPC responses)"""
+        return asdict(self)

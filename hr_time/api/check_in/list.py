@@ -1,4 +1,4 @@
-import datetime
+# import datetime
 from typing import Optional
 
 from hr_time.api import logger
@@ -69,7 +69,7 @@ class CheckinList:
 
         return False
 
-    # Adds a closing checkin event for the current duration
+    # Adds a closing checkin event for the current duration (Simulates checkout for duration calc)
     def close_current(self, clock: Clock = Clock()):
         latest = self.get_latest()
 

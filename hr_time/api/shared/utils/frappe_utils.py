@@ -1,23 +1,27 @@
 import frappe
-from frappe import _
 
 
 class FrappeUtils:
     """
-    Utility class with (wrapper) methods for Frappe's messaging methods - to display (translatable)
+    server-side utility class with (wrapper) methods for Frappe's messaging methods - to display (translatable)
     alerts and messages in the application.
     """
 
     @staticmethod
+    def error_modal(msg, title="Error"):
+        frappe.msgprint(frappe._(msg), title=frappe._(title), indicator="red")
+
+    @staticmethod
+    def success_modal(msg, title="Success"):
+        frappe.msgprint(frappe._(msg), title=frappe._(title), indicator="green")
+
+    @staticmethod
+    def info_modal(msg, title="Info"):
+        frappe.msgprint(frappe._(msg), title=frappe._(title), indicator="blue")
+
+    @staticmethod
     def warn_user(msg):
-        """
-        Display a closable warning message on top of the screen.
-        """
-        frappe.msgprint(
-            title=_("Warning"),
-            message=_(msg),
-            indicator="orange"
-        )
+        frappe.msgprint(frappe._(msg), title=frappe._("Warning"), indicator="orange")
 
     @staticmethod
     def throw_error_msg(msg, error_type=Exception):
@@ -28,4 +32,4 @@ class FrappeUtils:
             msg (str): The error message to raise.
             error_type (Exception): The type of exception to raise (default is Exception).
         """
-        frappe.throw(_(msg), error_type)
+        frappe.throw(frappe._(msg), error_type)

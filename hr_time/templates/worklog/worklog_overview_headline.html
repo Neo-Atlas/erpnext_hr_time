@@ -1,0 +1,13 @@
+<div class="worklog-display-bar">
+    {% if state == 'historical' %}
+        📅 {{ _("HISTORICAL") }} | {{ _("Total") }}: {{ total_hours }} {{ _("hrs") }}
+    {% elif state == 'completed' %}
+        ✓ {{ _("COMPLETED") }} | {{ _("Total") }}: {{ total_hours }} {{ _("hrs") }}
+    {% elif state == 'working' %}
+        <span class="blinking-dot"></span> {{ _("ACTIVE (Working now)") }} | ✚ {{ time_since_last_save }} {{ _("h")}} {{ _("since last save") }} | {{ _("Total") }}: {{ total_hours }}h | {{ _("Saved") }}: {{ saved_hours }}h ✓
+    {% elif state == 'break' %}
+        ☕ {{ _("ON BREAK") }} | {{ _("Total") }}: {{ total_hours }}h
+    {% elif state == 'new' %}
+        ✨ {{ _("NEW WORKLOG") }} | {{ _("Total") }}: {{ total_hours }}h
+    {% endif %}
+</div>

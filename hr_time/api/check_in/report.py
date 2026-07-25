@@ -5,6 +5,7 @@ import frappe
 from hr_time.api.check_in.repository import CheckinRepository
 from hr_time.api.check_in.service import State
 from hr_time.api.employee.repository import EmployeeRepository, Employee, TimeModel
+from hr_time.api.check_in.display_service import CheckinDisplayService
 
 
 class PresentEmployee:
@@ -29,7 +30,10 @@ class PresentEmployee:
             "employee_name": self.employee.full_name,
             "status_since": self._render_time(self.current_status_since),
             "work_start_today": self._render_time(self.work_start_today),
-            "status": frappe.render_template("templates/navbar/checkin_status.html", self.status.render())
+            "status": frappe.render_template(
+                "templates/navbar/checkin_status.html",
+                CheckinDisplayService.get_display_data(self.status)
+            )
         }
 
     def _render_time(self, time: datetime.time) -> datetime.time:
@@ -69,7 +73,7 @@ class CheckinReportService:
             if (not latest_event.is_in) and (not latest_event.is_break):
                 continue
 
-            status = State.Break if latest_event.is_break else State.In
+            status = State.BREAK if latest_event.is_break else State.IN
 
             if (filter_status is not None) and (status != filter_status):
                 continue

@@ -1,82 +1,134 @@
+from typing import Dict, Any
+import traceback
+import json
+
 import frappe
 from frappe import _
-from hr_time.api.worklog.service import WorklogService
+
+
+from hr_time.api.hr_settings.repository import HRSettingsRepository
+from hr_time.api.employee.api import get_current_employee_id
+from hr_time.api.shared.utils.response import Response
+from hr_time.api.worklog.application.worklog_app_service import WorklogAppService, WORKLOG_STATE_COLORS
 
 
 @frappe.whitelist()
-def has_employee_made_worklogs_today(employee_id) -> bool:
-    """
-    Checks if an employee has made any worklogs today.
+def get_tolerance_minutes() -> int:
+    """Get worklog tolerance from HR Settings"""
+    return HRSettingsRepository.get_tolerance_minutes()
 
-    Args:
-        employee_id (str): The ID of the employee.
 
-    Returns:
-        bool: True if the employee has made worklogs today, False otherwise.
+@frappe.whitelist()
+def get_buffer_task():
+    return HRSettingsRepository.get_buffer_task()
+
+
+@frappe.whitelist()
+def prepare_worklog_for_checkout(employee_id: str = None) -> Dict[str, Any]:
     """
-    return WorklogService.prod().check_if_employee_has_worklogs_today(
-        employee_id
+    Prepare worklog data for checkout dialog
+    Thin wrapper around WorklogService
+    """
+    if not employee_id:
+        employee_id = get_current_employee_id()
+    app = WorklogAppService()
+    return app.prepare_for_checkout(employee_id)
+
+
+def _render_overview_headline(state, total_hours: float, is_editable: bool) -> str:
+    """Render the worklog overview headline HTML."""
+    return frappe.render_template(
+        "templates/worklog/worklog_overview_headline.html",
+        {
+            "state": state.value,
+            "total_hours": round(total_hours, 2),
+            "is_editable": is_editable,
+            "_": frappe._
+        }
+    )
+
+
+def _render_today_indicator(has_worklog_today: bool) -> str:
+    """Render the indicator showing if a worklog exists for today."""
+    return frappe.render_template(
+        "templates/worklog/worklog_made_today_indicator.html",
+        {
+            "has_worklog": has_worklog_today,
+            "_": frappe._
+        }
     )
 
 
 @frappe.whitelist()
-def create_worklog_now(
-    employee_id, worklog_text,
-    task=None, ticket_link=None,
-    is_home_office="No"
+def get_worklog_context(
+    referred_worklog_name: str = None, employee_id: str = None, is_dialog_call: bool = False
 ) -> dict:
-    """
-    Creates a new worklog for the given employee.
+    """Get context for worklog - is it today's? has open session? on break?"""
 
-    Args:
-        employee_id (str): The ID of the employee creating the worklog.
-        worklog_text (str): The content or description of the worklog.
-        task (Optional[str]): The task associated with the worklog (if any).
-        ticket_link (Optional[str]): The external reference URL associated
-            with the worklog (if any).
-        is_home_office (str): Is the work done from Home - Yes/No. Default
-            is "No".
+    employee_id = employee_id or get_current_employee_id()
+    app = WorklogAppService()
+    context = app.get_worklog_context(employee_id, referred_worklog_name, is_dialog_call)
 
-    Returns:
-        dict:
-            The response from the WorklogService as JSON string after creating
-            the worklog which include information such as success status,
-            message and (optionally) data.
-    """
-    return WorklogService.prod().create_worklog_now(
-        employee_id, worklog_text, task, ticket_link, is_home_office
-    ).to_json()
+    return {
+        "worklog_state": context["state"].value,
+        "headline_color": WORKLOG_STATE_COLORS.get(context["state"], "red"),
+        "is_todays_worklog": context["is_todays"],
+        "is_new_doc": context["is_new_doc"],
+        "is_read_only": not context["is_editable"],
+        "has_open_session": context["has_open_session"],
+        "on_break": context["on_break"],
+        "today_worklog_name": context["today_worklog_name"],
+        "worklog_total_hours": context["worklog_total_hours"],
+        "tolerance_minutes": context["tolerance_minutes"],
+        "worklog_overview_headline": _render_overview_headline(
+            context["state"],
+            context["worklog_total_hours"],
+            context["is_editable"]
+        ),
+        "worklog_status_today_html": _render_today_indicator(
+            bool(context["today_worklog_name"])
+        ),
+    }
 
 
 @frappe.whitelist()
-def render_worklog_header() -> str:
-    """
-    Renders the HTML template for the worklog textbox's header (label and
-    worklog-status-alert).
+def save_and_checkout(
+    worklog_name: str = None,
+    employee_id: str = None,
+    worklog_data=None,
+    current_total=0
+) -> dict:
+    """Save worklog and perform checkout in one action"""
+    try:
+        # Parsing worklog_data
+        if worklog_data and isinstance(worklog_data, str):
+            worklog_data = json.loads(worklog_data)
+        else:
+            worklog_data = worklog_data or {}
 
-    Returns:
-        str: The rendered HTML content for the worklog textbox's header.
-    """
-    context = {
-        "_": frappe._  # Including the translation helper
-    }
-    return frappe.render_template(
-        "templates/worklog/worklog_textbox_header.html", context
-    )
+        # make sure current_total is a float
+        if current_total is None or current_total == '':
+            current_total = 0
+        current_total = float(current_total)
 
+        # Delegate saving worklog and checkout to App service
+        app = WorklogAppService()
+        saved_name, checkout_performed = app.save_and_checkout(
+            worklog_name=worklog_name,
+            employee_id=employee_id,
+            worklog_data=worklog_data,
+            current_total=current_total
+        )
 
-@frappe.whitelist()
-def render_worklog_full_form_link() -> str:
-    """
-    Renders the HTML template for link to the full form of worklog entry
-    ("Enter complete detail button").
+        return Response.success(
+            _("Worklog saved successfully" + (" and checked out." if checkout_performed else "")),
+            {"worklog": saved_name}
+        ).to_dict()
 
-    Returns:
-        str: The rendered HTML content for the link's template.
-    """
-    context = {
-        "_": frappe._  # Including the translation helper
-    }
-    return frappe.render_template(
-        "templates/worklog/worklog_btn_full_page.html", context
-    )
+    except json.JSONDecodeError as e:
+        return Response.error(f"Invalid JSON: {str(e)}").to_dict()
+
+    except Exception as e:
+        frappe.db.rollback()
+        traceback.print_exc()
+        return Response.error(str(e)).to_dict()
