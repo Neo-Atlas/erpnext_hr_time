@@ -93,9 +93,18 @@ flowchart TD
 | Layer | Rule |
 |---|---|
 | API | `@frappe.whitelist()` only. No business logic. |
-| Application | Orchestrates; coordinates domain + infra. No Frappe DB calls. |
-| Domain | Pure Python. No `import frappe`. Holds all business invariants. |
+| Application | Orchestrates; coordinates domain + infra. No Frappe DB calls. Houses `WORKLOG_STATE_COLORS` — presentation mapping belongs here, not in the domain enum. |
+| Domain | Pure Python. No `import frappe`. Business invariants live in the **aggregate**, not the entity. |
 | Infrastructure | All DB/Redis/WebSocket I/O. Maps Frappe docs ↔ domain entities. |
+
+### Domain object responsibilities
+
+| Object | Responsibility |
+|---|---|
+| `WorklogEntity` | Pure data holder. Fields + `total_allocated` property only. No methods that encode business rules. |
+| `WorklogAggregate` | Aggregate root. Owns `is_within_tolerance()` and `adjust_for_tolerance()`. Enforces the invariant that time adjustment logic cannot be bypassed by working directly on the entity. |
+| `WorklogStateService` | Stateless domain service. Maps checkin events → `WorklogState` enum (NEW / WORKING / ON_BREAK / COMPLETED / HISTORICAL). Determines editability. |
+| `WorklogState` (enum) | State values only — no display logic. Colors live in `WORKLOG_STATE_COLORS` in the application layer. |
 
 ---
 
@@ -286,7 +295,7 @@ sequenceDiagram
 
 | Class / File | Responsibility |
 |---|---|
-| `CheckinTimer` | Local timer with drift correction. Handles IN / BREAK / OUT states. Syncs with server every 5 min. |
+| `CheckinTimer` | Local timer with drift correction. Handles IN / BREAK / OUT states. Syncs with server every 5 min. **Race condition guard:** if a realtime OUT event is received while a drift sync is in-flight, the stale sync response is discarded — prevents the timer from restarting after checkout. |
 | `CHECKIN_STATUS` constants | Single source of truth for status → `{label, icon, CSS class}` mapping. |
 | `TimeFormatter` | Formats seconds as `HH:MM`; `formatWithDuration` for richer display. |
 | `NumberCardUpdater` | Direct DOM patch on Frappe number cards — patches value only, preserving card UI state. |
@@ -393,3 +402,33 @@ The notes below cover the one-time configuration required after the first deploy
 2. Set **Worklog Time Allocation Tolerance** to desired minutes (e.g. 30)
 3. Set **Default Timesheet Activity Type** (e.g. "Task")
 4. Save — triggers the `on_update` hook and primes the Redis cache
+
+---
+
+## 10. Post-merge Fixes Log
+
+### DDD layer refinements (post-PR cleanup)
+
+After initial PR review, three structural issues were identified and corrected without schema changes:
+
+| Issue | Location | Fix |
+|---|---|---|
+| Self-instantiation in `before_save_worklog` | `WorklogAppService` | Was creating a new `WorklogAppService()` instance inside a method on `self`, then calling `app.validate_worklog_document(doc)` on the new instance. Fixed to call `self.validate_worklog_document(doc)` directly. |
+| Business logic on entity instead of aggregate | `WorklogEntity` / `WorklogAggregate` | `is_within_tolerance()` and `adjusted_time_saved()` lived on `WorklogEntity`, with `WorklogAggregate` only delegating. Moved implementation to aggregate; entity is now a pure data holder. |
+| UI concern (`display_color`) in domain enum | `WorklogState` | `display_color()` method was on the domain enum, coupling color strings to domain objects. Removed; replaced with `WORKLOG_STATE_COLORS` dict in `WorklogAppService` (application layer). All callers (`api.py`, `worklog_app_service.py`) updated to use the dict. |
+
+### Multi-tab realtime race condition fix
+
+**Symptom:** After checkout in Tab 1, Tab 2's navbar timer could continue running (showing a larger elapsed time) instead of switching to "Checked out" state.
+
+**Root cause:** The 5-minute drift correction fires `CheckinTimer.sync()` which sends an async `frappe.call`. If the checkout's realtime OUT event arrives and correctly stops the timer *while that sync call is still in-flight*, the sync callback returns with a stale `{status: "IN"}` response and inadvertently restarts the timer.
+
+**Fix:** `CheckinTimer.sync()` now checks whether the current status has already moved to OUT before applying the sync response. If so, the stale response is silently discarded.
+
+```js
+// checkin_timer.js — sync() callback guard
+if (this.status === CHECKIN_STATUS.OUT.key &&
+    response.message.status !== CHECKIN_STATUS.OUT.key) {
+    return; // discard stale IN response — realtime event already committed the checkout
+}
+```
