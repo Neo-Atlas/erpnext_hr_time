@@ -79,11 +79,16 @@ export class CheckinTimer {
         }
     }
 
-    sync(callback = null) {        
+    sync(callback = null) {
         frappe.call({
             method: "hr_time.api.flextime.api.get_current_session_state",
             callback: (response) => {
-                if (response.message) {                    
+                if (response.message) {
+                    // Discard(ignore) stale sync response (and UI update) if a realtime event already moved us to OUT state
+                    if (this.status === CHECKIN_STATUS.OUT.key &&
+                        response.message.status !== CHECKIN_STATUS.OUT.key) {
+                        return;
+                    }
                     this.updateFromEvent(response.message);
                     if (callback) callback();
                 }
